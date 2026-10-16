@@ -1,8 +1,10 @@
-import { Box, Chip, Typography } from '@mui/joy'
+import { HomeRounded } from '@mui/icons-material'
+import { Box, Chip, IconButton, Typography } from '@mui/joy'
 import { useQueryClient } from '@tanstack/react-query'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { useChores, useChoresHistory } from '@/queries/ChoreQueries'
 import { useCircleMembers } from '@/queries/UserQueries'
@@ -61,13 +63,14 @@ const useNow = interval => {
   return now
 }
 
-// Time left in the tour as HH:MM (hours can run past 24 on a 48-hour shift).
-// Rounded up so it never reads 00:00 while the shift is still on.
+// Time left in the tour, e.g. "9 Hours and 56 Minutes" (hours run past 24
+// on a 48-hour shift). Rounded up so it never reads 0 while still on shift.
+const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`
 const untilChange = (end, now) => {
   const minutes = Math.max(0, Math.ceil((end - now) / 60000))
   const h = Math.floor(minutes / 60)
   const m = minutes % 60
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+  return `${plural(h, 'Hour')} and ${plural(m, 'Minute')}`
 }
 
 const dueLabel = (date, now) => {
@@ -210,6 +213,7 @@ Empty.propTypes = { children: PropTypes.node }
 
 const WallDisplay = () => {
   useWakeLock()
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const now = useNow(CLOCK_MS)
   const { data: choresData } = useChores(false)
@@ -307,6 +311,21 @@ const WallDisplay = () => {
         }}
       >
         <Box sx={{ alignItems: 'center', display: 'flex', gap: 1.5 }}>
+          {/* Touchscreens have no back button, so give them a way out. */}
+          <IconButton
+            aria-label='Back to tasks'
+            onClick={() => navigate('/')}
+            variant='soft'
+            sx={{
+              '--IconButton-size': 'clamp(44px, 3.6vw, 64px)',
+              bgcolor: 'rgba(255,255,255,0.08)',
+              borderRadius: '14px',
+              color: '#fff',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.16)' },
+            }}
+          >
+            <HomeRounded sx={{ fontSize: 'clamp(24px, 2vw, 36px)' }} />
+          </IconButton>
           <Box
             component='img'
             src={LogoSrc}

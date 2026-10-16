@@ -1,12 +1,18 @@
-import { Download, Print } from '@mui/icons-material'
+import { Download, OpenInNew, Print } from '@mui/icons-material'
 import {
   Box,
   Button,
   Chip,
   Container,
+  DialogContent,
+  DialogTitle,
+  Divider,
   FormControl,
   FormLabel,
   Input,
+  Modal,
+  ModalClose,
+  ModalDialog,
   Option,
   Select,
   Sheet,
@@ -14,7 +20,9 @@ import {
   Typography,
 } from '@mui/joy'
 import moment from 'moment'
+import PropTypes from 'prop-types'
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { useChores, useChoresHistory } from '@/queries/ChoreQueries'
 import { useCircleMembers } from '@/queries/UserQueries'
@@ -62,6 +70,19 @@ const rangeBounds = (range, from, to) => {
   }
 }
 
+// Note text with paragraph and line breaks kept, for the detail popup.
+const htmlToText = html =>
+  (html || '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|li)>/gi, '\n')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+
 const stripHtml = html =>
   (html || '')
     .replace(/<[^>]*>/g, ' ')
@@ -94,6 +115,7 @@ const CompletionLog = () => {
   const [person, setPerson] = useState('all')
   const [shift, setShift] = useState('all')
   const [status, setStatus] = useState('all')
+  const [selected, setSelected] = useState(null)
 
   const { end, start } = rangeBounds(range, from, to)
   // The history endpoint takes "days back from now".
@@ -134,6 +156,7 @@ const CompletionLog = () => {
           const at = moment(h.performedAt)
           return {
             id: h.id,
+            choreId: h.choreId,
             at,
             task: choreName(h.choreId),
             by: memberName(h.completedBy),
@@ -141,6 +164,7 @@ const CompletionLog = () => {
             shift: shiftAt(at.toDate()),
             status: h.status,
             notes: stripHtml(h.notes),
+            notesFull: htmlToText(h.notes),
             duration: formatDuration(h.duration),
             // Start = end - timer duration; blank when the timer wasn't used.
             start:
@@ -172,13 +196,13 @@ const CompletionLog = () => {
   const exportCsv = () => {
     const header = [
       'Date',
-      'Start time',
-      'End time',
+      'Start',
+      'End',
+      'Duration',
       'Task',
       'Completed by',
       'Shift',
       'Status',
-      'Duration',
       'Notes',
     ]
     const lines = rows.map(r =>
@@ -186,12 +210,12 @@ const CompletionLog = () => {
         r.at.format('YYYY-MM-DD'),
         startLabel(r.start, r.at, 'YYYY-MM-DD'),
         r.at.format('HH:mm'),
+        r.duration,
         r.task,
         r.by,
         r.shift,
         STATUS[r.status].label,
-        r.duration,
-        r.notes,
+        r.notesFull,
       ]
         .map(csvCell)
         .join(','),
@@ -359,26 +383,33 @@ const CompletionLog = () => {
         >
           <thead>
             <tr>
-              <th style={{ width: 120 }}>Date</th>
-              <th style={{ width: 72 }}>Start time</th>
-              <th style={{ width: 72 }}>End time</th>
+              <th style={{ width: 110 }}>Date</th>
+              <th style={{ width: 64 }}>Start</th>
+              <th style={{ width: 64 }}>End</th>
+              <th style={{ width: 84 }}>Duration</th>
               <th>Task</th>
-              <th style={{ width: 140 }}>Completed by</th>
-              <th style={{ width: 70 }}>Shift</th>
-              <th style={{ width: 90 }}>Status</th>
-              <th style={{ width: 96 }}>Duration</th>
-              <th>Notes</th>
+              <th style={{ width: 130 }}>Completed by</th>
+              <th style={{ width: 60 }}>Shift</th>
+              <th style={{ width: 84 }}>Status</th>
+              <th style={{ width: '22%' }}>Notes</th>
             </tr>
           </thead>
           <tbody>
             {rows.map(r => (
-              <tr key={r.id}>
+              <tr
+                key={r.id}
+                onClick={() => setSelected(r)}
+                style={{ cursor: 'pointer' }}
+              >
                 <td>{r.at.format('ddd D MMM')}</td>
                 <td style={{ fontVariantNumeric: 'tabular-nums' }}>
                   {startLabel(r.start, r.at, 'ddd')}
                 </td>
                 <td style={{ fontVariantNumeric: 'tabular-nums' }}>
                   {r.at.format('HH:mm')}
+                </td>
+                <td style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {r.duration || '—'}
                 </td>
                 <td>
                   <Typography level='body-sm' fontWeight='md'>
@@ -396,11 +427,13 @@ const CompletionLog = () => {
                     {STATUS[r.status].label}
                   </Chip>
                 </td>
-                <td style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {r.duration || '—'}
-                </td>
                 <td>
-                  <Typography level='body-sm' textColor='text.secondary'>
+                  <Typography
+                    level='body-sm'
+                    textColor='text.secondary'
+                    noWrap
+                    title={r.notes}
+                  >
                     {r.notes}
                   </Typography>
                 </td>
@@ -422,8 +455,91 @@ const CompletionLog = () => {
           </tbody>
         </Table>
       </Sheet>
+
+      <LogEntryDialog entry={selected} onClose={() => setSelected(null)} />
     </Container>
   )
 }
+
+// Full details for one log entry, including the whole note.
+const Detail = ({ children, label }) => (
+  <Box>
+    <Typography level='body-xs' textColor='text.tertiary'>
+      {label}
+    </Typography>
+    <Typography level='body-md' sx={{ fontVariantNumeric: 'tabular-nums' }}>
+      {children}
+    </Typography>
+  </Box>
+)
+
+const LogEntryDialog = ({ entry, onClose }) => {
+  const navigate = useNavigate()
+  return (
+    <Modal open={Boolean(entry)} onClose={onClose}>
+      <ModalDialog sx={{ width: 'min(560px, 94vw)' }}>
+        <ModalClose />
+        {entry && (
+          <>
+            <DialogTitle sx={{ pr: 4 }}>{entry.task}</DialogTitle>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Chip size='sm' variant='soft' color={STATUS[entry.status].color}>
+                {STATUS[entry.status].label}
+              </Chip>
+              <Chip size='sm' variant='soft' color={SHIFT_COLORS[entry.shift]}>
+                {entry.shift} Shift
+              </Chip>
+            </Box>
+            <DialogContent>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gap: 1.5,
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                  mt: 1,
+                }}
+              >
+                <Detail label='Completed by'>{entry.by}</Detail>
+                <Detail label='Date'>
+                  {entry.at.format('dddd D MMMM YYYY')}
+                </Detail>
+                <Detail label='Start'>
+                  {entry.start ? entry.start.format('ddd D MMM HH:mm') : '—'}
+                </Detail>
+                <Detail label='End'>
+                  {entry.at.format('ddd D MMM HH:mm')}
+                </Detail>
+                <Detail label='Duration'>{entry.duration || '—'}</Detail>
+              </Box>
+              <Divider sx={{ my: 2 }} />
+              <Typography level='body-xs' textColor='text.tertiary'>
+                Notes
+              </Typography>
+              <Typography
+                level='body-md'
+                sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}
+              >
+                {entry.notesFull || 'No notes.'}
+              </Typography>
+            </DialogContent>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+              <Button
+                variant='plain'
+                startDecorator={<OpenInNew />}
+                onClick={() => navigate(`/chores/${entry.choreId}`)}
+                disabled={!entry.choreId}
+              >
+                Open task
+              </Button>
+            </Box>
+          </>
+        )}
+      </ModalDialog>
+    </Modal>
+  )
+}
+
+Detail.propTypes = { children: PropTypes.node, label: PropTypes.string }
+LogEntryDialog.propTypes = { entry: PropTypes.object, onClose: PropTypes.func }
 
 export default CompletionLog
