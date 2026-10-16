@@ -36,7 +36,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import { isHiddenRoute } from '@/crewtak/features'
+import { HIDE, isHiddenRoute } from '@/crewtak/features'
 import Wordmark from '@/crewtak/Wordmark'
 
 import { version } from '../../../package.json'
@@ -348,6 +348,7 @@ const NavBar = () => {
             }}
             sx={{
               borderRadius: 'md',
+              display: HIDE.upstreamFeedback ? 'none' : undefined,
               gap: compact ? 0 : undefined,
               justifyContent: compact ? 'center' : 'flex-start',
               minHeight: 48,

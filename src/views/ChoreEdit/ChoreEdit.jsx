@@ -752,7 +752,9 @@ const ChoreEdit = () => {
     }
   }, [choreId, userProfile?.id])
   useEffect(() => {
-    const anyoneSetting = localStorage.getItem('defaultAnyoneSetting')
+    // CrewTAK: with nothing saved, the built-in default is "Anyone".
+    const anyoneSetting =
+      localStorage.getItem('defaultAnyoneSetting') ?? JSON.stringify(true)
     const anyoneDirty = anyoneSetting !== JSON.stringify(anyone)
     const assigneeSetting = localStorage.getItem('defaultAssigneeSetting')
     const assigneeDirty = assigneeSetting !== JSON.stringify(assignableTo)

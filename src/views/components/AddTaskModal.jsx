@@ -1488,10 +1488,15 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
                     setAssignees(userIds.map(userId => ({ userId })))
                   }
                 }}
-                onClear={() => {
-                  setIsAnyoneTask(true)
-                  setAssignees([])
-                }}
+                // CrewTAK: "Anyone" is the default, so there is nothing to clear.
+                onClear={
+                  isAnyoneTask
+                    ? undefined
+                    : () => {
+                        setIsAnyoneTask(true)
+                        setAssignees([])
+                      }
+                }
                 members={assignableMembers}
               />
               <LabelsPicker
