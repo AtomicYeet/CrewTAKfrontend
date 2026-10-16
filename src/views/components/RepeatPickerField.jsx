@@ -16,6 +16,8 @@ import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { HIDDEN_FREQUENCY_TYPES } from '@/crewtak/features'
+
 import ModalActions from '../../components/common/ModalActions'
 import NumberInput from '../../components/common/NumberInput'
 import { useResponsiveModal } from '../../hooks/useResponsiveModal'
@@ -29,7 +31,7 @@ const FREQUENCY_TYPES = [
   'adaptive',
   'always',
   'custom',
-]
+].filter(type => !HIDDEN_FREQUENCY_TYPES.includes(type))
 const REPEAT_ON_TYPE = ['interval', 'days_of_the_week', 'day_of_the_month']
 
 const DAYS = [

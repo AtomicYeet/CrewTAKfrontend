@@ -995,7 +995,7 @@
     "clear": "مسح"
   },
   "empty": {
-    "errorTitle": "لا يمكن الوصول إلى Donetick",
+    "errorTitle": "لا يمكن الوصول إلى CrewTAK",
     "errorDescription": "مهامك آمنة. لا يمكننا فقط تحميلها الآن، تحقق من اتصالك وحاول مرة أخرى.",
     "errorAction": "حاول مرة أخرى",
     "noTasksTitle": "لا توجد مهام بعد",

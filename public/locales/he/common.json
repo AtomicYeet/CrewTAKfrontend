@@ -69,7 +69,7 @@
   },
   "search": {
     "title": "חיפוש",
-    "placeholder": "חיפוש ב-Donetick",
+    "placeholder": "חיפוש ב-CrewTAK",
     "inputAriaLabel": "חיפוש במשימות, בהיסטוריה, בפרויקטים, בתגיות ובהגדרות",
     "deviceNote": "חיפוש בתוכן הזמין במכשיר הזה",
     "escape": "Esc",
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "אולי מאוחר יותר",
     "sentiment": {
-      "title": "איך Donetick עובד עבורכם?",
+      "title": "איך CrewTAK עובד עבורכם?",
       "subtitle": "התשובה שלכם עוזרת לנו להחליט מה לפתח בהמשך.",
       "options": {
         "love": "אני אוהב/ת את זה",
@@ -159,8 +159,8 @@
       "submitSelfHosted": "המשך ל-GitHub"
     },
     "review": {
-      "title": "שמחים שאתם נהנים מ-Donetick!",
-      "subtitle": "דירוג או כוכב עוזרים לאנשים אחרים למצוא את Donetick.",
+      "title": "שמחים שאתם נהנים מ-CrewTAK!",
+      "subtitle": "דירוג או כוכב עוזרים לאנשים אחרים למצוא את CrewTAK.",
       "github": "מתן כוכב ב-GitHub",
       "appStore": "דירוג ב-App Store",
       "playStore": "דירוג ב-Google Play"

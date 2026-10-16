@@ -25,6 +25,8 @@ import {
 } from '@mui/joy'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import { useImpersonateUser } from '../../contexts/ImpersonateUserContext.jsx'
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { usePendingCommands } from '../../hooks/usePendingCommands'
@@ -324,7 +326,7 @@ const ChoreCard = ({
                     </Box>
                   )}
                   <Box key={`${chore.id}-labels`}>
-                    {chore.priority > 0 && (
+                    {!HIDE.priority && chore.priority > 0 && (
                       <Chip
                         sx={{
                           position: 'relative',
@@ -351,7 +353,7 @@ const ChoreCard = ({
                       </Chip>
                     )}
                     {/* show points chip if there is points assigned */}
-                    {chore.points > 0 && (
+                    {!HIDE.points && chore.points > 0 && (
                       <Chip
                         sx={{
                           position: 'relative',
@@ -391,7 +393,7 @@ const ChoreCard = ({
                         {getUrlHostname(descriptionUrl)}
                       </Chip>
                     )}
-                    {chore.labelsV2?.map((l, index) => {
+                    {(HIDE.labels ? [] : chore.labelsV2)?.map((l, index) => {
                       return (
                         <div
                           role='none'

@@ -12,6 +12,8 @@ import { Avatar, Box, Card, Chip, IconButton, Typography } from '@mui/joy'
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { TASK_COLOR } from '../../utils/Colors.jsx'
 import PendingBadge from '../components/PendingBadge'
@@ -111,7 +113,7 @@ const HistoryCard = ({
     historyEntry?.duration > 0
       ? `⏱ ${formatTime(historyEntry.duration)}`
       : null,
-    historyEntry?.points > 0
+    !HIDE.points && historyEntry?.points > 0
       ? t('card.points', { count: historyEntry.points })
       : null,
   ].filter(Boolean)

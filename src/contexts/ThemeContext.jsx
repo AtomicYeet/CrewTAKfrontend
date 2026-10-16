@@ -8,10 +8,11 @@ import { prefixer } from 'stylis'
 import rtlPlugin from 'stylis-plugin-rtl'
 
 import { COLORS, THEME_BACKGROUND } from '@/constants/theme'
+import { BRAND_BLUE } from '@/crewtak/brand'
 
 import { useLocalization } from './LocalizationContext'
 
-const primaryColor = 'cyan'
+const primaryColor = 'cyan' // upstream default, kept for getPalette
 const shades = [
   '50',
   ...Array.from({ length: 9 }, (_, i) => String((i + 1) * 100)),
@@ -23,7 +24,8 @@ const getPalette = (key = primaryColor) =>
     return palette
   }, {})
 
-const primaryPalette = getPalette(primaryColor)
+// CrewTAK: brand blue replaces the stock cyan.
+const primaryPalette = BRAND_BLUE
 
 // Fallbacks only. A parent that owns the radius (ButtonGroup, Input/Select
 // decorator slots, CardActions) sets --Button-radius / --IconButton-radius and

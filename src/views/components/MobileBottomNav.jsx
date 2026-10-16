@@ -54,6 +54,7 @@ const HIDDEN_ROUTES = [
   '/privacy',
   '/terms',
   '/search',
+  '/display',
 ]
 
 const isTaskDetailRoute = pathname =>

@@ -29,6 +29,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import EmptyState from '../../components/common/EmptyState'
 import KeyboardShortcutHint from '../../components/common/KeyboardShortcutHint'
 import { useImpersonateUser } from '../../contexts/ImpersonateUserContext.jsx'
@@ -1256,8 +1258,8 @@ const MyChores = () => {
           onMoveToProject={handleBulkMoveToProject}
           onSetDueDate={handleBulkDueDate}
           onSetAssignee={handleBulkAssignee}
-          onSetPriority={handleBulkPriority}
-          onToggleLabel={handleBulkLabels}
+          onSetPriority={HIDE.priority ? undefined : handleBulkPriority}
+          onToggleLabel={HIDE.labels ? undefined : handleBulkLabels}
           selectionSummary={selectionSummary}
           members={membersData?.res || []}
           labels={userLabels || []}

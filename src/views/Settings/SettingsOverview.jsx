@@ -24,6 +24,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import { SETTINGS_SECTIONS } from '../../constants/settingsSections'
 import { useUserProfile } from '../../queries/UserQueries'
 import { isCloudInstance } from '../../service/FeedbackService'
@@ -56,20 +58,23 @@ const SettingsOverview = () => {
         isBeta,
       }),
     ),
-    {
-      id: 'feedback',
-      title: t('overview.sections.feedback.title'),
-      description: t('overview.sections.feedback.description'),
-      icon: <Feedback />,
-      onSelect: () => setFeedbackOpen(true),
-    },
-    {
-      id: 'bugreport',
-      title: t('overview.sections.bugReport.title'),
-      description: t('overview.sections.bugReport.description'),
-      icon: <ReportProblem />,
-      onSelect: () => setBugReportOpen(true),
-    },
+    // CrewTAK: feedback and bug reports went to the upstream Donetick team.
+    ...[
+      {
+        id: 'feedback',
+        title: t('overview.sections.feedback.title'),
+        description: t('overview.sections.feedback.description'),
+        icon: <Feedback />,
+        onSelect: () => setFeedbackOpen(true),
+      },
+      {
+        id: 'bugreport',
+        title: t('overview.sections.bugReport.title'),
+        description: t('overview.sections.bugReport.description'),
+        icon: <ReportProblem />,
+        onSelect: () => setBugReportOpen(true),
+      },
+    ].filter(() => !HIDE.upstreamFeedback),
   ]
 
   const handleCardClick = setting => {

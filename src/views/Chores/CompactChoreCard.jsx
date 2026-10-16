@@ -13,6 +13,8 @@ import {
 import { Box, Checkbox, Chip, IconButton, Typography } from '@mui/joy'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import { useImpersonateUser } from '../../contexts/ImpersonateUserContext.jsx'
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { usePendingCommands } from '../../hooks/usePendingCommands'
@@ -133,7 +135,7 @@ const CompactChoreCard = ({
     }
 
     // Points
-    if (chore.points > 0) {
+    if (!HIDE.points && chore.points > 0) {
       parts.push(`${chore.points}pts`)
     }
 
@@ -148,10 +150,11 @@ const CompactChoreCard = ({
   const showDescriptionUrl = descriptionUrl && descriptionUrl !== titleUrl
   const showLeadingSlot = showActions || isMultiSelectMode
   const showTrailingSlot = showActions && !isMultiSelectMode
-  const visibleLabels = chore.labelsV2?.slice(0, 2) ?? []
+  const choreLabels = HIDE.labels ? [] : chore.labelsV2
+  const visibleLabels = choreLabels?.slice(0, 2) ?? []
   const extraLabelCount = Math.max(
     0,
-    (chore.labelsV2?.length ?? 0) - visibleLabels.length,
+    (choreLabels?.length ?? 0) - visibleLabels.length,
   )
 
   return (
@@ -185,13 +188,13 @@ const CompactChoreCard = ({
           top: 0,
           bottom: 0,
           width: '3px',
-          backgroundColor: getPriorityColor(chore.priority),
+          backgroundColor: getPriorityColor(HIDE.priority ? 0 : chore.priority),
           borderRadius: '16px',
         },
       }}
     >
       {/* Priority bar clickable area */}
-      {chore.priority > 0 && onChipClick && (
+      {!HIDE.priority && chore.priority > 0 && onChipClick && (
         <Box
           sx={{
             position: 'absolute',

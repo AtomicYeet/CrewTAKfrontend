@@ -88,7 +88,7 @@
       },
       "feedback": {
         "title": "Feedback sturen",
-        "description": "Laat ons weten hoe Donetick voor je werkt of vraag een functie aan."
+        "description": "Laat ons weten hoe CrewTAK voor je werkt of vraag een functie aan."
       },
       "bugReport": {
         "title": "Een bug melden",
@@ -126,8 +126,8 @@
     "codeCopied": "Code gekopieerd naar klembord",
     "linkCopied": "Uitnodigingslink gekopieerd naar klembord",
     "myCircle": "mijn circle",
-    "shareTitle": "Kom bij {{name}} op Donetick",
-    "shareText": "Ik wil je uitnodigen om deel te nemen aan {{name}} op Donetick.",
+    "shareTitle": "Kom bij {{name}} op CrewTAK",
+    "shareText": "Ik wil je uitnodigen om deel te nemen aan {{name}} op CrewTAK.",
     "shareDialogTitle": "Circle-uitnodiging delen",
     "leave": "Circle verlaten",
     "leaveConfirmTitle": "Circle verlaten",
@@ -533,7 +533,7 @@
     "title": "Geavanceerde instellingen",
     "description": "Stel geavanceerde functies in zoals webhooks en realtime-updates voor meer productiviteit.",
     "offlineTitle": "Offlineondersteuning",
-    "offlineDescription": "Blijf Donetick gebruiken als je offline bent op dit apparaat of in deze browser. Je wijzigingen worden lokaal opgeslagen en gesynchroniseerd zodra je weer online bent.",
+    "offlineDescription": "Blijf CrewTAK gebruiken als je offline bent op dit apparaat of in deze browser. Je wijzigingen worden lokaal opgeslagen en gesynchroniseerd zodra je weer online bent.",
     "offlineToggle": "Offlineondersteuning inschakelen",
     "offlineHelper": "Uitschakelen verwijdert niet-gesynchroniseerde offlinewijzigingen en opgeslagen offlinegegevens van dit apparaat of deze browser.",
     "offlineEnabled": "Offlinemodus ingeschakeld voor dit apparaat/deze browser",
@@ -568,11 +568,11 @@
   },
   "privacyAnalytics": {
     "title": "Privacy & Analytics",
-    "description": "Donetick never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
+    "description": "CrewTAK never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
     "analyticsToggle": "Anonymous analytics",
-    "analyticsHelper": "Help improve Donetick by sharing anonymous usage statistics.",
+    "analyticsHelper": "Help improve CrewTAK by sharing anonymous usage statistics.",
     "crashToggle": "Crash reports",
-    "crashHelper": "Send us the error and what led to it when Donetick crashes no task content.",
+    "crashHelper": "Send us the error and what led to it when CrewTAK crashes no task content.",
     "footnote": "You can change these choices at any time."
   },
   "subscription": {

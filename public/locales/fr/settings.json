@@ -88,7 +88,7 @@
       },
       "feedback": {
         "title": "Envoyer un retour",
-        "description": "Dites-nous ce que vous pensez de Donetick ou demandez une fonctionnalité."
+        "description": "Dites-nous ce que vous pensez de CrewTAK ou demandez une fonctionnalité."
       },
       "bugReport": {
         "title": "Signaler un bug",
@@ -126,8 +126,8 @@
     "codeCopied": "Code copié dans le presse-papiers",
     "linkCopied": "Lien d'invitation copié dans le presse-papiers",
     "myCircle": "mon cercle",
-    "shareTitle": "Rejoignez {{name}} sur Donetick",
-    "shareText": "J'aimerais vous inviter à rejoindre {{name}} sur Donetick.",
+    "shareTitle": "Rejoignez {{name}} sur CrewTAK",
+    "shareText": "J'aimerais vous inviter à rejoindre {{name}} sur CrewTAK.",
     "shareDialogTitle": "Partager l'invitation au cercle",
     "leave": "Quitter le cercle",
     "leaveConfirmTitle": "Quitter le cercle",
@@ -533,7 +533,7 @@
     "title": "Paramètres avancés",
     "description": "Configurez des fonctionnalités avancées comme les webhooks et les mises à jour en temps réel pour gagner en productivité.",
     "offlineTitle": "Mode hors ligne",
-    "offlineDescription": "Continuez à utiliser Donetick hors ligne sur cet appareil ou navigateur. Vos modifications sont enregistrées localement et synchronisées dès votre retour en ligne.",
+    "offlineDescription": "Continuez à utiliser CrewTAK hors ligne sur cet appareil ou navigateur. Vos modifications sont enregistrées localement et synchronisées dès votre retour en ligne.",
     "offlineToggle": "Activer le mode hors ligne",
     "offlineHelper": "Le désactiver supprime les modifications hors ligne non synchronisées et les données enregistrées sur cet appareil ou navigateur.",
     "offlineEnabled": "Mode hors ligne activé pour cet appareil/navigateur",
@@ -568,11 +568,11 @@
   },
   "privacyAnalytics": {
     "title": "Confidentialité et statistiques d'utilisation",
-    "description": "Donetick n'envoie jamais le nom, la description, les notes ni aucun autre contenu de vos tâches. L'enregistrement des sessions n'est jamais activé.",
+    "description": "CrewTAK n'envoie jamais le nom, la description, les notes ni aucun autre contenu de vos tâches. L'enregistrement des sessions n'est jamais activé.",
     "analyticsToggle": "Statistiques d'utilisation anonymes",
-    "analyticsHelper": "Aidez à améliorer Donetick en partageant des statistiques d'utilisation anonymes.",
+    "analyticsHelper": "Aidez à améliorer CrewTAK en partageant des statistiques d'utilisation anonymes.",
     "crashToggle": "Rapports de plantage",
-    "crashHelper": "En cas de plantage de Donetick, envoyez-nous l'erreur et les actions qui l'ont précédée, sans aucun contenu de tâche.",
+    "crashHelper": "En cas de plantage de CrewTAK, envoyez-nous l'erreur et les actions qui l'ont précédée, sans aucun contenu de tâche.",
     "footnote": "Vous pouvez modifier ces choix à tout moment."
   },
   "subscription": {
@@ -719,7 +719,7 @@
     "iosStep1": "1. Ouvrez l'application <b>Réglages</b> de votre appareil",
     "iosStep2": "2. Touchez votre nom en haut de l'écran",
     "iosStep3": "3. Touchez <b>Abonnements</b>",
-    "iosStep4": "4. Recherchez <b>Donetick</b> et touchez son nom",
+    "iosStep4": "4. Recherchez <b>CrewTAK</b> et touchez son nom",
     "iosStep5": "5. Tapez sur <b>Annuler l'abonnement</b>",
     "iosNote": "<b>Remarque :</b> Si vous avez souscrit via iOS et utilisez la version web ou pour ordinateur, vous devez résilier l'abonnement dans les réglages d'iOS comme décrit ci-dessus.",
     "androidHeading": "Sur Android :",
@@ -727,7 +727,7 @@
     "androidStep2": "2. Touchez l'icône de profil en haut à droite",
     "androidStep3": "3. Touchez <b>Paiements et abonnements</b>",
     "androidStep4": "4. Touchez <b>Abonnements</b>",
-    "androidStep5": "5. Recherchez <b>Donetick</b> et tapez sur son nom",
+    "androidStep5": "5. Recherchez <b>CrewTAK</b> et tapez sur son nom",
     "androidStep6": "6. Tapez sur <b>Résilier l'abonnement</b>",
     "androidNote": "<b>Remarque :</b> Si vous avez souscrit via Google Play et utilisez la version web ou pour ordinateur, vous devez résilier l'abonnement dans Google Play comme décrit ci-dessus.",
     "webHeading": "Pour les abonnements souscrits sur le web ou sur ordinateur :",

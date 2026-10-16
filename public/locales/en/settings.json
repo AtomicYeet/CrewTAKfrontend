@@ -59,8 +59,8 @@
         "description": "Generate and manage access tokens for third-party integrations and API access."
       },
       "bridge": {
-        "title": "Donetick Bridge",
-        "description": "Connect to Donetick Bridge to deliver push notifications from this self-hosted instance."
+        "title": "CrewTAK Bridge",
+        "description": "Connect to CrewTAK Bridge to deliver push notifications from this self-hosted instance."
       },
       "calendar": {
         "title": "Calendar Sync",
@@ -96,7 +96,7 @@
       },
       "feedback": {
         "title": "Send Feedback",
-        "description": "Tell us how Donetick is working for you or request a feature."
+        "description": "Tell us how CrewTAK is working for you or request a feature."
       },
       "bugReport": {
         "title": "Report an Issue",
@@ -141,8 +141,8 @@
     "codeCopied": "Code copied to clipboard",
     "linkCopied": "Invite link copied to clipboard",
     "myCircle": "my Circle",
-    "shareTitle": "Join {{name}} on Donetick",
-    "shareText": "I'd like to invite you to join {{name}} on Donetick.",
+    "shareTitle": "Join {{name}} on CrewTAK",
+    "shareText": "I'd like to invite you to join {{name}} on CrewTAK.",
     "shareDialogTitle": "Share Circle invite",
     "leave": "Leave Circle",
     "leaveConfirmTitle": "Leave Circle",
@@ -396,7 +396,7 @@
   },
   "calendar": {
     "title": "Calendar Sync",
-    "description": "Keep your Donetick tasks visible in your preferred calendar app with a private iCalendar subscription.",
+    "description": "Keep your CrewTAK tasks visible in your preferred calendar app with a private iCalendar subscription.",
     "plusTitle": "Calendar sync is a Plus feature",
     "plusNotice": "Upgrade to Plus to subscribe to your tasks from Apple Calendar, Google Calendar, Outlook, and other calendar apps.",
     "upgrade": "Upgrade to Plus",
@@ -431,12 +431,12 @@
     "loadFailed": "Could not load your calendar subscription. This server may not support calendar sync yet."
   },
   "bridge": {
-    "title": "Donetick Bridge",
-    "description": "Connect your self-hosted instance to the official Donetick app and deliver reliable native push notifications without maintaining your own stack for it",
+    "title": "CrewTAK Bridge",
+    "description": "Connect your self-hosted instance to the official CrewTAK app and deliver reliable native push notifications without maintaining your own stack for it",
     "heroEyebrow": "Built for self-hosters",
     "freeToStart": "Free to start",
     "heroTitle": "Keep control. Stay connected.",
-    "pricingSummary": "Start on the Free plan. Upgrade to Plus when you need more notifications or devices. or to support Donetick!",
+    "pricingSummary": "Start on the Free plan. Upgrade to Plus when you need more notifications or devices. or to support CrewTAK!",
     "connectedBadge": "Bridge is active",
     "benefits": {
       "native": {
@@ -444,7 +444,7 @@
         "description": "Reach your household in the official iOS and Android apps."
       },
       "support": {
-        "title": "Support Donetick",
+        "title": "Support CrewTAK",
         "description": "Your plan helps fund continued development and maintenance."
       },
       "simple": {
@@ -454,7 +454,7 @@
     },
     "privacyTitle": "Private by design",
     "privacyNotice": "Notification content (title, body, and data) is relayed only while a request is processed and is never stored or logged. Bridge keeps only account, device, and delivery-count information.",
-    "adminOnly": "Only a Donetick administrator can configure Bridge.",
+    "adminOnly": "Only a CrewTAK administrator can configure Bridge.",
     "notConnected": "Not connected yet",
     "checkingStatus": "Checking your Bridge connection…",
     "connectionTitle": "Your connection",
@@ -462,7 +462,7 @@
     "credentialsTitle": "Enter your instance credentials",
     "steps": {
       "1": "Create your Bridge account",
-      "2": "Add this Donetick instance",
+      "2": "Add this CrewTAK instance",
       "3": "Paste the issued credentials"
     },
     "unnamedInstance": "Connected instance",
@@ -673,7 +673,7 @@
     "title": "Advanced Settings",
     "description": "Configure advanced features like webhooks and real-time updates for enhanced productivity.",
     "offlineTitle": "Offline Support",
-    "offlineDescription": "Keep using Donetick when you're offline on this device/browser. Your changes are saved locally and synced when you're back online.",
+    "offlineDescription": "Keep using CrewTAK when you're offline on this device/browser. Your changes are saved locally and synced when you're back online.",
     "offlineToggle": "Enable Offline Support",
     "offlineHelper": "Turning this off removes unsynced offline changes and saved offline data from this device/browser.",
     "offlineEnabled": "Offline mode turned on for this device/browser",
@@ -708,11 +708,11 @@
   },
   "privacyAnalytics": {
     "title": "Privacy & Analytics",
-    "description": "Donetick never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
+    "description": "CrewTAK never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
     "analyticsToggle": "Anonymous analytics",
-    "analyticsHelper": "Help improve Donetick by sharing anonymous usage statistics.",
+    "analyticsHelper": "Help improve CrewTAK by sharing anonymous usage statistics.",
     "crashToggle": "Crash reports",
-    "crashHelper": "Send us the error and what led to it when Donetick crashes no task content.",
+    "crashHelper": "Send us the error and what led to it when CrewTAK crashes no task content.",
     "footnote": "You can change these choices at any time."
   },
   "subscription": {
@@ -860,7 +860,7 @@
     "iosStep1": "1. Open the <b>Settings</b> app on your device",
     "iosStep2": "2. Tap your name at the top of the screen",
     "iosStep3": "3. Tap <b>Subscriptions</b>",
-    "iosStep4": "4. Find and tap <b>Donetick</b>",
+    "iosStep4": "4. Find and tap <b>CrewTAK</b>",
     "iosStep5": "5. Tap <b>Cancel Subscription</b>",
     "iosNote": "<b>Note:</b> If you subscribed through iOS and are using the web/desktop version, you must cancel through iOS Settings as described above.",
     "androidHeading": "For Android:",
@@ -868,7 +868,7 @@
     "androidStep2": "2. Tap the profile icon in the top right",
     "androidStep3": "3. Tap <b>Payments & subscriptions</b>",
     "androidStep4": "4. Tap <b>Subscriptions</b>",
-    "androidStep5": "5. Find and tap <b>Donetick</b>",
+    "androidStep5": "5. Find and tap <b>CrewTAK</b>",
     "androidStep6": "6. Tap <b>Cancel subscription</b>",
     "androidNote": "<b>Note:</b> If you subscribed through Google Play and are using the web/desktop version, you must cancel through Google Play as described above.",
     "webHeading": "For Web/Desktop Subscriptions:",

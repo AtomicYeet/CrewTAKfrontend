@@ -69,7 +69,7 @@
   },
   "search": {
     "title": "Hledat",
-    "placeholder": "Hledat v Donetick",
+    "placeholder": "Hledat v CrewTAK",
     "inputAriaLabel": "Hledat úkoly, historii, projekty, štítky a nastavení",
     "deviceNote": "Hledá se v obsahu dostupném v tomto zařízení",
     "escape": "Esc",
@@ -124,7 +124,7 @@
   },
   "policyUpdate": {
     "title": "Aktualizovali jsme Zásady ochrany osobních údajů a Podmínky",
-    "subtitle": "Věnujte prosím chvilku jejich přečtení. Dalším používáním Donetick přijímáte aktualizované dokumenty.",
+    "subtitle": "Věnujte prosím chvilku jejich přečtení. Dalším používáním CrewTAK přijímáte aktualizované dokumenty.",
     "readPrivacy": "Zásady ochrany osobních údajů",
     "readTerms": "Podmínky",
     "acknowledge": "Rozumím"
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "Možná později",
     "sentiment": {
-      "title": "Jak jste s Donetick spokojeni?",
+      "title": "Jak jste s CrewTAK spokojeni?",
       "subtitle": "Vaše odpověď nám pomůže rozhodnout, co vytvořit dál.",
       "options": {
         "love": "Miluju ho",
@@ -160,7 +160,7 @@
     },
     "review": {
       "title": "Jsme rádi, že vás baví!",
-      "subtitle": "Hodnocení nebo hvězdička pomůže ostatním Donetick najít.",
+      "subtitle": "Hodnocení nebo hvězdička pomůže ostatním CrewTAK najít.",
       "github": "Dát hvězdičku na GitHubu",
       "appStore": "Ohodnotit v App Store",
       "playStore": "Ohodnotit na Google Play"
@@ -443,19 +443,19 @@
     },
     "slides": {
       "problemTitle": "Přestaňte zapomínat na maličkosti",
-      "problemBody": "Donetick si pamatuje, kdy se to stalo naposledy a kdy je další termín. Aby nikdo jiný nemusel.",
+      "problemBody": "CrewTAK si pamatuje, kdy se to stalo naposledy a kdy je další termín. Aby nikdo jiný nemusel.",
       "captureTitle": "Přidejte to dřív, než to zapomenete",
-      "captureBody": "Napište to, řekněte nahlas nebo vyfoťte. Donetick doplní termín, prioritu, štítky i to, kdo to má na starosti.",
+      "captureBody": "Napište to, řekněte nahlas nebo vyfoťte. CrewTAK doplní termín, prioritu, štítky i to, kdo to má na starosti.",
       "scheduleTitle": "Vrátí se přesně tehdy, kdy má",
       "scheduleBody": "Každý týden, každé 3 měsíce nebo měsíc poté, co jste to skutečně udělali. Pozdní dokončení vám nerozhodí zbytek roku.",
       "circleTitle": "Každý se dostane na řadu, žádné hádky",
-      "circleBody": "Střídejte se v pořadí, které zvolíte, nebo náhodně. Donetick si pamatuje, kdo byl naposledy, takže střídání je spravedlivé.",
+      "circleBody": "Střídejte se v pořadí, které zvolíte, nebo náhodně. CrewTAK si pamatuje, kdo byl naposledy, takže střídání je spravedlivé.",
       "remindersTitle": "Připomínka přesně ve správnou chvíli a widgety!",
       "remindersBody": "Nechte si připomenout blížící se termín nebo pošlete upozornění, když někdo na svůj úkol zapomene. Dnešní seznam máte i na domovské obrazovce."
     },
     "carousel": {
       "skip": "Přeskočit",
-      "ariaLabel": "Co můžete s Donetick dělat",
+      "ariaLabel": "Co můžete s CrewTAK dělat",
       "goToStep": "Přejít na krok {{number}}",
       "slidePosition": "{{index}} z {{total}}",
       "turnOnReminders": "Zapnout připomínky",
@@ -471,7 +471,7 @@
       "connectSelfHosted": "Připojit k vlastnímu serveru"
     },
     "heardAbout": {
-      "title": "Kde jste se o Donetick dozvěděli?",
+      "title": "Kde jste se o CrewTAK dozvěděli?",
       "subtitle": "Pomůže nám to zjistit, co funguje. Zcela dobrovolné.",
       "detailPlaceholder": "Napište nám kde",
       "continue": "Pokračovat",
@@ -486,10 +486,10 @@
       }
     },
     "privacy": {
-      "title": "Pomozte nám vylepšit Donetick",
+      "title": "Pomozte nám vylepšit CrewTAK",
       "subtitle": "Váš server, vaše data. Obě možnosti jsou vypnuté, dokud je sami nezapnete.",
       "crashReportsLabel": "Sdílet hlášení o pádech",
-      "crashReportsDescription": "Když Donetick spadne, pošle nám chybu a to, co k ní vedlo (zařízení, verzi aplikace, obrazovku, na které jste byli), bez obsahu úkolů. Díky tomu odhalíme chyby, které se při našem testování nikdy neobjeví, a rychleji vydáme opravy.",
+      "crashReportsDescription": "Když CrewTAK spadne, pošle nám chybu a to, co k ní vedlo (zařízení, verzi aplikace, obrazovku, na které jste byli), bez obsahu úkolů. Díky tomu odhalíme chyby, které se při našem testování nikdy neobjeví, a rychleji vydáme opravy.",
       "analyticsLabel": "Sdílet anonymní analytiku používání",
       "analyticsDescription": "Posílá anonymní události o používání: které funkce se používají a které ne, abychom věděli, co vytvořit dál, a nemuseli hádat. Žádný obsah úkolů, žádné osobní údaje, nic, co by vedlo k vám."
     }
@@ -550,8 +550,8 @@
     "title": "Jste zváni do kruhu",
     "incompleteTitle": "Odkaz s pozvánkou je neúplný",
     "incompleteSubtitle": "V tomto odkazu s pozvánkou chybí kód. Požádejte osobu, která vás pozvala, o nový odkaz.",
-    "goToDonetick": "Přejít na Donetick",
-    "signedOutSubtitle": "Pro pokračování se přihlaste nebo si vytvořte účet Donetick. Po přihlášení odešleme vaši žádost o připojení.",
+    "goToDonetick": "Přejít na CrewTAK",
+    "signedOutSubtitle": "Pro pokračování se přihlaste nebo si vytvořte účet CrewTAK. Po přihlášení odešleme vaši žádost o připojení.",
     "signIn": "Přihlásit se",
     "createAccount": "Vytvořit účet",
     "sendingTitle": "Odesíláme vaši žádost",

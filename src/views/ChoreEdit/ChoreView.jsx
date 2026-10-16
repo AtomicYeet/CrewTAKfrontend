@@ -39,6 +39,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import EmptyState from '../../components/common/EmptyState'
 import { useImpersonateUser } from '../../contexts/ImpersonateUserContext.jsx'
 import { useLocalization } from '../../contexts/LocalizationContext'
@@ -879,7 +881,7 @@ const ChoreView = () => {
             gap: 0.5,
           }}
         >
-          {chore?.labelsV2?.map((label, index) => (
+          {(HIDE.labels ? [] : chore?.labelsV2)?.map((label, index) => (
             <Chip
               key={index}
               sx={{
@@ -891,7 +893,7 @@ const ChoreView = () => {
             </Chip>
           ))}
 
-          {chore?.attachments?.length > 0 && (
+          {!HIDE.attachments && chore?.attachments?.length > 0 && (
             <Chip
               startDecorator={<AttachFile />}
               size='md'

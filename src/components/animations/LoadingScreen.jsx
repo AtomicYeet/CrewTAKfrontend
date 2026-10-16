@@ -65,6 +65,8 @@ const LogoContainer = styled(Box)({
 
 import { useTranslation } from 'react-i18next'
 
+import Wordmark from '@/crewtak/Wordmark'
+
 const LoadingScreen = ({ message = null, showLogo = true, size = 'lg' }) => {
   const { t } = useTranslation('common')
   return (
@@ -81,8 +83,7 @@ const LoadingScreen = ({ message = null, showLogo = true, size = 'lg' }) => {
                 mb: 1,
               }}
             >
-              {t('done')}
-              <span style={{ color: '#06b6d4' }}>tick</span>
+              <Wordmark />
             </Typography>
           </LogoContainer>
         )}

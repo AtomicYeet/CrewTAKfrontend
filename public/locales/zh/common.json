@@ -69,7 +69,7 @@
   },
   "search": {
     "title": "搜索",
-    "placeholder": "搜索 Donetick",
+    "placeholder": "搜索 CrewTAK",
     "inputAriaLabel": "搜索任务、历史、项目、标签和设置",
     "deviceNote": "正在搜索此设备上可用的内容",
     "escape": "Esc",
@@ -124,7 +124,7 @@
   },
   "policyUpdate": {
     "title": "We've updated our Privacy Policy and Terms",
-    "subtitle": "Please take a moment to review them. By continuing to use Donetick, you accept the updated documents.",
+    "subtitle": "Please take a moment to review them. By continuing to use CrewTAK, you accept the updated documents.",
     "readPrivacy": "Privacy Policy",
     "readTerms": "Terms",
     "acknowledge": "Got it"
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "Maybe later",
     "sentiment": {
-      "title": "How's Donetick working for you?",
+      "title": "How's CrewTAK working for you?",
       "subtitle": "Your answer helps us decide what to build next.",
       "options": {
         "love": "Love it",
@@ -160,7 +160,7 @@
     },
     "review": {
       "title": "Glad you're enjoying it!",
-      "subtitle": "A rating or a star helps other people find Donetick.",
+      "subtitle": "A rating or a star helps other people find CrewTAK.",
       "github": "Star on GitHub",
       "appStore": "Rate on the App Store",
       "playStore": "Rate on Google Play"

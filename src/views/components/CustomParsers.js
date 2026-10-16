@@ -1,3 +1,4 @@
+import { HIDE } from '@/crewtak/features'
 const VALID_DAYS = {
   monday: 'Monday',
   mon: 'Monday',
@@ -60,6 +61,9 @@ const isValidWordBoundary = (text, matchIndex, matchLength) => {
 }
 
 export const parsePriority = inputSentence => {
+  // CrewTAK: priority is hidden, so words like "urgent" stay in the title.
+  if (HIDE.priority)
+    return { result: 0, highlight: [], cleanedSentence: inputSentence }
   let sentence = inputSentence.toLowerCase()
   const priorityMap = {
     1: ['!p1', 'priority 1', 'high priority', 'urgent', 'asap', 'important'],
@@ -97,6 +101,8 @@ export const parsePriority = inputSentence => {
   }
 }
 export const parseLabels = (inputSentence, userLabels) => {
+  if (HIDE.labels)
+    return { result: null, highlight: [], cleanedSentence: inputSentence }
   const currentLabels = []
   const matchedRanges = []
   const allHighlights = []
@@ -691,6 +697,8 @@ export const parseAssignees = (inputSentence, users) => {
 }
 
 export const parsePoints = inputSentence => {
+  if (HIDE.points)
+    return { result: null, highlight: [], cleanedSentence: inputSentence }
   let sentence = inputSentence.toLowerCase()
   const pointsPattern = /\*(\d+)\s*(?:points?)?/gi
   const match = sentence.match(pointsPattern)

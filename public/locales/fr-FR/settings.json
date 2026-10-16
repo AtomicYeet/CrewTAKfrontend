@@ -88,7 +88,7 @@
       },
       "feedback": {
         "title": "Envoyer un retour",
-        "description": "Dites-nous ce que vous pensez de Donetick ou demandez une fonctionnalité."
+        "description": "Dites-nous ce que vous pensez de CrewTAK ou demandez une fonctionnalité."
       },
       "bugReport": {
         "title": "Signaler un bug",
@@ -130,8 +130,8 @@
     "codeCopied": "Code copié dans le presse-papiers",
     "linkCopied": "Lien d'invitation copié dans le presse-papiers",
     "myCircle": "mon cercle",
-    "shareTitle": "Rejoignez {{name}} sur Donetick",
-    "shareText": "J'aimerais vous inviter à rejoindre {{name}} sur Donetick.",
+    "shareTitle": "Rejoignez {{name}} sur CrewTAK",
+    "shareText": "J'aimerais vous inviter à rejoindre {{name}} sur CrewTAK.",
     "shareDialogTitle": "Partager l'invitation au cercle",
     "leave": "Quitter le cercle",
     "leaveConfirmTitle": "Quitter le cercle",
@@ -538,7 +538,7 @@
     "title": "Paramètres avancés",
     "description": "Configurez des fonctionnalités avancées comme les webhooks et les mises à jour en temps réel pour gagner en productivité.",
     "offlineTitle": "Mode hors ligne",
-    "offlineDescription": "Continuez à utiliser Donetick hors ligne sur cet appareil ou navigateur. Vos modifications sont enregistrées localement et synchronisées dès votre retour en ligne.",
+    "offlineDescription": "Continuez à utiliser CrewTAK hors ligne sur cet appareil ou navigateur. Vos modifications sont enregistrées localement et synchronisées dès votre retour en ligne.",
     "offlineToggle": "Activer le mode hors ligne",
     "offlineHelper": "Le désactiver supprime les modifications hors ligne non synchronisées et les données enregistrées sur cet appareil ou navigateur.",
     "offlineEnabled": "Mode hors ligne activé pour cet appareil/navigateur",
@@ -573,11 +573,11 @@
   },
   "privacyAnalytics": {
     "title": "Privacy & Analytics",
-    "description": "Donetick never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
+    "description": "CrewTAK never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
     "analyticsToggle": "Anonymous analytics",
-    "analyticsHelper": "Help improve Donetick by sharing anonymous usage statistics.",
+    "analyticsHelper": "Help improve CrewTAK by sharing anonymous usage statistics.",
     "crashToggle": "Crash reports",
-    "crashHelper": "Send us the error and what led to it when Donetick crashes no task content.",
+    "crashHelper": "Send us the error and what led to it when CrewTAK crashes no task content.",
     "footnote": "You can change these choices at any time."
   },
   "subscription": {
@@ -724,7 +724,7 @@
     "iosStep1": "1. Open the <b>Settings</b> app on your device",
     "iosStep2": "2. Tap your name at the top of the screen",
     "iosStep3": "3. Tap <b>Subscriptions</b>",
-    "iosStep4": "4. Find and tap <b>Donetick</b>",
+    "iosStep4": "4. Find and tap <b>CrewTAK</b>",
     "iosStep5": "5. Tap <b>Cancel Subscription</b>",
     "iosNote": "<b>Note:</b> If you subscribed through iOS and are using the web/desktop version, you must cancel through iOS Settings as described above.",
     "androidHeading": "For Android:",
@@ -732,7 +732,7 @@
     "androidStep2": "2. Tap the profile icon in the top right",
     "androidStep3": "3. Tap <b>Payments & subscriptions</b>",
     "androidStep4": "4. Tap <b>Subscriptions</b>",
-    "androidStep5": "5. Find and tap <b>Donetick</b>",
+    "androidStep5": "5. Find and tap <b>CrewTAK</b>",
     "androidStep6": "6. Tap <b>Cancel subscription</b>",
     "androidNote": "<b>Note:</b> If you subscribed through Google Play and are using the web/desktop version, you must cancel through Google Play as described above.",
     "webHeading": "For Web/Desktop Subscriptions:",

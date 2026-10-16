@@ -1,6 +1,8 @@
 import { Archive } from '@mui/icons-material'
 import { Box, Checkbox, Chip, Typography } from '@mui/joy'
 
+import { HIDE } from '@/crewtak/features'
+
 import {
   getPriorityColor,
   getTextColorFromBackgroundColor,
@@ -26,10 +28,11 @@ const ArchivedChoreCard = ({
     ? performers.find(p => p.userId === chore.assignedTo)?.displayName
     : null
 
-  const visibleLabels = chore.labelsV2?.slice(0, 2) ?? []
+  const choreLabels = HIDE.labels ? [] : chore.labelsV2
+  const visibleLabels = choreLabels?.slice(0, 2) ?? []
   const extraLabelCount = Math.max(
     0,
-    (chore.labelsV2?.length ?? 0) - visibleLabels.length,
+    (choreLabels?.length ?? 0) - visibleLabels.length,
   )
   const showMetaRow = Boolean(assigneeName) || visibleLabels.length > 0
 

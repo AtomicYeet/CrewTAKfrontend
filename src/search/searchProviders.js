@@ -1,3 +1,5 @@
+import { HIDE } from '@/crewtak/features'
+
 import { SETTINGS_SECTIONS } from '../constants/settingsSections'
 import { stripHtml } from '../utils/Helpers'
 
@@ -34,8 +36,9 @@ registerSearchProvider({
   id: 'tasks',
   getDocuments: ({ chores, membersById, projectsById }) =>
     chores.map(chore => {
-      const labels =
-        chore.labelsV2?.map(label => label.name).filter(Boolean) || []
+      const labels = HIDE.labels
+        ? []
+        : chore.labelsV2?.map(label => label.name).filter(Boolean) || []
       const project = projectsById.get(String(chore.projectId))
       const assignees = (chore.assignees || [])
         .map(assignee => membersById.get(String(assignee.userId))?.displayName)
@@ -107,21 +110,22 @@ registerSearchProvider({
     ),
 })
 
-registerSearchProvider({
-  id: 'labels',
-  getDocuments: ({ labels }) =>
-    labels.map(label =>
-      document('labels', {
-        id: `label:${label.id}`,
-        entityId: label.id,
-        title: label.name || 'Untitled label',
-        subtitle: 'Label',
-        keywords: 'tag label',
-        route: `/labels/${label.id}`,
-        color: label.color,
-      }),
-    ),
-})
+if (!HIDE.labels)
+  registerSearchProvider({
+    id: 'labels',
+    getDocuments: ({ labels }) =>
+      labels.map(label =>
+        document('labels', {
+          id: `label:${label.id}`,
+          entityId: label.id,
+          title: label.name || 'Untitled label',
+          subtitle: 'Label',
+          keywords: 'tag label',
+          route: `/labels/${label.id}`,
+          color: label.color,
+        }),
+      ),
+  })
 
 registerSearchProvider({
   id: 'people',

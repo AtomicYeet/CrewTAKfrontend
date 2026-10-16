@@ -88,7 +88,7 @@
       },
       "feedback": {
         "title": "Invia feedback",
-        "description": "Dicci come sta funzionando Donetick o richiedi una funzionalità."
+        "description": "Dicci come sta funzionando CrewTAK o richiedi una funzionalità."
       },
       "bugReport": {
         "title": "Segnala un problema",
@@ -126,8 +126,8 @@
     "codeCopied": "Codice copiato negli appunti",
     "linkCopied": "Link di invito copiato negli appunti",
     "myCircle": "la mia Cerchia",
-    "shareTitle": "Entra in {{name}} su Donetick",
-    "shareText": "Vorrei invitarti a entrare in {{name}} su Donetick.",
+    "shareTitle": "Entra in {{name}} su CrewTAK",
+    "shareText": "Vorrei invitarti a entrare in {{name}} su CrewTAK.",
     "shareDialogTitle": "Condividi invito alla Cerchia",
     "leave": "Esci dalla Cerchia",
     "leaveConfirmTitle": "Esci dalla Cerchia",
@@ -533,7 +533,7 @@
     "title": "Impostazioni avanzate",
     "description": "Configura funzioni avanzate come webhook e aggiornamenti in tempo reale.",
     "offlineTitle": "Supporto offline",
-    "offlineDescription": "Continua a usare Donetick su questo dispositivo/browser anche quando sei offline. Le modifiche vengono salvate localmente e sincronizzate quando torni online.",
+    "offlineDescription": "Continua a usare CrewTAK su questo dispositivo/browser anche quando sei offline. Le modifiche vengono salvate localmente e sincronizzate quando torni online.",
     "offlineToggle": "Abilita supporto offline",
     "offlineHelper": "Disabilitando questa opzione verranno rimosse le modifiche offline non sincronizzate e i dati offline salvati su questo dispositivo/browser.",
     "offlineEnabled": "Modalità offline attivata per questo dispositivo/browser",
@@ -568,11 +568,11 @@
   },
   "privacyAnalytics": {
     "title": "Privacy e analisi",
-    "description": "Donetick non invia mai nomi, descrizioni, note o altri contenuti delle attività. La registrazione della sessione non viene mai attivata.",
+    "description": "CrewTAK non invia mai nomi, descrizioni, note o altri contenuti delle attività. La registrazione della sessione non viene mai attivata.",
     "analyticsToggle": "Statistiche anonime",
-    "analyticsHelper": "Aiuta a migliorare Donetick condividendo statistiche di utilizzo anonime.",
+    "analyticsHelper": "Aiuta a migliorare CrewTAK condividendo statistiche di utilizzo anonime.",
     "crashToggle": "Report di arresto anomalo",
-    "crashHelper": "Quando Donetick si arresta in modo anomalo, inviaci l'errore e ciò che lo ha preceduto, senza contenuti delle attività.",
+    "crashHelper": "Quando CrewTAK si arresta in modo anomalo, inviaci l'errore e ciò che lo ha preceduto, senza contenuti delle attività.",
     "footnote": "Puoi modificare queste scelte in qualsiasi momento."
   },
   "subscription": {
@@ -719,7 +719,7 @@
     "iosStep1": "1. Apri l'app <b>Impostazioni</b> sul dispositivo",
     "iosStep2": "2. Tocca il tuo nome nella parte superiore dello schermo",
     "iosStep3": "3. Tocca <b>Abbonamenti</b>",
-    "iosStep4": "4. Trova e tocca <b>Donetick</b>",
+    "iosStep4": "4. Trova e tocca <b>CrewTAK</b>",
     "iosStep5": "5. Tocca <b>Annulla abbonamento</b>",
     "iosNote": "<b>Nota:</b> se hai sottoscritto l'abbonamento tramite iOS e stai usando la versione web/desktop, devi annullarlo dalle Impostazioni di iOS come indicato sopra.",
     "androidHeading": "Per Android:",
@@ -727,7 +727,7 @@
     "androidStep2": "2. Tocca l'icona del profilo in alto a destra",
     "androidStep3": "3. Tocca <b>Pagamenti e abbonamenti</b>",
     "androidStep4": "4. Tocca <b>Abbonamenti</b>",
-    "androidStep5": "5. Trova e tocca <b>Donetick</b>",
+    "androidStep5": "5. Trova e tocca <b>CrewTAK</b>",
     "androidStep6": "6. Tocca <b>Annulla abbonamento</b>",
     "androidNote": "<b>Nota:</b> se hai sottoscritto l'abbonamento tramite Google Play e stai usando la versione web/desktop, devi annullarlo tramite Google Play come indicato sopra.",
     "webHeading": "Per abbonamenti Web/Desktop:",

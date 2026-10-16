@@ -124,7 +124,7 @@
   },
   "policyUpdate": {
     "title": "Actualización de Política de Privacidad",
-    "subtitle": "Por favor, tómate un momento para revisarlos. Al continuar usando Donetick, aceptas los documentos actualizados.",
+    "subtitle": "Por favor, tómate un momento para revisarlos. Al continuar usando CrewTAK, aceptas los documentos actualizados.",
     "readPrivacy": "Política de Privacidad",
     "readTerms": "Términos",
     "acknowledge": "Entendido"
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "Quizás más tarde",
     "sentiment": {
-      "title": "¿Qué tal te está funcionando Donetick?",
+      "title": "¿Qué tal te está funcionando CrewTAK?",
       "subtitle": "Tu respuesta nos ayuda a decidir qué construir a continuación.",
       "options": {
         "love": "Me encanta",
@@ -160,7 +160,7 @@
     },
     "review": {
       "title": "Glad you're enjoying it!",
-      "subtitle": "A rating or a star helps other people find Donetick.",
+      "subtitle": "A rating or a star helps other people find CrewTAK.",
       "github": "Star on GitHub",
       "appStore": "Rate on the App Store",
       "playStore": "Rate on Google Play"
@@ -443,19 +443,19 @@
     },
     "slides": {
       "problemTitle": "Stop forgetting the little Objetos",
-      "problemBody": "Donetick remembers the last time it happened, and when it's due next. So nobody else has to.",
+      "problemBody": "CrewTAK remembers the last time it happened, and when it's due next. So nobody else has to.",
       "captureTitle": "Añadir it before you forget it",
-      "captureBody": "Escríbela, dilos en alto o toma una foto. Donetick rellena la fecha de vencimiento, la prioridad, las etiquetas y a quién le toca.",
+      "captureBody": "Escríbela, dilos en alto o toma una foto. CrewTAK rellena la fecha de vencimiento, la prioridad, las etiquetas y a quién le toca.",
       "scheduleTitle": "It comes back exactly when it should",
       "scheduleBody": "Every week, every 3 months, or a month after you actually did it. Finishing late doesn't throw the rest of the year off.",
       "circleTitle": "Everyone gets a turn, No more arguing",
-      "circleBody": "Rotate in the order you pick, or at random. Donetick remembers who went last, so turns stay fair.",
+      "circleBody": "Rotate in the order you pick, or at random. CrewTAK remembers who went last, so turns stay fair.",
       "remindersTitle": "¡Avisos justo cuando importa y widgets!",
       "remindersBody": "Recibe un recordatorio antes del vencimiento o envía un aviso cuando a alguien se le olvide. La lista de hoy también está en tu pantalla de inicio."
     },
     "carousel": {
       "skip": "Omitir",
-      "ariaLabel": "What you can do with Donetick",
+      "ariaLabel": "What you can do with CrewTAK",
       "goToStep": "Go to step {{number}}",
       "slidePosition": "{{index}} of {{total}}",
       "turnOnReminders": "Turn on reminders",
@@ -471,7 +471,7 @@
       "connectSelfHosted": "Connect to a self-hosted server"
     },
     "heardAbout": {
-      "title": "Where'd you hear about Donetick?",
+      "title": "Where'd you hear about CrewTAK?",
       "subtitle": "Helps us know what's working. Totally optional.",
       "detailPlaceholder": "Tell us where",
       "continue": "Continue",
@@ -486,10 +486,10 @@
       }
     },
     "privacy": {
-      "title": "Help us improve Donetick",
+      "title": "Help us improve CrewTAK",
       "subtitle": "Your server, your data. Both of these are off from this Punto unless you turn them on.",
       "crashReportsLabel": "Share crash reports",
-      "crashReportsDescription": "Cuando Donetick falle, envíanos el error y lo que condujo a él (dispositivo, versión de la app, pantalla) sin contenido de tareas.",
+      "crashReportsDescription": "Cuando CrewTAK falle, envíanos el error y lo que condujo a él (dispositivo, versión de la app, pantalla) sin contenido de tareas.",
       "analyticsLabel": "Share anonymous usage analytics",
       "analyticsDescription": "Send anonymous usage events which features get used, which get ignored so we know what to build next instead of guessing. No Tarea content, no personal data, nothing tied back to you."
     }
@@ -550,8 +550,8 @@
     "title": "You're invited to join a Círculo",
     "incompleteTitle": "Invite link is incomplete",
     "incompleteSubtitle": "This invite link is missing a code. Ask the person who invited you to send a new link.",
-    "goToDonetick": "Go to Donetick",
-    "signedOutSubtitle": "Sign in or Crear a Donetick account to continue. We'll send your join request once you're signed in.",
+    "goToDonetick": "Go to CrewTAK",
+    "signedOutSubtitle": "Sign in or Crear a CrewTAK account to continue. We'll send your join request once you're signed in.",
     "signIn": "Sign in",
     "createAccount": "Crear an account",
     "sendingTitle": "Sending your request",

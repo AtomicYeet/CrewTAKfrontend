@@ -88,7 +88,7 @@
       },
       "feedback": {
         "title": "Send Feedback",
-        "description": "Tell us how Donetick is working for you or request a feature."
+        "description": "Tell us how CrewTAK is working for you or request a feature."
       },
       "bugReport": {
         "title": "Informar de un problema",
@@ -130,8 +130,8 @@
     "codeCopied": "Code copied to clipboard",
     "linkCopied": "Invite link copied to clipboard",
     "myCircle": "my Círculo",
-    "shareTitle": "Join {{name}} on Donetick",
-    "shareText": "I'd like to invite you to join {{name}} on Donetick.",
+    "shareTitle": "Join {{name}} on CrewTAK",
+    "shareText": "I'd like to invite you to join {{name}} on CrewTAK.",
     "shareDialogTitle": "Share Círculo invite",
     "leave": "Leave Círculo",
     "leaveConfirmTitle": "Leave Círculo",
@@ -539,7 +539,7 @@
     "title": "Advanced Ajustes",
     "description": "Configure advanced features like webhooks and real-time updates for enhanced productivity.",
     "offlineTitle": "Offline Support",
-    "offlineDescription": "Keep using Donetick when you're offline on this device/browser. Your changes are saved locally and synced when you're back online.",
+    "offlineDescription": "Keep using CrewTAK when you're offline on this device/browser. Your changes are saved locally and synced when you're back online.",
     "offlineToggle": "Enable Offline Support",
     "offlineHelper": "Turning this off removes unsynced offline changes and saved offline data from this device/browser.",
     "offlineEnabled": "Offline mode turned on for this device/browser",
@@ -574,11 +574,11 @@
   },
   "privacyAnalytics": {
     "title": "Privacidad y Analítica",
-    "description": "Donetick nunca envía nombres de tareas, descripciones, notas u otro contenido de las tareas. La grabación de sesiones nunca está activada.",
+    "description": "CrewTAK nunca envía nombres de tareas, descripciones, notas u otro contenido de las tareas. La grabación de sesiones nunca está activada.",
     "analyticsToggle": "Analítica anónima",
-    "analyticsHelper": "Ayuda a mejorar Donetick compartiendo estadísticas de uso anónimas.",
+    "analyticsHelper": "Ayuda a mejorar CrewTAK compartiendo estadísticas de uso anónimas.",
     "crashToggle": "Informes de fallos",
-    "crashHelper": "Envíanos información sobre los errores cuando Donetick falle (sin incluir contenido de las tareas).",
+    "crashHelper": "Envíanos información sobre los errores cuando CrewTAK falle (sin incluir contenido de las tareas).",
     "footnote": "Puedes cambiar estas opciones en cualquier momento."
   },
   "subscription": {
@@ -661,7 +661,7 @@
     "restored": "Copia de seguridad restaurada correctamente",
     "restoreFailed": "Error al restaurar la copia de seguridad",
     "readFailed": "Error al leer el archivo de copia de seguridad",
-    "createIntro": "Crea una copia de seguridad cifrada de todos tus datos de Donetick.",
+    "createIntro": "Crea una copia de seguridad cifrada de todos tus datos de CrewTAK.",
     "keyPlaceholder": "Introduce la clave de cifrado",
     "includeAssets": "Incluir archivos adjuntos (imágenes, etc.)",
     "warningLabel": "Importante:",
@@ -725,7 +725,7 @@
     "iosStep1": "1. Abre la aplicación <b>Ajustes</b> en tu dispositivo",
     "iosStep2": "2. Toca tu nombre en la parte superior",
     "iosStep3": "3. Toca <b>Suscripciones</b>",
-    "iosStep4": "4. Busca y toca <b>Donetick</b>",
+    "iosStep4": "4. Busca y toca <b>CrewTAK</b>",
     "iosStep5": "5. Toca <b>Cancelar suscripción</b>",
     "iosNote": "<b>Nota:</b> Si te suscribiste a través de iOS y estás usando la versión web/escritorio, debes cancelar a través de Ajustes de iOS como se describe arriba.",
     "androidHeading": "Para Android:",
@@ -733,7 +733,7 @@
     "androidStep2": "2. Toca el icono de perfil en la esquina superior derecha",
     "androidStep3": "3. Toca <b>Pagos y suscripciones</b>",
     "androidStep4": "4. Toca <b>Suscripciones</b>",
-    "androidStep5": "5. Busca y toca <b>Donetick</b>",
+    "androidStep5": "5. Busca y toca <b>CrewTAK</b>",
     "androidStep6": "6. Toca <b>Cancelar suscripción</b>",
     "androidNote": "<b>Nota:</b> Si te suscribiste a través de Google Play y estás usando la versión web/escritorio, debes cancelar a través de Google Play como se describe arriba.",
     "webHeading": "Para Suscripciones Web/Escritorio:",

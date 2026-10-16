@@ -1,3 +1,5 @@
+import { isHiddenRoute } from '@/crewtak/features'
+
 // Pool of destinations the mobile bottom nav can be configured to show.
 // `to` matches the routes used by the desktop NavBar drawer; `action`
 // marks slots with special behavior instead of a route (search, more).
@@ -79,7 +81,7 @@ export const BOTTOM_NAV_ITEM_POOL = [
     translationKey: 'navigation.settings',
     translationDefault: 'Settings',
   },
-]
+].filter(item => !item.to || !isHiddenRoute('/' + item.to.replace(/^\//, '')))
 
 // The nav has a fixed 4th slot for "More" (opens the full drawer), so only
 // this many slots are user-configurable.

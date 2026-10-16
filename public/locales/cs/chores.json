@@ -498,7 +498,7 @@
     "notifyAll": "Upozornit všechny řešitele",
     "notifyAllHint": "Je-li zapnuto, budou upozorněni všichni členové, kteří tento úkol vidí. Jinak připomenutí dostane pouze přiřazená osoba.",
     "selfHostedHeading": "Upozornění!",
-    "selfHostedNotice": "Tato funkce je dostupná v Donetick Cloud! Protože používáte vlastní instanci, připomenutí vyžadují nastavení účtu Google Cloud a Firebase Cloud Messaging (FCM) a vlastní sestavení aplikace pro Android nebo iOS.",
+    "selfHostedNotice": "Tato funkce je dostupná v CrewTAK Cloud! Protože používáte vlastní instanci, připomenutí vyžadují nastavení účtu Google Cloud a Firebase Cloud Messaging (FCM) a vlastní sestavení aplikace pro Android nebo iOS.",
     "selfHostedFollowUp": "Pokud přijdeme na jednodušší způsob konfigurace pro vlastní instance, dáme vědět."
   },
   "nfc": {
@@ -553,7 +553,7 @@
     "couldNotReadScannedImage": "Naskenovaný obrázek se nepodařilo přečíst."
   },
   "searchBar": {
-    "placeholder": "Hledat v Donetick",
+    "placeholder": "Hledat v CrewTAK",
     "clearAria": "Vymazat hledání úkolů"
   },
   "subTask": {
@@ -995,11 +995,11 @@
     "clear": "Vymazat"
   },
   "empty": {
-    "errorTitle": "Nelze se připojit k Donetick",
+    "errorTitle": "Nelze se připojit k CrewTAK",
     "errorDescription": "Vaše úkoly jsou v bezpečí. Jen je teď nešlo načíst. Zkontrolujte připojení a zkuste to znovu.",
     "errorAction": "Zkusit znovu",
     "noTasksTitle": "Zatím žádné úkoly",
-    "noTasksDescription": "Vytvořte svůj první úkol a Donetick bude hlídat, kdy má termín, kdo je na řadě a co přijde dál.",
+    "noTasksDescription": "Vytvořte svůj první úkol a CrewTAK bude hlídat, kdy má termín, kdo je na řadě a co přijde dál.",
     "createTask": "Vytvořit úkol",
     "moreOptions": "Další možnosti",
     "noMatchTitle": "Tomuto zobrazení neodpovídají žádné úkoly",

@@ -69,7 +69,7 @@
   },
   "search": {
     "title": "Szukaj",
-    "placeholder": "Szukaj w Donetick",
+    "placeholder": "Szukaj w CrewTAK",
     "inputAriaLabel": "Szukaj zadań, historii, projektów, etykiet i ustawień",
     "deviceNote": "Wyszukiwanie zawartości dostępnej na tym urządzeniu",
     "escape": "Esc",
@@ -124,7 +124,7 @@
   },
   "policyUpdate": {
     "title": "Zaktualizowaliśmy naszą Politykę prywatności i Regulamin",
-    "subtitle": "Poświęć chwilę na ich przeczytanie. Dalsze korzystanie z Donetick oznacza akceptację zaktualizowanych dokumentów.",
+    "subtitle": "Poświęć chwilę na ich przeczytanie. Dalsze korzystanie z CrewTAK oznacza akceptację zaktualizowanych dokumentów.",
     "readPrivacy": "Polityka prywatności",
     "readTerms": "Regulamin",
     "acknowledge": "Rozumiem"
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "Może później",
     "sentiment": {
-      "title": "Jak oceniasz korzystanie z Donetick?",
+      "title": "Jak oceniasz korzystanie z CrewTAK?",
       "subtitle": "Twoja odpowiedź pomaga nam zdecydować, co rozwijać w następnej kolejności.",
       "options": {
         "love": "Uwielbiam",
@@ -160,7 +160,7 @@
     },
     "review": {
       "title": "Cieszymy się, że aplikacja Ci się podoba!",
-      "subtitle": "Ocena lub gwiazdka pomaga innym odkryć Donetick.",
+      "subtitle": "Ocena lub gwiazdka pomaga innym odkryć CrewTAK.",
       "github": "Daj gwiazdkę na GitHubie",
       "appStore": "Oceń w App Store",
       "playStore": "Oceń w Google Play"
@@ -443,19 +443,19 @@
     },
     "slides": {
       "problemTitle": "Przestań zapominać o drobiazgach",
-      "problemBody": "Donetick pamięta, kiedy zadanie było robione ostatnio i kiedy przypada kolejny termin. Nikt inny nie musi o tym pamiętać.",
+      "problemBody": "CrewTAK pamięta, kiedy zadanie było robione ostatnio i kiedy przypada kolejny termin. Nikt inny nie musi o tym pamiętać.",
       "captureTitle": "Dodaj, zanim wyleci Ci z głowy",
-      "captureBody": "Wpisz, podyktuj na głos lub zrób zdjęcie. Donetick ustawi termin, priorytet, etykiety i wykonawcę.",
+      "captureBody": "Wpisz, podyktuj na głos lub zrób zdjęcie. CrewTAK ustawi termin, priorytet, etykiety i wykonawcę.",
       "scheduleTitle": "Powraca dokładnie wtedy, kiedy powinno",
       "scheduleBody": "Co tydzień, co 3 miesiące lub miesiąc po faktycznym wykonaniu. Spóźnienie nie psuje harmonogramu na resztę roku.",
       "circleTitle": "Każdy ma swoją kolej — koniec ze sporami",
-      "circleBody": "Zmieniajcie się w ustalonej kolejności lub losowo. Donetick pamięta, czyja była ostatnia kolej, więc wszystko jest sprawiedliwe.",
+      "circleBody": "Zmieniajcie się w ustalonej kolejności lub losowo. CrewTAK pamięta, czyja była ostatnia kolej, więc wszystko jest sprawiedliwe.",
       "remindersTitle": "Przypomnienie w odpowiednim momencie i widżety!",
       "remindersBody": "Otrzymaj przypomnienie przed terminem lub wyślij powiadomienie, gdy ktoś zapomni o swoim zadaniu. Dzisiejsza lista jest też na Twoim ekranie głównym."
     },
     "carousel": {
       "skip": "Pomiń",
-      "ariaLabel": "Co możesz zrobić w Donetick",
+      "ariaLabel": "Co możesz zrobić w CrewTAK",
       "goToStep": "Przejdź do kroku {{number}}",
       "slidePosition": "{{index}} z {{total}}",
       "turnOnReminders": "Włącz przypomnienia",
@@ -471,7 +471,7 @@
       "connectSelfHosted": "Połącz z własnym serwerem (self-hosted)"
     },
     "heardAbout": {
-      "title": "Skąd wiesz o Donetick?",
+      "title": "Skąd wiesz o CrewTAK?",
       "subtitle": "Pomaga nam to zrozumieć, jak nas znajdujesz. Całkowicie opcjonalne.",
       "detailPlaceholder": "Napisz, skąd",
       "continue": "Dalej",
@@ -486,10 +486,10 @@
       }
     },
     "privacy": {
-      "title": "Pomóż nam ulepszać Donetick",
+      "title": "Pomóż nam ulepszać CrewTAK",
       "subtitle": "Twój serwer, Twoje dane. Obie te opcje są wyłączone, dopóki ich nie włączysz.",
       "crashReportsLabel": "Wysyłaj raporty o awariach",
-      "crashReportsDescription": "Gdy Donetick napotka awarię, wyślij nam informację o błędzie i kontekście (urządzenie, wersja aplikacji, otwarty ekran) — bez treści zadań. Dzięki temu wyłapujemy błędy i szybciej wypuszczamy poprawki.",
+      "crashReportsDescription": "Gdy CrewTAK napotka awarię, wyślij nam informację o błędzie i kontekście (urządzenie, wersja aplikacji, otwarty ekran) — bez treści zadań. Dzięki temu wyłapujemy błędy i szybciej wypuszczamy poprawki.",
       "analyticsLabel": "Wysyłaj anonimowe statystyki użytkowania",
       "analyticsDescription": "Wysyłaj anonimowe zdarzenia o tym, które funkcje są używane, a które pomijane — wiemy wtedy, co rozwijać. Bez treści zadań, bez danych osobowych, nic powiązanego z Tobą."
     }
@@ -550,8 +550,8 @@
     "title": "Zaproszono Cię do kręgu",
     "incompleteTitle": "Link zaproszenia jest niekompletny",
     "incompleteSubtitle": "W tym linku brakuje kodu zaproszenia. Poproś osobę zapraszającą o nowy link.",
-    "goToDonetick": "Przejdź do Donetick",
-    "signedOutSubtitle": "Zaloguj się lub załóż konto Donetick, aby kontynuować. Wyślemy prośbę o dołączenie po zalogowaniu.",
+    "goToDonetick": "Przejdź do CrewTAK",
+    "signedOutSubtitle": "Zaloguj się lub załóż konto CrewTAK, aby kontynuować. Wyślemy prośbę o dołączenie po zalogowaniu.",
     "signIn": "Zaloguj się",
     "createAccount": "Utwórz konto",
     "sendingTitle": "Wysyłanie prośby",

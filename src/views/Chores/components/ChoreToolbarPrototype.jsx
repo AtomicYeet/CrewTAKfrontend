@@ -50,6 +50,8 @@ import {
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import AppModal from '../../../components/common/AppModal'
 import ActiveFilterChips from '../../../components/common/filter/ActiveFilterChips'
 import KeyboardShortcutHint from '../../../components/common/KeyboardShortcutHint'
@@ -580,7 +582,7 @@ const ChoreToolbar = ({
     { value: 'priority', name: t('priority') },
     { value: 'created_date', name: t('sort.createdDate') },
     { value: 'updated_date', name: t('sort.updatedDate') },
-  ]
+  ].filter(o => !(HIDE.priority && o.value === 'priority'))
 
   const groupByOptions = [
     { value: 'default', name: t('sort.smart') },
@@ -589,7 +591,11 @@ const ChoreToolbar = ({
     { value: 'labels', name: t('labels.label') },
     { value: 'created_date', name: t('sort.createdDate') },
     { value: 'updated_date', name: t('sort.updatedDate') },
-  ]
+  ].filter(
+    o =>
+      !(HIDE.priority && o.value === 'priority') &&
+      !(HIDE.labels && o.value === 'labels'),
+  )
 
   const assigneeOptions = [
     { value: 'anyone', label: t('toolbar.everyone') },

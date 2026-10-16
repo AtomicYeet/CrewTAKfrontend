@@ -17,6 +17,8 @@ import moment from 'moment'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import ModalActions from '../../components/common/ModalActions'
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { useResponsiveModal } from '../../hooks/useResponsiveModal'
@@ -293,7 +295,7 @@ function HistoryDetailModal({ config }) {
         )}
 
         {/* Points */}
-        {entry.points > 0 && (
+        {!HIDE.points && entry.points > 0 && (
           <DetailRow
             icon={<Typography sx={{ fontSize: 14 }}>★</Typography>}
             label={t('detail.pointsEarned')}

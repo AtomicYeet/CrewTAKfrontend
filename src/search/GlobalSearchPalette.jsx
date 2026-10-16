@@ -33,6 +33,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import { CREWTAK_ACTIONS, crewtakVisible } from '@/crewtak/searchActions'
+
 import AppModal from '../components/common/AppModal'
 
 const RECENTS_KEY = 'donetick.globalSearch.recents'
@@ -291,7 +293,10 @@ const GlobalSearchPalette = ({
   const [recents] = useState(readRecents)
   const selectedResultRef = useRef(null)
 
-  const quickActions = useMemo(() => buildQuickActions(t), [t])
+  const quickActions = useMemo(
+    () => [...buildQuickActions(t), ...CREWTAK_ACTIONS].filter(crewtakVisible),
+    [t],
+  )
   const quickActionIndex = useMemo(
     () =>
       new Fuse(quickActions, {

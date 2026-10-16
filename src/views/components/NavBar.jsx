@@ -3,6 +3,7 @@ import {
   Archive,
   ArrowBack,
   Checklist,
+  FactCheckOutlined,
   FilterAlt,
   FolderOpen,
   History,
@@ -15,6 +16,7 @@ import {
   SettingsOutlined,
   SpaceDashboard,
   Toll,
+  TvOutlined,
   Widgets,
 } from '@mui/icons-material'
 import {
@@ -34,6 +36,9 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
+import { isHiddenRoute } from '@/crewtak/features'
+import Wordmark from '@/crewtak/Wordmark'
+
 import { version } from '../../../package.json'
 import DoneTickLogo from '../../assets/logo.svg'
 import UserProfileAvatar from '../../components/UserProfileAvatar'
@@ -52,6 +57,7 @@ const COMPACT_NAV_WIDTH = 60
 const EXPANDED_NAV_WIDTH = 232
 const PUBLIC_PAGES = ['/landing', '/privacy', '/terms']
 const NAVBAR_TITLE_KEYS = {
+  '/log': 'Completion log',
   '/activities': 'navigation.activities',
   '/archived': 'navigation.archived',
   '/chores': 'navigation.allTasks',
@@ -73,6 +79,7 @@ const SHELL_FREE_PAGES = [
   '/get-started',
   '/ready',
   '/circle/join',
+  '/display', // CrewTAK wall display runs full screen
 ]
 
 const NavBar = () => {
@@ -176,12 +183,23 @@ const NavBar = () => {
       label: t('navigation.points'),
       icon: <Toll />,
     },
+    // CrewTAK pages
+    {
+      to: '/log',
+      label: 'Completion log',
+      icon: <FactCheckOutlined />,
+    },
+    {
+      to: '/display',
+      label: 'Wall display',
+      icon: <TvOutlined />,
+    },
     {
       to: '/settings',
       label: t('navigation.settings'),
       icon: <SettingsOutlined />,
     },
-  ]
+  ].filter(link => !link.to || !isHiddenRoute(link.to))
 
   const getMenuIcon = () => {
     const menuButton = (
@@ -535,10 +553,7 @@ const NavBar = () => {
                       userSelect: 'none',
                     }}
                   >
-                    Done
-                    <Box component='span' sx={{ color: '#06b6d4' }}>
-                      tick
-                    </Box>
+                    <Wordmark />
                   </Typography>
                 </Box>
               )}

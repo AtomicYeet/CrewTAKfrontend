@@ -1,6 +1,8 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 import App from '@/App'
+import CompletionLog from '@/crewtak/CompletionLog'
+import WallDisplay from '@/crewtak/WallDisplay'
 import ChoreEdit from '@/views/ChoreEdit/ChoreEdit'
 import Error from '@/views/Error'
 import AccountSettings from '@/views/Settings/AccountSettings'
@@ -299,6 +301,15 @@ const Router = createBrowserRouter([
       {
         path: 'filters/',
         element: <FilterView />,
+      },
+      // CrewTAK pages
+      {
+        path: '/log',
+        element: <CompletionLog />,
+      },
+      {
+        path: '/display',
+        element: <WallDisplay />,
       },
       {
         path: '*',

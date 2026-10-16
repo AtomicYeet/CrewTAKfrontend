@@ -69,7 +69,7 @@
   },
   "search": {
     "title": "Recherche",
-    "placeholder": "Rechercher dans Donetick",
+    "placeholder": "Rechercher dans CrewTAK",
     "inputAriaLabel": "Rechercher des tâches, l’historique, des projets, des étiquettes et des paramètres",
     "deviceNote": "Recherche dans le contenu disponible sur cet appareil",
     "escape": "Échap",
@@ -124,7 +124,7 @@
   },
   "policyUpdate": {
     "title": "We've updated our Privacy Policy and Terms",
-    "subtitle": "Please take a moment to review them. By continuing to use Donetick, you accept the updated documents.",
+    "subtitle": "Please take a moment to review them. By continuing to use CrewTAK, you accept the updated documents.",
     "readPrivacy": "Privacy Policy",
     "readTerms": "Terms",
     "acknowledge": "Got it"
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "Maybe later",
     "sentiment": {
-      "title": "How's Donetick working for you?",
+      "title": "How's CrewTAK working for you?",
       "subtitle": "Your answer helps us decide what to build next.",
       "options": {
         "love": "Love it",
@@ -160,7 +160,7 @@
     },
     "review": {
       "title": "Glad you're enjoying it!",
-      "subtitle": "A rating or a star helps other people find Donetick.",
+      "subtitle": "A rating or a star helps other people find CrewTAK.",
       "github": "Star on GitHub",
       "appStore": "Rate on the App Store",
       "playStore": "Rate on Google Play"
@@ -443,19 +443,19 @@
     },
     "slides": {
       "problemTitle": "Stop forgetting the little things",
-      "problemBody": "Donetick remembers the last time it happened, and when it's due next. So nobody else has to.",
+      "problemBody": "CrewTAK remembers the last time it happened, and when it's due next. So nobody else has to.",
       "captureTitle": "Add it before you forget it",
-      "captureBody": "Type it, say it out loud, or snap a photo. Donetick fills in the due date, priority, labels, and who's on it.",
+      "captureBody": "Type it, say it out loud, or snap a photo. CrewTAK fills in the due date, priority, labels, and who's on it.",
       "scheduleTitle": "It comes back exactly when it should",
       "scheduleBody": "Every week, every 3 months, or a month after you actually did it. Finishing late doesn't throw the rest of the year off.",
       "circleTitle": "Everyone gets a turn, No more arguing",
-      "circleBody": "Rotate in the order you pick, or at random. Donetick remembers who went last, so turns stay fair.",
+      "circleBody": "Rotate in the order you pick, or at random. CrewTAK remembers who went last, so turns stay fair.",
       "remindersTitle": "A nudge right when it matters & Widgets!",
       "remindersBody": "Get a reminder before something's due, or send a heads-up when someone forgets theirs. Today's list sits on your home screen too."
     },
     "carousel": {
       "skip": "Skip",
-      "ariaLabel": "What you can do with Donetick",
+      "ariaLabel": "What you can do with CrewTAK",
       "goToStep": "Go to step {{number}}",
       "slidePosition": "{{index}} of {{total}}",
       "turnOnReminders": "Turn on reminders",
@@ -471,7 +471,7 @@
       "connectSelfHosted": "Connect to a self-hosted server"
     },
     "heardAbout": {
-      "title": "Where'd you hear about Donetick?",
+      "title": "Where'd you hear about CrewTAK?",
       "subtitle": "Helps us know what's working. Totally optional.",
       "detailPlaceholder": "Tell us where",
       "continue": "Continue",
@@ -486,10 +486,10 @@
       }
     },
     "privacy": {
-      "title": "Help us improve Donetick",
+      "title": "Help us improve CrewTAK",
       "subtitle": "Your server, your data. Both of these are off from this point unless you turn them on.",
       "crashReportsLabel": "Share crash reports",
-      "crashReportsDescription": "When Donetick crashes, send us the error and what led to it (device, app version, the screen you were on) no task content. It's how we catch bugs that never show up in our own testing and ship fixes faster.",
+      "crashReportsDescription": "When CrewTAK crashes, send us the error and what led to it (device, app version, the screen you were on) no task content. It's how we catch bugs that never show up in our own testing and ship fixes faster.",
       "analyticsLabel": "Share anonymous usage analytics",
       "analyticsDescription": "Send anonymous usage events which features get used, which get ignored so we know what to build next instead of guessing. No task content, no personal data, nothing tied back to you."
     }
@@ -550,8 +550,8 @@
     "title": "You're invited to join a circle",
     "incompleteTitle": "Invite link is incomplete",
     "incompleteSubtitle": "This invite link is missing a code. Ask the person who invited you to send a new link.",
-    "goToDonetick": "Go to Donetick",
-    "signedOutSubtitle": "Sign in or create a Donetick account to continue. We'll send your join request once you're signed in.",
+    "goToDonetick": "Go to CrewTAK",
+    "signedOutSubtitle": "Sign in or create a CrewTAK account to continue. We'll send your join request once you're signed in.",
     "signIn": "Sign in",
     "createAccount": "Create an account",
     "sendingTitle": "Sending your request",

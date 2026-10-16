@@ -498,7 +498,7 @@
     "notifyAll": "Notificar a todas las personas asignadas",
     "notifyAllHint": "Si se activa, todos los miembros que puedan ver esta tarea recibirán notificación. De lo contrario, solo la persona asignada.",
     "selfHostedHeading": "¡Aviso!",
-    "selfHostedNotice": "Esta función está disponible en Donetick Cloud. En instancias alojadas por ti mismo, requiere configurar Google Cloud y Firebase Cloud Messaging (FCM).",
+    "selfHostedNotice": "Esta función está disponible en CrewTAK Cloud. En instancias alojadas por ti mismo, requiere configurar Google Cloud y Firebase Cloud Messaging (FCM).",
     "selfHostedFollowUp": "Actualizaremos esto si encontramos una forma más sencilla de configurarlo en autoalojado."
   },
   "nfc": {
@@ -553,7 +553,7 @@
     "couldNotReadScannedImage": "Could not read the scanned image."
   },
   "searchBar": {
-    "placeholder": "Buscar Donetick",
+    "placeholder": "Buscar CrewTAK",
     "clearAria": "Limpiar tarea search"
   },
   "subTask": {
@@ -995,11 +995,11 @@
     "clear": "Limpiar"
   },
   "empty": {
-    "errorTitle": "No se puede conectar con Donetick",
+    "errorTitle": "No se puede conectar con CrewTAK",
     "errorDescription": "Tus tareas están a salvo. No pudimos cargarlas en este momento, comprueba tu conexión e inténtalo de nuevo.",
     "errorAction": "Reintentar",
     "noTasksTitle": "Sin tareas aún",
-    "noTasksDescription": "Crea tu primera tarea y Donetick hará un seguimiento de cuándo vence, a quién le toca y qué sigue.",
+    "noTasksDescription": "Crea tu primera tarea y CrewTAK hará un seguimiento de cuándo vence, a quién le toca y qué sigue.",
     "createTask": "Crear una tarea",
     "moreOptions": "Más opciones",
     "noMatchTitle": "Ninguna tarea coincide con esta vista",

@@ -29,6 +29,8 @@ import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import { useChores, useChoresHistory } from '../../queries/ChoreQueries'
 import { useCircleMembers } from '../../queries/UserQueries'
 import { resolvePhotoURL } from '../../utils/Helpers'
@@ -186,7 +188,7 @@ const ActivityItem = ({ activity, members, onViewNote }) => {
               })}
             </Typography>
             {/* Points chip */}
-            {activity.points && activity.points > 0 && (
+            {!HIDE.points && activity.points > 0 && (
               <Chip
                 size='sm'
                 variant='soft'

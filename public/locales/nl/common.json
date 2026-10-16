@@ -69,7 +69,7 @@
   },
   "search": {
     "title": "Zoeken",
-    "placeholder": "Zoeken in Donetick",
+    "placeholder": "Zoeken in CrewTAK",
     "inputAriaLabel": "Zoek in taken, geschiedenis, projecten, labels en instellingen",
     "deviceNote": "Er wordt gezocht in inhoud die op dit apparaat beschikbaar is",
     "escape": "Esc",
@@ -124,7 +124,7 @@
   },
   "policyUpdate": {
     "title": "We've updated our Privacy Policy and Terms",
-    "subtitle": "Please take a moment to review them. By continuing to use Donetick, you accept the updated documents.",
+    "subtitle": "Please take a moment to review them. By continuing to use CrewTAK, you accept the updated documents.",
     "readPrivacy": "Privacy Policy",
     "readTerms": "Terms",
     "acknowledge": "Got it"
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "Maybe later",
     "sentiment": {
-      "title": "How's Donetick working for you?",
+      "title": "How's CrewTAK working for you?",
       "subtitle": "Your answer helps us decide what to build next.",
       "options": {
         "love": "Love it",
@@ -160,7 +160,7 @@
     },
     "review": {
       "title": "Glad you're enjoying it!",
-      "subtitle": "A rating or a star helps other people find Donetick.",
+      "subtitle": "A rating or a star helps other people find CrewTAK.",
       "github": "Star on GitHub",
       "appStore": "Rate on the App Store",
       "playStore": "Rate on Google Play"

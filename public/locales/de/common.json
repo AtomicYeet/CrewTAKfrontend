@@ -69,7 +69,7 @@
   },
   "search": {
     "title": "Suche",
-    "placeholder": "Donetick durchsuchen",
+    "placeholder": "CrewTAK durchsuchen",
     "inputAriaLabel": "Aufgaben, Verlauf, Projekte, Labels und Einstellungen durchsuchen",
     "deviceNote": "Es wird in Inhalten gesucht, die auf diesem Gerät verfügbar sind",
     "escape": "Esc",
@@ -124,7 +124,7 @@
   },
   "policyUpdate": {
     "title": "Wir haben unsere Datenschutzrichtlinie und Nutzungsbedingungen aktualisiert",
-    "subtitle": "Bitte nimm dir einen Moment Zeit, sie zu prüfen. Wenn du Donetick weiter verwendest, akzeptierst du die aktualisierten Dokumente.",
+    "subtitle": "Bitte nimm dir einen Moment Zeit, sie zu prüfen. Wenn du CrewTAK weiter verwendest, akzeptierst du die aktualisierten Dokumente.",
     "readPrivacy": "Datenschutzrichtlinie",
     "readTerms": "Nutzungsbedingungen",
     "acknowledge": "Verstanden"
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "Vielleicht später",
     "sentiment": {
-      "title": "Was hältst du von Donetick?",
+      "title": "Was hältst du von CrewTAK?",
       "subtitle": "Deine Antwort hilft uns zu entscheiden, was wir als Nächstes entwickeln sollen.",
       "options": {
         "love": "Ich liebe es",
@@ -160,8 +160,8 @@
     },
     "review": {
       "title": "Schön, dass es dir gefällt!",
-      "subtitle": "Eine Bewertung oder ein Stern hilft anderen Menschen, Donetick zu finden.",
-      "github": "Donetick auf GitHub einen Stern geben",
+      "subtitle": "Eine Bewertung oder ein Stern hilft anderen Menschen, CrewTAK zu finden.",
+      "github": "CrewTAK auf GitHub einen Stern geben",
       "appStore": "Im App Store bewerten",
       "playStore": "Auf Google Play bewerten"
     },
@@ -443,19 +443,19 @@
     },
     "slides": {
       "problemTitle": "Vergiss die kleinen Dinge nicht mehr",
-      "problemBody": "Donetick merkt sich, wann etwas zuletzt erledigt wurde und wann es wieder fällig ist. So muss es sich niemand sonst merken.",
+      "problemBody": "CrewTAK merkt sich, wann etwas zuletzt erledigt wurde und wann es wieder fällig ist. So muss es sich niemand sonst merken.",
       "captureTitle": "Trag es ein, bevor du es vergisst",
-      "captureBody": "Tippe es ein, sprich es aus oder mach ein Foto. Donetick ergänzt Fälligkeitsdatum, Priorität, Labels und Zuständigkeit.",
+      "captureBody": "Tippe es ein, sprich es aus oder mach ein Foto. CrewTAK ergänzt Fälligkeitsdatum, Priorität, Labels und Zuständigkeit.",
       "scheduleTitle": "Es kommt genau dann wieder, wenn es soll",
       "scheduleBody": "Jede Woche, alle 3 Monate oder einen Monat nachdem du es tatsächlich erledigt hast. Ein verspäteter Abschluss verschiebt nicht gleich den Rest des Jahres.",
       "circleTitle": "Jeder kommt dran – Schluss mit Diskussionen",
-      "circleBody": "Wechselt euch in der von dir gewählten Reihenfolge oder zufällig ab. Donetick merkt sich, wer zuletzt dran war, damit es fair bleibt.",
+      "circleBody": "Wechselt euch in der von dir gewählten Reihenfolge oder zufällig ab. CrewTAK merkt sich, wer zuletzt dran war, damit es fair bleibt.",
       "remindersTitle": "Eine Erinnerung genau dann, wenn sie zählt – plus Widgets!",
       "remindersBody": "Erhalte eine Erinnerung, bevor etwas fällig ist, oder schicke einen Hinweis, wenn jemand seine Aufgabe vergisst. Die heutige Liste kann außerdem auf deinem Startbildschirm angezeigt werden."
     },
     "carousel": {
       "skip": "Überspringen",
-      "ariaLabel": "Was du mit Donetick machen kannst",
+      "ariaLabel": "Was du mit CrewTAK machen kannst",
       "goToStep": "Zu Schritt {{number}}",
       "slidePosition": "{{index}} von {{total}}",
       "turnOnReminders": "Erinnerungen aktivieren",
@@ -471,7 +471,7 @@
       "connectSelfHosted": "Mit selbst gehostetem Server verbinden"
     },
     "heardAbout": {
-      "title": "Wie hast du von Donetick erfahren?",
+      "title": "Wie hast du von CrewTAK erfahren?",
       "subtitle": "Hilft uns zu verstehen, was funktioniert. Völlig optional.",
       "detailPlaceholder": "Sag uns, wo",
       "continue": "Weiter",
@@ -486,10 +486,10 @@
       }
     },
     "privacy": {
-      "title": "Hilf uns, Donetick zu verbessern",
+      "title": "Hilf uns, CrewTAK zu verbessern",
       "subtitle": "Dein Server, deine Daten. Beide Optionen bleiben ab jetzt deaktiviert, sofern du sie nicht selbst einschaltest.",
       "crashReportsLabel": "Absturzberichte teilen",
-      "crashReportsDescription": "Wenn Donetick abstürzt, kannst du uns den Fehler und den Ablauf davor senden (Gerät, App-Version, geöffneter Bildschirm) – ohne Aufgabeninhalte. So finden wir Fehler, die in unseren eigenen Tests nicht auftreten, und können sie schneller beheben.",
+      "crashReportsDescription": "Wenn CrewTAK abstürzt, kannst du uns den Fehler und den Ablauf davor senden (Gerät, App-Version, geöffneter Bildschirm) – ohne Aufgabeninhalte. So finden wir Fehler, die in unseren eigenen Tests nicht auftreten, und können sie schneller beheben.",
       "analyticsLabel": "Anonyme Nutzungsstatistiken teilen",
       "analyticsDescription": "Sende anonyme Nutzungsereignisse darüber, welche Funktionen verwendet oder ignoriert werden. So wissen wir, was wir als Nächstes entwickeln sollten, statt zu raten. Keine Aufgabeninhalte, keine personenbezogenen Daten und nichts, das dir zugeordnet werden kann."
     }
@@ -550,8 +550,8 @@
     "title": "Du wurdest zu einem Kreis eingeladen",
     "incompleteTitle": "Einladungslink ist unvollständig",
     "incompleteSubtitle": "In diesem Einladungslink fehlt ein Code. Bitte die einladende Person um einen neuen Link.",
-    "goToDonetick": "Zu Donetick",
-    "signedOutSubtitle": "Melde dich an oder erstelle ein Donetick-Konto, um fortzufahren. Deine Beitrittsanfrage wird gesendet, sobald du angemeldet bist.",
+    "goToDonetick": "Zu CrewTAK",
+    "signedOutSubtitle": "Melde dich an oder erstelle ein CrewTAK-Konto, um fortzufahren. Deine Beitrittsanfrage wird gesendet, sobald du angemeldet bist.",
     "signIn": "Anmelden",
     "createAccount": "Konto erstellen",
     "sendingTitle": "Anfrage wird gesendet",

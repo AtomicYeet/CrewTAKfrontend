@@ -69,7 +69,7 @@
   },
   "search": {
     "title": "Recherche",
-    "placeholder": "Rechercher dans Donetick",
+    "placeholder": "Rechercher dans CrewTAK",
     "inputAriaLabel": "Rechercher des tâches, l'historique, des projets, des étiquettes et des paramètres",
     "deviceNote": "Recherche dans le contenu disponible sur cet appareil",
     "escape": "Échap",
@@ -124,7 +124,7 @@
   },
   "policyUpdate": {
     "title": "Nous avons mis à jour notre politique de confidentialité et nos conditions",
-    "subtitle": "Prenez un moment pour les consulter. En continuant à utiliser Donetick, vous acceptez les documents mis à jour.",
+    "subtitle": "Prenez un moment pour les consulter. En continuant à utiliser CrewTAK, vous acceptez les documents mis à jour.",
     "readPrivacy": "Politique de confidentialité",
     "readTerms": "Conditions d'utilisation",
     "acknowledge": "J'ai compris"
@@ -132,7 +132,7 @@
   "feedback": {
     "later": "Peut-être plus tard",
     "sentiment": {
-      "title": "Donetick vous convient-il ?",
+      "title": "CrewTAK vous convient-il ?",
       "subtitle": "Votre réponse nous aide à décider de ce qu'il faut construire ensuite.",
       "options": {
         "love": "J'adore",
@@ -160,7 +160,7 @@
     },
     "review": {
       "title": "Nous sommes ravis que vous l'appréciez !",
-      "subtitle": "Une note ou une étoile aide d'autres personnes à découvrir Donetick.",
+      "subtitle": "Une note ou une étoile aide d'autres personnes à découvrir CrewTAK.",
       "github": "Mettez une étoile sur GitHub",
       "appStore": "Évaluer sur l'App Store",
       "playStore": "Évaluer sur Google Play"
@@ -443,19 +443,19 @@
     },
     "slides": {
       "problemTitle": "Ne plus oublier les petites choses",
-      "problemBody": "Donetick retient la dernière fois que c'est arrivé, et la prochaine échéance. Plus personne n'a à y penser.",
+      "problemBody": "CrewTAK retient la dernière fois que c'est arrivé, et la prochaine échéance. Plus personne n'a à y penser.",
       "captureTitle": "Ajoutez-le avant de l'oublier",
-      "captureBody": "Écrivez-le, dites-le à voix haute ou prenez une photo. Donetick renseigne la date d'échéance, la priorité, les étiquettes et la personne assignée.",
+      "captureBody": "Écrivez-le, dites-le à voix haute ou prenez une photo. CrewTAK renseigne la date d'échéance, la priorité, les étiquettes et la personne assignée.",
       "scheduleTitle": "La tâche revient exactement quand il faut",
       "scheduleBody": "Toutes les semaines, tous les 3 mois, ou un mois après l'avoir réellement faite. Terminer en retard ne décale pas tout le reste de l'année.",
       "circleTitle": "Chacun son tour, fini les disputes",
-      "circleBody": "Alternez dans l'ordre de votre choix, ou au hasard. Donetick retient qui est passé en dernier, pour que les tours restent équitables.",
+      "circleBody": "Alternez dans l'ordre de votre choix, ou au hasard. CrewTAK retient qui est passé en dernier, pour que les tours restent équitables.",
       "remindersTitle": "Un rappel au bon moment, et des widgets !",
       "remindersBody": "Recevez un rappel avant une échéance, ou envoyez un petit rappel quand quelqu'un oublie la sienne. La liste du jour s'affiche aussi sur votre écran d'accueil."
     },
     "carousel": {
       "skip": "Ignorer",
-      "ariaLabel": "Ce que vous pouvez faire avec Donetick",
+      "ariaLabel": "Ce que vous pouvez faire avec CrewTAK",
       "goToStep": "Aller à l'étape {{number}}",
       "slidePosition": "{{index}} sur {{total}}",
       "turnOnReminders": "Activer les rappels",
@@ -471,7 +471,7 @@
       "connectSelfHosted": "Se connecter à un serveur autohébergé"
     },
     "heardAbout": {
-      "title": "Comment avez-vous connu Donetick ?",
+      "title": "Comment avez-vous connu CrewTAK ?",
       "subtitle": "Cela nous aide à savoir ce qui fonctionne. C'est entièrement facultatif.",
       "detailPlaceholder": "Dites-nous où",
       "continue": "Continuer",
@@ -486,10 +486,10 @@
       }
     },
     "privacy": {
-      "title": "Aidez-nous à améliorer Donetick",
+      "title": "Aidez-nous à améliorer CrewTAK",
       "subtitle": "Votre serveur, vos données. Ces deux options restent désactivées tant que vous ne les activez pas.",
       "crashReportsLabel": "Partager les rapports de plantage",
-      "crashReportsDescription": "Quand Donetick plante, nous recevons l'erreur et ce qui l'a provoquée (appareil, version de l'application, écran affiché), sans aucun contenu de tâche. C'est ainsi que nous repérons les anomalies qui n'apparaissent jamais dans nos propres tests et que nous corrigeons plus vite.",
+      "crashReportsDescription": "Quand CrewTAK plante, nous recevons l'erreur et ce qui l'a provoquée (appareil, version de l'application, écran affiché), sans aucun contenu de tâche. C'est ainsi que nous repérons les anomalies qui n'apparaissent jamais dans nos propres tests et que nous corrigeons plus vite.",
       "analyticsLabel": "Partager des statistiques d'utilisation anonymes",
       "analyticsDescription": "Envoyez des événements d'utilisation anonymes — quelles fonctionnalités servent, lesquelles sont ignorées — pour que nous sachions quoi construire ensuite au lieu de le deviner. Aucun contenu de tâche, aucune donnée personnelle, rien qui remonte jusqu'à vous."
     }
@@ -550,8 +550,8 @@
     "title": "Invitation à rejoindre un cercle",
     "incompleteTitle": "Lien d'invitation incomplet",
     "incompleteSubtitle": "Il manque un code à ce lien d'invitation. Demandez un nouveau lien à la personne qui vous l'a transmis.",
-    "goToDonetick": "Aller à Donetick",
-    "signedOutSubtitle": "Connectez-vous ou créez un compte Donetick pour continuer. Nous enverrons votre demande d'adhésion une fois la connexion effectuée.",
+    "goToDonetick": "Aller à CrewTAK",
+    "signedOutSubtitle": "Connectez-vous ou créez un compte CrewTAK pour continuer. Nous enverrons votre demande d'adhésion une fois la connexion effectuée.",
     "signIn": "Se connecter",
     "createAccount": "Créer un compte",
     "sendingTitle": "Envoi de votre demande",

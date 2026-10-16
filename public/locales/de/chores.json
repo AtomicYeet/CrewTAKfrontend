@@ -498,7 +498,7 @@
     "notifyAll": "Alle zugewiesenen Personen benachrichtigen",
     "notifyAllHint": "Wenn aktiviert, werden alle Mitglieder benachrichtigt, die diese Aufgabe sehen können. Andernfalls erhält nur die zugewiesene Person die Erinnerung.",
     "selfHostedHeading": "Achtung!",
-    "selfHostedNotice": "Diese Funktion ist in Donetick Cloud verfügbar! Da du eine selbst gehostete Instanz verwendest, benötigst du für Erinnerungen ein Google-Cloud-Konto sowie Firebase Cloud Messaging (FCM) und musst die Android- oder iOS-App selbst erstellen.",
+    "selfHostedNotice": "Diese Funktion ist in CrewTAK Cloud verfügbar! Da du eine selbst gehostete Instanz verwendest, benötigst du für Erinnerungen ein Google-Cloud-Konto sowie Firebase Cloud Messaging (FCM) und musst die Android- oder iOS-App selbst erstellen.",
     "selfHostedFollowUp": "Wir aktualisieren dies, sobald wir einen einfacheren Weg für Selbst-Hoster finden, dies einzurichten."
   },
   "nfc": {
@@ -553,7 +553,7 @@
     "couldNotReadScannedImage": "Das gescannte Bild konnte nicht gelesen werden."
   },
   "searchBar": {
-    "placeholder": "Donetick durchsuchen",
+    "placeholder": "CrewTAK durchsuchen",
     "clearAria": "Aufgabensuche zurücksetzen"
   },
   "subTask": {
@@ -995,11 +995,11 @@
     "clear": "Zurücksetzen"
   },
   "empty": {
-    "errorTitle": "Donetick ist nicht erreichbar",
+    "errorTitle": "CrewTAK ist nicht erreichbar",
     "errorDescription": "Deine Aufgaben sind sicher. Sie konnten gerade nur nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
     "errorAction": "Erneut versuchen",
     "noTasksTitle": "Noch keine Aufgaben",
-    "noTasksDescription": "Erstelle deine erste Aufgabe. Donetick behält im Blick, wann sie fällig ist, wer an der Reihe ist und was als Nächstes kommt.",
+    "noTasksDescription": "Erstelle deine erste Aufgabe. CrewTAK behält im Blick, wann sie fällig ist, wer an der Reihe ist und was als Nächstes kommt.",
     "createTask": "Aufgabe erstellen",
     "moreOptions": "Weitere Optionen",
     "noMatchTitle": "Keine Aufgaben passen zu dieser Ansicht",

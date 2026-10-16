@@ -12,6 +12,8 @@ import {
 import { Avatar, Box, Chip, Divider, Typography } from '@mui/joy'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import NumberInput from '../../../components/common/NumberInput'
 import Priorities from '../../../utils/Priorities'
 import { ProjectAccessIcon } from '../../Projects/ProjectVisibilityField'
@@ -123,8 +125,15 @@ export const selectionsToConditions = selections => {
   return conditions
 }
 
-const SectionHeader = ({ children, icon, label }) => (
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+const SectionHeader = ({ children, hidden, icon, label }) => (
+  <Box
+    sx={{
+      display: hidden ? 'none' : 'flex',
+      alignItems: 'center',
+      gap: 1,
+      mb: 1.5,
+    }}
+  >
     <Box
       sx={{
         color: 'text.secondary',
@@ -232,6 +241,7 @@ const FilterBuilderContent = ({
     }))
 
   const chipRow = (type, options, getChipProps) => {
+    if (HIDE.priority && type === 'priority') return null // CrewTAK
     const selected = selections[type].values || []
     return (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -375,6 +385,7 @@ const FilterBuilderContent = ({
 
       {/* Priority */}
       <SectionHeader
+        hidden={HIDE.priority}
         icon={<PriorityHigh />}
         label={t('filterBuilder.priority')}
       >
@@ -395,7 +406,7 @@ const FilterBuilderContent = ({
             : null,
         }),
       )}
-      <Divider sx={{ my: 2.5 }} />
+      <Divider sx={{ my: 2.5, display: HIDE.priority ? 'none' : undefined }} />
 
       {/* Due Date */}
       <SectionHeader
@@ -439,7 +450,7 @@ const FilterBuilderContent = ({
       <Divider sx={{ my: 2.5 }} />
 
       {/* Labels */}
-      {labels.length > 0 && (
+      {!HIDE.labels && labels.length > 0 && (
         <>
           <SectionHeader icon={<Label />} label={t('filterBuilder.labels')}>
             <IncludeExcludeToggle
@@ -522,14 +533,25 @@ const FilterBuilderContent = ({
                 ),
               })),
           ])}
-          <Divider sx={{ my: 2.5 }} />
+          <Divider
+            sx={{ my: 2.5, display: HIDE.points ? 'none' : undefined }}
+          />
         </>
       )}
 
       {/* Points */}
-      <SectionHeader icon={<Stars />} label={t('filterBuilder.points')} />
+      <SectionHeader
+        hidden={HIDE.points}
+        icon={<Stars />}
+        label={t('filterBuilder.points')}
+      />
       <Box
-        sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}
+        sx={{
+          display: HIDE.points ? 'none' : 'flex',
+          gap: 1,
+          alignItems: 'center',
+          flexWrap: 'wrap',
+        }}
       >
         {POINTS_OPERATORS.map(op => (
           <Chip

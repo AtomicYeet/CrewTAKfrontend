@@ -17,6 +17,8 @@ import {
   ViewSidebar,
 } from '@mui/icons-material'
 
+import { HIDE } from '@/crewtak/features'
+
 // Single source of truth for the settings sections: id, icon, and access
 // gating. Titles/descriptions live in locales/settings.json under
 // `overview.sections.<id>`, keyed off the same ids.
@@ -39,4 +41,8 @@ export const SETTINGS_SECTIONS = [
   { id: 'advanced', icon: Settings },
   { id: 'privacy', icon: PrivacyTip },
   { id: 'developer', icon: Code },
-]
+].filter(
+  ({ id }) =>
+    // CrewTAK: notifications and the push-notification bridge are hidden.
+    !(HIDE.notifications && (id === 'notifications' || id === 'bridge')),
+)

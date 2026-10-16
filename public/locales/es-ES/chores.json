@@ -566,14 +566,14 @@
     "dayFreeDescription": "Este día está libre. Añade una tarea si quieres que aparezca algo aquí.",
     "errorAction": "Reintentar",
     "errorDescription": "Tus tareas están a salvo. No pudimos cargarlas en este momento, comprueba tu conexión e inténtalo de nuevo.",
-    "errorTitle": "No se puede conectar con Donetick",
+    "errorTitle": "No se puede conectar con CrewTAK",
     "moreOptions": "Más opciones",
     "noMatchFilters": "Tienes tareas, pero ninguna coincide con los filtros aplicados.",
     "noMatchSearch": "Nada coincide con \"{{term}}\". Intenta con una búsqueda diferente o limpia los filtros.",
     "noMatchTitle": "Ninguna tarea coincide con esta vista",
     "noProjectDescription": "Las tareas que no pertenecen a ningún proyecto están aquí. Añade una o cambia de proyecto para ver su contenido.",
     "noProjectTitle": "No hay tareas aquí todavía",
-    "noTasksDescription": "Crea tu primera tarea y Donetick hará un seguimiento de cuándo vence, a quién le toca y qué sigue.",
+    "noTasksDescription": "Crea tu primera tarea y CrewTAK hará un seguimiento de cuándo vence, a quién le toca y qué sigue.",
     "noTasksTitle": "Sin tareas aún",
     "projectDescription": "Las tareas que añadas a este proyecto aparecerán aquí. Tus otras tareas seguirán donde las dejaste.",
     "projectTitle": "Nada en {{name}} todavía",
@@ -822,7 +822,7 @@
     "notifyAllHint": "Si se activa, todos los miembros que puedan ver esta tarea recibirán notificación. De lo contrario, solo la persona asignada.",
     "selfHostedFollowUp": "Actualizaremos esto si encontramos una forma más sencilla de configurarlo en autoalojado.",
     "selfHostedHeading": "¡Aviso!",
-    "selfHostedNotice": "Esta función está disponible en Donetick Cloud. En instancias alojadas por ti mismo, requiere configurar Google Cloud y Firebase Cloud Messaging (FCM).",
+    "selfHostedNotice": "Esta función está disponible en CrewTAK Cloud. En instancias alojadas por ti mismo, requiere configurar Google Cloud y Firebase Cloud Messaging (FCM).",
     "title": "Enviar toque de atención",
     "empty": "No se puede enviar un toque de atención porque no hay nadie asignado a esta tarea.",
     "emptyTitle": "Sin personas asignadas",
@@ -1075,7 +1075,7 @@
   },
   "searchBar": {
     "clearAria": "Limpiar tarea search",
-    "placeholder": "Buscar Donetick"
+    "placeholder": "Buscar CrewTAK"
   },
   "shortcuts": {
     "allSelectedAltTitle": "🎯 Todas las tareas seleccionadas",

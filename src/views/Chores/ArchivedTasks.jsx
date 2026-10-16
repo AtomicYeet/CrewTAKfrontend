@@ -29,6 +29,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import EmptyState from '../../components/common/EmptyState'
 import FilterBar from '../../components/common/FilterBar'
 import KeyboardShortcutHint from '../../components/common/KeyboardShortcutHint'
@@ -143,20 +145,24 @@ const ArchivedTasks = () => {
         })),
         filterFn: (item, values) => values.includes(item.assignedTo),
       },
-      {
-        id: 'priority',
-        label: t('priority'),
-        type: 'multi-select',
-        icon: <PriorityHigh />,
-        options: Priorities.map(p => ({
-          value: p.value,
-          label: p.name,
-          color: p.color || 'neutral',
-          icon: p.icon,
-        })),
-        filterFn: (item, values) => values.includes(item.priority ?? 0),
-      },
-      ...(availableLabels.length > 0
+      ...(HIDE.priority
+        ? []
+        : [
+            {
+              id: 'priority',
+              label: t('priority'),
+              type: 'multi-select',
+              icon: <PriorityHigh />,
+              options: Priorities.map(p => ({
+                value: p.value,
+                label: p.name,
+                color: p.color || 'neutral',
+                icon: p.icon,
+              })),
+              filterFn: (item, values) => values.includes(item.priority ?? 0),
+            },
+          ]),
+      ...(!HIDE.labels && availableLabels.length > 0
         ? [
             {
               id: 'label',

@@ -19,6 +19,8 @@ import {
 } from '@mui/joy'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import NumberInput from '../../components/common/NumberInput'
 
 const STRATEGY_VALUES = [
@@ -28,10 +30,10 @@ const STRATEGY_VALUES = [
   'round_robin',
 ]
 
-const FieldRow = ({ children, description, label, onLabelClick }) => (
+const FieldRow = ({ children, description, hidden, label, onLabelClick }) => (
   <Box
     sx={{
-      display: 'flex',
+      display: hidden ? 'none' : 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 2,
@@ -195,6 +197,7 @@ const AdvancedOptionsSection = ({
         >
           {/* Points */}
           <FieldRow
+            hidden={HIDE.points}
             label={t('advancedOptions.points')}
             description={t('advancedOptions.pointsDescription')}
           >
@@ -231,6 +234,7 @@ const AdvancedOptionsSection = ({
 
           {/* Require approval */}
           <FieldRow
+            hidden={HIDE.approval}
             label={t('advancedOptions.requireApproval')}
             description={t('advancedOptions.requireApprovalDescription')}
             onLabelClick={() => onRequireApprovalChange(!requireApproval)}
@@ -244,6 +248,7 @@ const AdvancedOptionsSection = ({
 
           {/* Privacy */}
           <FieldRow
+            hidden={HIDE.privacy}
             label={t('advancedOptions.limitedVisibility')}
             description={
               isPrivacyInherited

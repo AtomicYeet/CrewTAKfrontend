@@ -88,7 +88,7 @@
       },
       "feedback": {
         "title": "发送反馈",
-        "description": "告诉我们 Donetick 用起来如何，或提出功能建议。"
+        "description": "告诉我们 CrewTAK 用起来如何，或提出功能建议。"
       },
       "bugReport": {
         "title": "报告问题",
@@ -126,8 +126,8 @@
     "codeCopied": "Circle code copied!",
     "linkCopied": "Circle link copied!",
     "myCircle": "我的圈子",
-    "shareTitle": "在 Donetick 加入 {{name}}",
-    "shareText": "我想邀请你加入 Donetick 上的 {{name}}。",
+    "shareTitle": "在 CrewTAK 加入 {{name}}",
+    "shareText": "我想邀请你加入 CrewTAK 上的 {{name}}。",
     "shareDialogTitle": "分享圈子邀请",
     "leave": "退出圈子",
     "leaveConfirmTitle": "退出圈子",
@@ -533,7 +533,7 @@
     "title": "高级设置",
     "description": "配置 Webhook、实时更新等高级功能，进一步提升效率。",
     "offlineTitle": "离线支持",
-    "offlineDescription": "在此设备／浏览器上离线时也能继续使用 Donetick。你的更改会保存在本地，恢复联网后自动同步。",
+    "offlineDescription": "在此设备／浏览器上离线时也能继续使用 CrewTAK。你的更改会保存在本地，恢复联网后自动同步。",
     "offlineToggle": "启用离线支持",
     "offlineHelper": "关闭后，将移除此设备／浏览器上未同步的离线更改和已保存的离线数据。",
     "offlineEnabled": "已为此设备／浏览器启用离线模式",
@@ -568,11 +568,11 @@
   },
   "privacyAnalytics": {
     "title": "Privacy & Analytics",
-    "description": "Donetick never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
+    "description": "CrewTAK never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
     "analyticsToggle": "Anonymous analytics",
-    "analyticsHelper": "Help improve Donetick by sharing anonymous usage statistics.",
+    "analyticsHelper": "Help improve CrewTAK by sharing anonymous usage statistics.",
     "crashToggle": "Crash reports",
-    "crashHelper": "Send us the error and what led to it when Donetick crashes no task content.",
+    "crashHelper": "Send us the error and what led to it when CrewTAK crashes no task content.",
     "footnote": "You can change these choices at any time."
   },
   "subscription": {

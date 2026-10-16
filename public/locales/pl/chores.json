@@ -498,7 +498,7 @@
     "notifyAll": "Powiadom wszystkich wykonawców",
     "notifyAllHint": "Jeśli włączone, powiadomieni zostaną wszyscy członkowie widzący to zadanie. W przeciwnym razie tylko osoba przypisana.",
     "selfHostedHeading": "Ważna informacja!",
-    "selfHostedNotice": "Ta funkcja jest dostępna w Donetick Cloud! Na instancji self-hosted ponaglenia wymagają skonfigurowania konta Google Cloud i Firebase Cloud Messaging (FCM) oraz samodzielnego zbudowania aplikacji Android lub iOS.",
+    "selfHostedNotice": "Ta funkcja jest dostępna w CrewTAK Cloud! Na instancji self-hosted ponaglenia wymagają skonfigurowania konta Google Cloud i Firebase Cloud Messaging (FCM) oraz samodzielnego zbudowania aplikacji Android lub iOS.",
     "selfHostedFollowUp": "Zaktualizujemy to, jeśli opracujemy prostszy sposób konfiguracji dla użytkowników self-hosted."
   },
   "nfc": {
@@ -553,7 +553,7 @@
     "couldNotReadScannedImage": "Nie udało się odczytać zeskanowanego obrazu."
   },
   "searchBar": {
-    "placeholder": "Szukaj w Donetick",
+    "placeholder": "Szukaj w CrewTAK",
     "clearAria": "Wyczyść wyszukiwanie zadań"
   },
   "subTask": {
@@ -995,11 +995,11 @@
     "clear": "Wyczyść"
   },
   "empty": {
-    "errorTitle": "Brak połączenia z Donetick",
+    "errorTitle": "Brak połączenia z CrewTAK",
     "errorDescription": "Twoje zadania są bezpieczne. Nie udało się ich teraz załadować — sprawdź połączenie i spróbuj ponownie.",
     "errorAction": "Spróbuj ponownie",
     "noTasksTitle": "Brak zadań",
-    "noTasksDescription": "Utwórz swoje pierwsze zadanie, a Donetick zadba o terminy, kolejność wykonawców i kolejne kroki.",
+    "noTasksDescription": "Utwórz swoje pierwsze zadanie, a CrewTAK zadba o terminy, kolejność wykonawców i kolejne kroki.",
     "createTask": "Utwórz zadanie",
     "moreOptions": "Więcej opcji",
     "noMatchTitle": "Brak zadań w tym widoku",

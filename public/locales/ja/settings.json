@@ -88,7 +88,7 @@
       },
       "feedback": {
         "title": "フィードバックを送る",
-        "description": "Donetickの使い心地を教えてください。機能のご要望もどうぞ。"
+        "description": "CrewTAKの使い心地を教えてください。機能のご要望もどうぞ。"
       },
       "bugReport": {
         "title": "不具合を報告",
@@ -126,8 +126,8 @@
     "codeCopied": "コードをクリップボードにコピーしました",
     "linkCopied": "招待リンクをクリップボードにコピーしました",
     "myCircle": "私のサークル",
-    "shareTitle": "Donetickで{{name}}に参加しませんか",
-    "shareText": "Donetickの{{name}}にご招待します。",
+    "shareTitle": "CrewTAKで{{name}}に参加しませんか",
+    "shareText": "CrewTAKの{{name}}にご招待します。",
     "shareDialogTitle": "サークルの招待を共有",
     "leave": "サークルを退出",
     "leaveConfirmTitle": "サークルを退出",
@@ -533,7 +533,7 @@
     "title": "詳細設定",
     "description": "Webhookやリアルタイム更新など、生産性を高める高度な機能を設定します。",
     "offlineTitle": "オフライン対応",
-    "offlineDescription": "この端末・ブラウザでオフラインでもDonetickを使えます。変更はローカルに保存され、オンラインに戻ると同期されます。",
+    "offlineDescription": "この端末・ブラウザでオフラインでもCrewTAKを使えます。変更はローカルに保存され、オンラインに戻ると同期されます。",
     "offlineToggle": "オフライン対応を有効にする",
     "offlineHelper": "無効にすると、未同期のオフライン変更とこの端末・ブラウザに保存されたオフラインデータが削除されます。",
     "offlineEnabled": "この端末・ブラウザでオフラインモードを有効にしました",
@@ -568,11 +568,11 @@
   },
   "privacyAnalytics": {
     "title": "Privacy & Analytics",
-    "description": "Donetick never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
+    "description": "CrewTAK never sends task names, descriptions, notes, or other task content. Session recording is never enabled.",
     "analyticsToggle": "Anonymous analytics",
-    "analyticsHelper": "Help improve Donetick by sharing anonymous usage statistics.",
+    "analyticsHelper": "Help improve CrewTAK by sharing anonymous usage statistics.",
     "crashToggle": "Crash reports",
-    "crashHelper": "Send us the error and what led to it when Donetick crashes no task content.",
+    "crashHelper": "Send us the error and what led to it when CrewTAK crashes no task content.",
     "footnote": "You can change these choices at any time."
   },
   "subscription": {

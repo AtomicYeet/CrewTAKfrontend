@@ -50,6 +50,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import EmptyState from '../../components/common/EmptyState'
 import FilterBar from '../../components/common/FilterBar'
 import SortAndFilterMenu from '../../components/common/SortAndFilterMenu'
@@ -596,7 +598,7 @@ const ChoreHistory = () => {
               { name: t('sort.performer'), value: 'name' },
               { name: t('sort.status'), value: 'status' },
               { name: t('sort.points'), value: 'points' },
-            ]}
+            ].filter(o => !(HIDE.points && o.value === 'points'))}
             selectedSort={sortBy}
             onSortChange={setSortBy}
             sortDirection={sortDirection}

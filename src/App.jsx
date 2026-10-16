@@ -4,9 +4,10 @@ import { Capacitor } from '@capacitor/core'
 import { Box, Button, Snackbar, Typography, useColorScheme } from '@mui/joy'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 
+import { isHiddenRoute } from '@/crewtak/features'
 import MobileBottomNav from '@/views/components/MobileBottomNav'
 import NavBar from '@/views/components/NavBar'
 
@@ -150,6 +151,8 @@ const AppContent = () => {
   useStatusBar()
 
   if (isRedirectingToOnboarding) return null
+  // CrewTAK: pages for hidden features send people home instead.
+  if (isHiddenRoute(location.pathname)) return <Navigate to='/' replace />
 
   return (
     <div>

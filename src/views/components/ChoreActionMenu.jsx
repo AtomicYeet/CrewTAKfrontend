@@ -44,6 +44,8 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import AppModal from '../../components/common/AppModal'
 import LABEL_COLORS, {
   getTextColorFromBackgroundColor,
@@ -419,22 +421,23 @@ const ChoreActionMenu = ({
       submenu: 'schedule',
       endDecorator: <ChevronRight fontSize='small' />,
     },
-    onChangePriority && {
-      key: 'priority',
-      icon: <Flag />,
-      label: t('priority'),
-      onClick: target => openPicker('priority', target),
-      submenu: 'priority',
-      endDecorator: (
-        <Chip
-          size='sm'
-          variant='soft'
-          color={currentPriority?.color || 'neutral'}
-        >
-          {currentPriority?.name.trim() || t('actionMenu.noPriority')}
-        </Chip>
-      ),
-    },
+    !HIDE.priority &&
+      onChangePriority && {
+        key: 'priority',
+        icon: <Flag />,
+        label: t('priority'),
+        onClick: target => openPicker('priority', target),
+        submenu: 'priority',
+        endDecorator: (
+          <Chip
+            size='sm'
+            variant='soft'
+            color={currentPriority?.color || 'neutral'}
+          >
+            {currentPriority?.name.trim() || t('actionMenu.noPriority')}
+          </Chip>
+        ),
+      },
     {
       key: 'delegate',
       icon: <RecordVoiceOver />,

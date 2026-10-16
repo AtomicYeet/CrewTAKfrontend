@@ -498,7 +498,7 @@
     "notifyAll": "Notifier toutes les personnes assignées",
     "notifyAllHint": "Si cette option est activée, tous les membres qui peuvent voir cette tâche seront notifiés. Sinon, seule la personne assignée recevra le rappel.",
     "selfHostedHeading": "Attention !",
-    "selfHostedNotice": "Cette fonctionnalité est disponible sur Donetick Cloud ! Comme vous utilisez une instance auto-hébergée, l'envoi de rappels exige de configurer un compte Google Cloud et Firebase Cloud Messaging (FCM), puis de compiler vous-même l'application Android ou iOS.",
+    "selfHostedNotice": "Cette fonctionnalité est disponible sur CrewTAK Cloud ! Comme vous utilisez une instance auto-hébergée, l'envoi de rappels exige de configurer un compte Google Cloud et Firebase Cloud Messaging (FCM), puis de compiler vous-même l'application Android ou iOS.",
     "selfHostedFollowUp": "Nous mettrons ce message à jour si nous trouvons un moyen plus simple de le configurer en auto-hébergement."
   },
   "nfc": {
@@ -553,7 +553,7 @@
     "couldNotReadScannedImage": "Impossible de lire l'image numérisée."
   },
   "searchBar": {
-    "placeholder": "Rechercher dans Donetick",
+    "placeholder": "Rechercher dans CrewTAK",
     "clearAria": "Effacer la recherche de tâches"
   },
   "subTask": {
@@ -995,11 +995,11 @@
     "clear": "Effacer"
   },
   "empty": {
-    "errorTitle": "Impossible d'atteindre Donetick",
+    "errorTitle": "Impossible d'atteindre CrewTAK",
     "errorDescription": "Vos tâches ne sont pas perdues. Nous n'avons simplement pas pu les charger : vérifiez votre connexion et réessayez.",
     "errorAction": "Réessayer",
     "noTasksTitle": "Pas encore de tâches",
-    "noTasksDescription": "Créez votre première tâche : Donetick suit son échéance, indique à qui c'est le tour et ce qui vient ensuite.",
+    "noTasksDescription": "Créez votre première tâche : CrewTAK suit son échéance, indique à qui c'est le tour et ce qui vient ensuite.",
     "createTask": "Créer une tâche",
     "moreOptions": "Plus d'options",
     "noMatchTitle": "Aucune tâche ne correspond à cette vue",

@@ -10,6 +10,8 @@ import { Box, Button, Chip, Sheet, Typography } from '@mui/joy'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import { TASK_COLOR } from '../../utils/Colors'
 
 // Home's triage tiles (overdue / due-today / coming-up) only count chores
@@ -260,7 +262,7 @@ const SmartInsightsCard = ({
     const highPriorityTasks = chores.filter(
       chore => chore.priority === 1 || chore.priority === 2,
     )
-    if (highPriorityTasks.length > 0) {
+    if (!HIDE.priority && highPriorityTasks.length > 0) {
       detectedInsights.push({
         id: 'high-priority',
         priority: 5,

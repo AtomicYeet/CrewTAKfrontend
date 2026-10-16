@@ -17,6 +17,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import KeyboardShortcutHint from '../../components/common/KeyboardShortcutHint'
 import ModalActions from '../../components/common/ModalActions'
 import { useModalShortcutScope } from '../../contexts/KeyboardShortcutScopeContext'
@@ -68,6 +70,13 @@ import VoicePanel from './VoiceToTask/VoicePanel'
 // Canonical reminder template shape, shared with NotificationTemplate and
 // LocalNotificationScheduler: a signed value plus 'm' | 'h' | 'd'. Negative is
 // before due, positive is after, zero is on due.
+// CrewTAK: pickers for hidden features render nothing.
+const Hidden = () => null
+const PriorityPicker = HIDE.priority ? Hidden : PriorityPickerField
+const LabelsPicker = HIDE.labels ? Hidden : LabelsPickerField
+const AttachmentPicker = HIDE.attachments ? Hidden : AttachmentPickerField
+const NotificationPicker = HIDE.notifications ? Hidden : NotificationPickerField
+
 const DEFAULT_NOTIFICATION_TEMPLATES = [
   { value: -1, unit: 'd' },
   { value: 0, unit: 'm' },
@@ -289,7 +298,8 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
   }))
   const [subTasks, setSubTasks] = useState(null)
   const [points, setPoints] = useState(-1)
-  const [isAnyoneTask, setIsAnyoneTask] = useState(false)
+  // CrewTAK: quick-added tasks belong to the whole crew by default.
+  const [isAnyoneTask, setIsAnyoneTask] = useState(true)
   const [hasDescription, setHasDescription] = useState(false)
   const [hasSubTasks, setHasSubTasks] = useState(false)
   const [deadlineOffset, setDeadlineOffset] = useState(-1)
@@ -709,7 +719,7 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
         // selection is assigned to the current user when the task is created.
         // Picker selections stay untouched.
         assigneesFromMentionRef.current = false
-        setIsAnyoneTask(false)
+        setIsAnyoneTask(true)
         setAssignees([])
       }
 
@@ -1015,7 +1025,7 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
     setFrequency(null)
     setPriority(0)
     setPoints(-1)
-    setIsAnyoneTask(false)
+    setIsAnyoneTask(true)
     setHasDescription(false)
     setDescription(null)
     setSubTasks(null)
@@ -1457,7 +1467,7 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
                 }}
                 onClear={() => setFrequency(null)}
               />
-              <PriorityPickerField
+              <PriorityPicker
                 value={priority}
                 onChange={setPriority}
                 onClear={() => setPriority(0)}
@@ -1479,12 +1489,12 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
                   }
                 }}
                 onClear={() => {
-                  setIsAnyoneTask(false)
+                  setIsAnyoneTask(true)
                   setAssignees([])
                 }}
                 members={assignableMembers}
               />
-              <LabelsPickerField
+              <LabelsPicker
                 emptyDisplay={pickerEmptyDisplay}
                 values={(labelsV2 || []).map(label => label.id)}
                 onChange={ids =>
@@ -1495,7 +1505,7 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
                 onClear={() => setLabelsV2([])}
                 labels={userLabels || []}
               />
-              <AttachmentPickerField
+              <AttachmentPicker
                 attachments={attachments}
                 onChange={setAttachments}
                 onClear={() => setAttachments([])}
@@ -1503,7 +1513,7 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
                 entityType='chore_attachment_draft'
                 draftId={draftId}
               />
-              <NotificationPickerField
+              <NotificationPicker
                 value={notificationMetadata}
                 onChange={setNotificationMetadata}
                 onClear={() => setNotificationMetadata({ templates: [] })}
@@ -1576,8 +1586,8 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
                 onToggle={() => setShowAdvanced(v => !v)}
                 activeCount={
                   [
-                    points > -1,
-                    requireApproval,
+                    !HIDE.points && points > -1,
+                    !HIDE.approval && requireApproval,
                     completionWindow > -1,
                     deadlineOffset > -1,
                   ].filter(Boolean).length

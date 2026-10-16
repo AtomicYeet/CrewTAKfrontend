@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { useCircleMembers, useUserProfile } from '../../queries/UserQueries'
 import { getPriorityColor, TASK_COLOR } from '../../utils/Colors'
@@ -119,6 +121,7 @@ const CalendarCard = ({ chores }) => {
               chores.map(chore => chore.priority).filter(p => p !== undefined),
             )
             const legendItems = []
+            if (HIDE.priority) return null // CrewTAK: no priority legend
 
             // Add priority levels that exist in the chores
             if (priorityLevels.has(1)) {

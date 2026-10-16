@@ -41,6 +41,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Cell, Pie, PieChart, Tooltip } from 'recharts'
 
+import { HIDE } from '@/crewtak/features'
+
 import EmptyState from '../../components/common/EmptyState'
 import FilterBar from '../../components/common/FilterBar'
 import SortAndFilterMenu from '../../components/common/SortAndFilterMenu'
@@ -155,7 +157,7 @@ const ChoreHistoryItem = ({
         >
           {name}
         </Typography>
-        {points && (
+        {!HIDE.points && points > 0 && (
           <Chip size='sm' color='success' startDecorator={<Toll />}>
             {t('detail.points', { count: points })}
           </Chip>
@@ -584,7 +586,7 @@ const UserActivites = () => {
         ],
         filterFn: (item, values) => values.includes(item.status),
       },
-      ...(userLabels?.length > 0
+      ...(!HIDE.labels && userLabels?.length > 0
         ? [
             {
               id: 'label',
@@ -620,13 +622,17 @@ const UserActivites = () => {
         icon: <EventNote />,
         filterFn: item => !!item.notes,
       },
-      {
-        id: 'hasPoints',
-        label: t('filter.hasPoints'),
-        type: 'boolean',
-        icon: <Toll />,
-        filterFn: item => (item.points ?? 0) > 0,
-      },
+      ...(HIDE.points
+        ? []
+        : [
+            {
+              id: 'hasPoints',
+              label: t('filter.hasPoints'),
+              type: 'boolean',
+              icon: <Toll />,
+              filterFn: item => (item.points ?? 0) > 0,
+            },
+          ]),
     ],
     [userLabels, t],
   )
@@ -1245,11 +1251,17 @@ const UserActivites = () => {
                 '--Select-radius': 'var(--joy-radius-md)',
               }}
             >
-              {Object.entries(chartData).map(([key, value]) => (
-                <Option key={key} value={key}>
-                  {value.title}
-                </Option>
-              ))}
+              {Object.entries(chartData)
+                .filter(
+                  ([key]) =>
+                    !(HIDE.priority && key === 'priority') &&
+                    !(HIDE.labels && key.startsWith('labels')),
+                )
+                .map(([key, value]) => (
+                  <Option key={key} value={key}>
+                    {value.title}
+                  </Option>
+                ))}
             </Select>
           </Box>
           <Divider />
@@ -1312,7 +1324,7 @@ const UserActivites = () => {
               { name: t('activities.sort.name'), value: 'name' },
               { name: t('activities.sort.status'), value: 'status' },
               { name: t('activities.sort.points'), value: 'points' },
-            ]}
+            ].filter(o => !(HIDE.points && o.value === 'points'))}
             selectedSort={sortBy}
             onSortChange={setSortBy}
             sortDirection={sortDirection}

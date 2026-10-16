@@ -88,7 +88,7 @@
       },
       "feedback": {
         "title": "Poslat zpětnou vazbu",
-        "description": "Dejte nám vědět, jak vám Donetick vyhovuje, nebo navrhněte funkci."
+        "description": "Dejte nám vědět, jak vám CrewTAK vyhovuje, nebo navrhněte funkci."
       },
       "bugReport": {
         "title": "Nahlásit problém",
@@ -126,8 +126,8 @@
     "codeCopied": "Kód zkopírován do schránky",
     "linkCopied": "Odkaz s pozvánkou zkopírován do schránky",
     "myCircle": "můj kruh",
-    "shareTitle": "Připojte se ke kruhu {{name}} v Donetick",
-    "shareText": "Rád(a) bych vás pozval(a) do kruhu {{name}} v Donetick.",
+    "shareTitle": "Připojte se ke kruhu {{name}} v CrewTAK",
+    "shareText": "Rád(a) bych vás pozval(a) do kruhu {{name}} v CrewTAK.",
     "shareDialogTitle": "Sdílet pozvánku do kruhu",
     "leave": "Opustit kruh",
     "leaveConfirmTitle": "Opustit kruh",
@@ -533,7 +533,7 @@
     "title": "Pokročilá nastavení",
     "description": "Nastavte pokročilé funkce, jako jsou webhooky a aktualizace v reálném čase, pro vyšší produktivitu.",
     "offlineTitle": "Podpora offline",
-    "offlineDescription": "Používejte Donetick i offline v tomto zařízení/prohlížeči. Změny se uloží místně a synchronizují se po návratu online.",
+    "offlineDescription": "Používejte CrewTAK i offline v tomto zařízení/prohlížeči. Změny se uloží místně a synchronizují se po návratu online.",
     "offlineToggle": "Zapnout podporu offline",
     "offlineHelper": "Vypnutím odstraníte nesynchronizované offline změny a uložená offline data z tohoto zařízení/prohlížeče.",
     "offlineEnabled": "Offline režim zapnut pro toto zařízení/prohlížeč",
@@ -568,11 +568,11 @@
   },
   "privacyAnalytics": {
     "title": "Soukromí a analytika",
-    "description": "Donetick nikdy neodesílá názvy, popisy, poznámky ani jiný obsah úkolů. Nahrávání relací není nikdy zapnuté.",
+    "description": "CrewTAK nikdy neodesílá názvy, popisy, poznámky ani jiný obsah úkolů. Nahrávání relací není nikdy zapnuté.",
     "analyticsToggle": "Anonymní analytika",
-    "analyticsHelper": "Pomozte vylepšit Donetick sdílením anonymních statistik používání.",
+    "analyticsHelper": "Pomozte vylepšit CrewTAK sdílením anonymních statistik používání.",
     "crashToggle": "Hlášení o pádech",
-    "crashHelper": "Když Donetick spadne, pošle nám chybu a to, co k ní vedlo, bez obsahu úkolů.",
+    "crashHelper": "Když CrewTAK spadne, pošle nám chybu a to, co k ní vedlo, bez obsahu úkolů.",
     "footnote": "Tyto volby můžete kdykoli změnit."
   },
   "subscription": {
@@ -719,7 +719,7 @@
     "iosStep1": "1. Otevřete v zařízení aplikaci <b>Nastavení</b>",
     "iosStep2": "2. Klepněte na své jméno v horní části obrazovky",
     "iosStep3": "3. Klepněte na <b>Předplatné</b>",
-    "iosStep4": "4. Najděte a klepněte na <b>Donetick</b>",
+    "iosStep4": "4. Najděte a klepněte na <b>CrewTAK</b>",
     "iosStep5": "5. Klepněte na <b>Zrušit předplatné</b>",
     "iosNote": "<b>Poznámka:</b> Pokud jste předplatné sjednali přes iOS a používáte webovou/desktopovou verzi, musíte ho zrušit v Nastavení iOS podle výše uvedeného postupu.",
     "androidHeading": "Pro Android:",
@@ -727,7 +727,7 @@
     "androidStep2": "2. Klepněte na ikonu profilu vpravo nahoře",
     "androidStep3": "3. Klepněte na <b>Platby a předplatná</b>",
     "androidStep4": "4. Klepněte na <b>Předplatná</b>",
-    "androidStep5": "5. Najděte a klepněte na <b>Donetick</b>",
+    "androidStep5": "5. Najděte a klepněte na <b>CrewTAK</b>",
     "androidStep6": "6. Klepněte na <b>Zrušit předplatné</b>",
     "androidNote": "<b>Poznámka:</b> Pokud jste předplatné sjednali přes Google Play a používáte webovou/desktopovou verzi, musíte ho zrušit v Google Play podle výše uvedeného postupu.",
     "webHeading": "Pro webová/desktopová předplatná:",

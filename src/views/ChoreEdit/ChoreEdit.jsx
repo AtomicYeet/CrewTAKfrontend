@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- Keep the existing editor callbacks together across wizard and single-page layouts. */
 import {
   Add,
   ArrowBack,
@@ -63,6 +62,8 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom'
+
+import { HIDE } from '@/crewtak/features'
 
 import DurationInput from '../../components/common/DurationInput'
 import EmptyState from '../../components/common/EmptyState'
@@ -717,7 +718,7 @@ const ChoreEdit = () => {
       const defaultPrivacySetting = localStorage.getItem(
         'defaultPrivacySetting',
       )
-      if (defaultPrivacySetting !== null) {
+      if (defaultPrivacySetting !== null && !HIDE.privacy) {
         setIsPrivate(JSON.parse(defaultPrivacySetting))
       }
 
@@ -745,9 +746,9 @@ const ChoreEdit = () => {
     )
 
     if (defaultAnyoneSetting === null && defaultAssigneeSetting === null) {
-      setAnyone(false)
-      setAssignableTo([{ userId: userProfile.id }])
-      setAssignedTo(userProfile.id)
+      // CrewTAK: station tasks belong to the whole crew by default.
+      setAnyone(true)
+      setAssignableTo([])
     }
   }, [choreId, userProfile?.id])
   useEffect(() => {
@@ -1577,7 +1578,9 @@ const ChoreEdit = () => {
               {!['once', 'no_repeat', 'trigger', 'always'].includes(
                 frequencyType,
               ) && (
-                <Box>
+                <Box
+                  sx={{ display: HIDE.schedulingPrefs ? 'none' : undefined }}
+                >
                   <Typography level='h4'>
                     {t('choreEdit.schedulingPrefs')}
                   </Typography>
@@ -1874,7 +1877,11 @@ const ChoreEdit = () => {
               )}
             </EditorSection>
             <EditorSection
-              title={t('taskEditor.descriptionAttachments')}
+              title={
+                HIDE.attachments
+                  ? t('choreEdit.description')
+                  : t('taskEditor.descriptionAttachments')
+              }
               icon={DescriptionOutlined}
               section='description'
               collapsible
@@ -1885,12 +1892,15 @@ const ChoreEdit = () => {
                   description.replace(/<[^>]*>/g, '').trim()
                     ? 'Instructions added'
                     : '',
-                  attachments.length
+                  !HIDE.attachments && attachments.length
                     ? `${attachments.length} file${attachments.length === 1 ? '' : 's'}`
                     : '',
                 ]
                   .filter(Boolean)
-                  .join(' · ') || 'Instructions, notes and supporting files'
+                  .join(' · ') ||
+                (HIDE.attachments
+                  ? 'Instructions and notes'
+                  : 'Instructions, notes and supporting files')
               }
             >
               <Box mb={2}>
@@ -1907,7 +1917,7 @@ const ChoreEdit = () => {
               </Box>
               <Box
                 sx={{
-                  display: 'flex',
+                  display: HIDE.attachments ? 'none' : 'flex',
                   flexWrap: 'wrap',
                   gap: 1,
                   mb: attachments.length ? 2 : 0,
@@ -1986,7 +1996,7 @@ const ChoreEdit = () => {
                   </Button>
                 )}
               </Box>
-              {attachments.length > 0 && (
+              {!HIDE.attachments && attachments.length > 0 && (
                 <Box sx={{ mt: 0 }}>
                   <Box>
                     {attachments.length > 0 && (
@@ -2131,20 +2141,27 @@ const ChoreEdit = () => {
             </EditorSection>
 
             <EditorSection
-              title={t('taskEditor.organization')}
+              title={
+                HIDE.priority && HIDE.labels
+                  ? t('choreEdit.project')
+                  : t('taskEditor.organization')
+              }
               icon={LabelOutlined}
               section='organization'
+              hidden={HIDE.priority && HIDE.labels && projects.length < 1}
               collapsible
               summary={[
-                priority
-                  ? Priorities.find(
-                      item => item.value === priority,
-                    )?.name.trim()
-                  : 'No priority',
+                HIDE.priority
+                  ? ''
+                  : priority
+                    ? Priorities.find(
+                        item => item.value === priority,
+                      )?.name.trim()
+                    : 'No priority',
                 projectId !== 'default'
                   ? projects.find(item => item.id === projectId)?.name
                   : '',
-                labelsV2.length
+                !HIDE.labels && labelsV2.length
                   ? `${labelsV2.length} label${labelsV2.length === 1 ? '' : 's'}`
                   : '',
               ]
@@ -2152,7 +2169,9 @@ const ChoreEdit = () => {
                 .join(' · ')}
             >
               <Box className='task-properties'>
-                <FormControl>
+                <FormControl
+                  sx={{ display: HIDE.priority ? 'none' : undefined }}
+                >
                   <Typography level='h4'>{t('choreEdit.priority')}</Typography>
                   <Select
                     aria-label={t('choreEdit.priority')}
@@ -2280,7 +2299,7 @@ const ChoreEdit = () => {
                   </Box>
                 )}
 
-                <Box mb={2}>
+                <Box mb={2} sx={{ display: HIDE.labels ? 'none' : undefined }}>
                   <Typography level='h4'>{t('choreEdit.labels')}</Typography>
                   <Select
                     multiple
@@ -2400,6 +2419,7 @@ const ChoreEdit = () => {
               title={t('taskEditor.onCompletion')}
               icon={BoltOutlined}
               section='actions'
+              hidden={HIDE.points && HIDE.approval && HIDE.things}
               collapsible
               defaultOpen={
                 points >= 0 || completionActions.length > 0 || requireApproval
@@ -2433,6 +2453,7 @@ const ChoreEdit = () => {
               title={t('choreEdit.notifications')}
               icon={NotificationsOutlined}
               section='notifications'
+              hidden={HIDE.notifications}
               collapsible
               defaultOpen={isNotificable}
               summary={isNotificable ? 'Reminders enabled' : 'Reminders off'}
@@ -2655,6 +2676,7 @@ const ChoreEdit = () => {
               title={t('choreEdit.privacySettings')}
               icon={LockOutlined}
               section='privacy'
+              hidden={HIDE.privacy}
               collapsible
               defaultOpen={isPrivate}
               summary={

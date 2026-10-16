@@ -7,6 +7,7 @@ export default function EditorSection({
   collapsible = false,
   defaultOpen = false,
   error,
+  hidden = false,
   hideHeading = false,
   icon: Icon,
   section,
@@ -19,6 +20,7 @@ export default function EditorSection({
     if (defaultOpen || error) setOpen(true)
   }, [defaultOpen, error])
   const expanded = !collapsible || open
+  if (hidden) return null // CrewTAK: section belongs to a hidden feature
   return (
     <Box
       data-editor-section={section}

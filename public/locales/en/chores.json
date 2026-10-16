@@ -500,7 +500,7 @@
     "notifyAll": "Notify All Assignees",
     "notifyAllHint": "If enabled, all members who can see this task will be notified. Otherwise, only the assigned person will receive the nudge.",
     "selfHostedHeading": "Heads up!",
-    "selfHostedNotice": "This feature is available on Donetick Cloud! Since you're using a self-hosted instance, nudges will require you to set up a Google Cloud account and Firebase Cloud Messaging (FCM), and build the Android or iOS app yourself.",
+    "selfHostedNotice": "This feature is available on CrewTAK Cloud! Since you're using a self-hosted instance, nudges will require you to set up a Google Cloud account and Firebase Cloud Messaging (FCM), and build the Android or iOS app yourself.",
     "selfHostedFollowUp": "We'll update this if we come up with an easier way for self-hosters to configure it."
   },
   "nfc": {
@@ -555,7 +555,7 @@
     "couldNotReadScannedImage": "Could not read the scanned image."
   },
   "searchBar": {
-    "placeholder": "Search Donetick",
+    "placeholder": "Search CrewTAK",
     "clearAria": "Clear task search"
   },
   "subTask": {
@@ -996,11 +996,11 @@
     "clear": "Clear"
   },
   "empty": {
-    "errorTitle": "Can't reach Donetick",
+    "errorTitle": "Can't reach CrewTAK",
     "errorDescription": "Your tasks are safe. We just could not load them right now, check your connection and try again.",
     "errorAction": "Try again",
     "noTasksTitle": "No tasks yet",
-    "noTasksDescription": "Create your first task and Donetick keeps track of when it is due, whose turn it is, and what comes next.",
+    "noTasksDescription": "Create your first task and CrewTAK keeps track of when it is due, whose turn it is, and what comes next.",
     "createTask": "Create a task",
     "moreOptions": "More options",
     "noMatchTitle": "No tasks match this view",

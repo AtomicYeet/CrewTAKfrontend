@@ -1,3 +1,4 @@
+import { HIDE } from '@/crewtak/features'
 const LABEL_COLORS = [
   { name: 'Default', value: '#FFFFFF' },
   { name: 'Salmon', value: '#ff7961' },
@@ -127,6 +128,8 @@ export const getTextColorFromBackgroundColor = bgColor => {
 }
 
 export const getPriorityColor = priority => {
+  // CrewTAK: priority is hidden, so every task gets the neutral stripe.
+  if (HIDE.priority) return TASK_COLOR.NO_PRIORITY
   switch (priority) {
     case 1:
       return TASK_COLOR.PRIORITY_1
