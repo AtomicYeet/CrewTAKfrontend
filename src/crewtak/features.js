@@ -21,6 +21,7 @@ export const HIDE = {
   legal: true, // privacy policy / terms links and policy-update notices
   activities: true, // Activities page (the completion log replaces it)
   nfc: true, // "Write to NFC tag" task action
+  nudge: true, // "Send nudge" task action
 }
 
 // Routes that belong to hidden features. Visiting one redirects home.

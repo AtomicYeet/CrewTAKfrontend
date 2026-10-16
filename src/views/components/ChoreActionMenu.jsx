@@ -456,15 +456,16 @@ const ChoreActionMenu = ({
       endDecorator: <ChevronRight fontSize='small' />,
     },
     { key: 'divider-utilities', type: 'divider' },
-    isOfficialInstance && {
-      key: 'nudge',
-      icon: <Notifications />,
-      label: t('actionMenu.sendNudge'),
-      onClick: () => {
-        onNudge?.()
-        handleMenuClose()
+    !HIDE.nudge &&
+      isOfficialInstance && {
+        key: 'nudge',
+        icon: <Notifications />,
+        label: t('actionMenu.sendNudge'),
+        onClick: () => {
+          onNudge?.()
+          handleMenuClose()
+        },
       },
-    },
     {
       key: 'history',
       icon: <ManageSearch />,

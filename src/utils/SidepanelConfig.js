@@ -1,3 +1,7 @@
+import { HIDE } from '@/crewtak/features'
+// CrewTAK: cards for hidden features never appear or show up as options.
+const isShownCard = item => !(HIDE.activities && item.id === 'activities')
+
 export const DEFAULT_SIDEPANEL_CONFIG = [
   {
     id: 'welcome', // legacy name, now represents User Switcher
@@ -47,7 +51,7 @@ export const DEFAULT_SIDEPANEL_CONFIG = [
     enabled: true,
     order: 5,
   },
-]
+].filter(isShownCard)
 
 export const getSidepanelConfig = () => {
   const saved = localStorage.getItem('sidepanelConfig')
@@ -75,7 +79,7 @@ export const getSidepanelConfig = () => {
       !DEFAULT_SIDEPANEL_CONFIG.find(item => item.id === savedItem.id),
   )
 
-  return [...mergedConfig, ...newSavedItems]
+  return [...mergedConfig, ...newSavedItems].filter(isShownCard)
 }
 
 export const saveSidepanelConfig = config => {
