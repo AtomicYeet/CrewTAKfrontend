@@ -86,7 +86,9 @@ registerSearchProvider({
           keywords: `${HISTORY_STATUS[entry.status] || 'activity'} ${member?.displayName || ''}`,
           route: entry.choreId
             ? `/chores/${entry.choreId}/history`
-            : '/activities',
+            : HIDE.activities
+              ? '/log'
+              : '/activities',
           updatedAt: entry.performedAt || entry.updatedAt,
         }),
       ]
@@ -134,8 +136,8 @@ registerSearchProvider({
       document('people', {
         id: `person:${member.userId}`,
         entityId: member.userId,
-        title: member.displayName || member.username || 'Circle member',
-        subtitle: 'Circle member',
+        title: member.displayName || member.username || 'Crew member',
+        subtitle: 'Crew member',
         keywords: `${member.username || ''} person member assignee tasks assigned`,
         route: `/chores?filterId=assignedTo:${member.userId}`,
       }),

@@ -294,7 +294,7 @@ function UserDeletionModal({ isOpen, onClose }) {
         step === 1
           ? 'Delete Account'
           : step === 2
-            ? 'Transfer Circle Ownership'
+            ? 'Transfer Crew Ownership'
             : 'Final Confirmation'
       }
       role={step === 3 ? 'alertdialog' : 'dialog'}

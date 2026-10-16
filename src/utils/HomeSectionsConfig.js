@@ -17,8 +17,8 @@ export const DEFAULT_HOME_SECTIONS_CONFIG = [
   },
   {
     id: 'circle',
-    name: 'Your Circle',
-    description: 'Shows what everyone in your circle is carrying this week',
+    name: 'Your Crew',
+    description: 'Shows what everyone in your crew is carrying this week',
     iconName: 'Groups',
     enabled: true,
     order: 2,

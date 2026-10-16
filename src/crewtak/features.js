@@ -19,6 +19,8 @@ export const HIDE = {
   yearlyRepeat: true,
   upstreamFeedback: true, // feedback/bug-report forms that go to donetick.com
   legal: true, // privacy policy / terms links and policy-update notices
+  activities: true, // Activities page (the completion log replaces it)
+  nfc: true, // "Write to NFC tag" task action
 }
 
 // Routes that belong to hidden features. Visiting one redirects home.
@@ -30,6 +32,7 @@ export const HIDDEN_ROUTE_PREFIXES = [
     ? ['/settings/notifications', '/settings/bridge']
     : []),
   ...(HIDE.legal ? ['/privacy', '/terms'] : []),
+  ...(HIDE.activities ? ['/activities'] : []),
 ]
 
 export const isHiddenRoute = path =>

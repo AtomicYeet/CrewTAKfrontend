@@ -35,7 +35,7 @@
     "notFoundDescription": "This label may have been deleted or is no longer shared with you.",
     "backToLabels": "Back to labels"
   },
-  "blurb": "Manage your labels and organize your tasks effectively. Labels will be automatically shared with your circle if they are used on a shared task.",
+  "blurb": "Manage your labels and organize your tasks effectively. Labels will be automatically shared with your crew if they are used on a shared task.",
   "modal": {
     "errorEmptyName": "Name cannot be empty",
     "errorDuplicate": "Label with this name already exists",
@@ -58,7 +58,7 @@
   },
   "view": {
     "emptyTitle": "No labels yet",
-    "emptyDescription": "Labels group tasks across your circle, like \"kitchen\" or \"bills\", so you can filter down to them in one tap.",
+    "emptyDescription": "Labels group tasks across your crew, like \"kitchen\" or \"bills\", so you can filter down to them in one tap.",
     "createLabel": "Create a label",
     "filterTitle": "Show",
     "sortName": "Name",

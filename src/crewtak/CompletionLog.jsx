@@ -77,6 +77,14 @@ const formatDuration = seconds => {
   return [h, m, s].map(n => String(n).padStart(2, '0')).join(':')
 }
 
+// Start time, with the day added when the task ran past midnight.
+const startLabel = (start, end, dayFormat) =>
+  !start
+    ? ''
+    : start.isSame(end, 'day')
+      ? start.format('HH:mm')
+      : start.format(`${dayFormat} HH:mm`)
+
 const csvCell = value => `"${String(value ?? '').replace(/"/g, '""')}"`
 
 const CompletionLog = () => {
@@ -134,6 +142,11 @@ const CompletionLog = () => {
             status: h.status,
             notes: stripHtml(h.notes),
             duration: formatDuration(h.duration),
+            // Start = end - timer duration; blank when the timer wasn't used.
+            start:
+              h.duration > 0
+                ? moment(at).subtract(h.duration, 'seconds')
+                : null,
           }
         })
         .filter(r => r.at.isSameOrAfter(start) && r.at.isSameOrBefore(end))
@@ -159,7 +172,8 @@ const CompletionLog = () => {
   const exportCsv = () => {
     const header = [
       'Date',
-      'Time',
+      'Start time',
+      'End time',
       'Task',
       'Completed by',
       'Shift',
@@ -170,6 +184,7 @@ const CompletionLog = () => {
     const lines = rows.map(r =>
       [
         r.at.format('YYYY-MM-DD'),
+        startLabel(r.start, r.at, 'YYYY-MM-DD'),
         r.at.format('HH:mm'),
         r.task,
         r.by,
@@ -345,7 +360,8 @@ const CompletionLog = () => {
           <thead>
             <tr>
               <th style={{ width: 120 }}>Date</th>
-              <th style={{ width: 64 }}>Time</th>
+              <th style={{ width: 72 }}>Start time</th>
+              <th style={{ width: 72 }}>End time</th>
               <th>Task</th>
               <th style={{ width: 140 }}>Completed by</th>
               <th style={{ width: 70 }}>Shift</th>
@@ -358,6 +374,9 @@ const CompletionLog = () => {
             {rows.map(r => (
               <tr key={r.id}>
                 <td>{r.at.format('ddd D MMM')}</td>
+                <td style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {startLabel(r.start, r.at, 'ddd')}
+                </td>
                 <td style={{ fontVariantNumeric: 'tabular-nums' }}>
                   {r.at.format('HH:mm')}
                 </td>
@@ -389,7 +408,7 @@ const CompletionLog = () => {
             ))}
             {!isLoading && rows.length === 0 && (
               <tr>
-                <td colSpan={8}>
+                <td colSpan={9}>
                   <Typography
                     level='body-sm'
                     textColor='text.tertiary'

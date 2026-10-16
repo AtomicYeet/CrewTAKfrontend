@@ -477,7 +477,7 @@ const ChoreActionMenu = ({
       label: t('actionMenu.clone'),
       onClick: handleClone,
     },
-    {
+    !HIDE.nfc && {
       key: 'writeNfc',
       icon: <Nfc />,
       label: t('actionMenu.writeNFC'),

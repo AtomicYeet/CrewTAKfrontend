@@ -451,7 +451,7 @@
     "scheduled": "Scheduled",
     "pendingReview": "Pending Review",
     "emptyTitle": "No one has tasks yet",
-    "emptyDescription": "Assign a task to someone in your circle and their workload shows up here."
+    "emptyDescription": "Assign a task to someone in your crew and their workload shows up here."
   },
   "filter": {
     "status": {
@@ -770,7 +770,7 @@
     "privacySettings": "Privacy Settings",
     "privacyDesc": "Who can see this task?",
     "public": "Public",
-    "publicHelp": "Everyone in your circle",
+    "publicHelp": "Everyone in your crew",
     "limited": "Limited",
     "limitedHelp": "You and others that are assigned to the task",
     "limitedDisabledHint": " (No assignees selected, Limited option is disabled)",
@@ -1100,7 +1100,7 @@
     "onCompletion": "On completion",
     "notificationsAndPrivacy": "Notifications and privacy",
     "taskNotificationsAreNotAvailableInThe": "Task notifications are not available in the Basic plan. Upgrade to Plus to receive reminders when tasks are due or completed.",
-    "visibleToEveryoneInYourCircle": "Visible to everyone in your circle.",
+    "visibleToEveryoneInYourCircle": "Visible to everyone in your crew.",
     "visibleToYouAndThePeopleEligible": "Visible to you and the people eligible for assignment.",
     "inheritedFromTheProjectTasksInA": "Inherited from the project: tasks in a private project are always private",
     "taskLog": "Task log",

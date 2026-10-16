@@ -1075,7 +1075,7 @@ const ChoreEdit = () => {
   const assignmentSummary = anyone
     ? selectedProjectIsPrivate
       ? 'Anyone who can see this project'
-      : 'Anyone in your circle'
+      : 'Anyone in your crew'
     : assignablePerformers
         .filter(user => assignableTo.some(a => a.userId === user.userId))
         .map(user => user.displayName)
@@ -2688,7 +2688,7 @@ const ChoreEdit = () => {
                     })
                   : isPrivate
                     ? 'Visible to assigned users'
-                    : 'Visible to your circle'
+                    : 'Visible to your crew'
               }
             >
               <Box>
