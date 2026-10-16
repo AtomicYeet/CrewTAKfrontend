@@ -18,6 +18,7 @@ export const HIDE = {
   adaptiveRepeat: true,
   yearlyRepeat: true,
   upstreamFeedback: true, // feedback/bug-report forms that go to donetick.com
+  legal: true, // privacy policy / terms links and policy-update notices
 }
 
 // Routes that belong to hidden features. Visiting one redirects home.
@@ -28,6 +29,7 @@ export const HIDDEN_ROUTE_PREFIXES = [
   ...(HIDE.notifications
     ? ['/settings/notifications', '/settings/bridge']
     : []),
+  ...(HIDE.legal ? ['/privacy', '/terms'] : []),
 ]
 
 export const isHiddenRoute = path =>

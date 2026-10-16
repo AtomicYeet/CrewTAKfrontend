@@ -68,6 +68,15 @@ const stripHtml = html =>
     .replace(/\s+/g, ' ')
     .trim()
 
+// Time spent from the task's start/pause timer, as HH:MM:SS.
+const formatDuration = seconds => {
+  if (typeof seconds !== 'number' || !(seconds > 0)) return ''
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = Math.floor(seconds % 60)
+  return [h, m, s].map(n => String(n).padStart(2, '0')).join(':')
+}
+
 const csvCell = value => `"${String(value ?? '').replace(/"/g, '""')}"`
 
 const CompletionLog = () => {
@@ -124,6 +133,7 @@ const CompletionLog = () => {
             shift: shiftAt(at.toDate()),
             status: h.status,
             notes: stripHtml(h.notes),
+            duration: formatDuration(h.duration),
           }
         })
         .filter(r => r.at.isSameOrAfter(start) && r.at.isSameOrBefore(end))
@@ -154,6 +164,7 @@ const CompletionLog = () => {
       'Completed by',
       'Shift',
       'Status',
+      'Duration',
       'Notes',
     ]
     const lines = rows.map(r =>
@@ -164,6 +175,7 @@ const CompletionLog = () => {
         r.by,
         r.shift,
         STATUS[r.status].label,
+        r.duration,
         r.notes,
       ]
         .map(csvCell)
@@ -338,6 +350,7 @@ const CompletionLog = () => {
               <th style={{ width: 140 }}>Completed by</th>
               <th style={{ width: 70 }}>Shift</th>
               <th style={{ width: 90 }}>Status</th>
+              <th style={{ width: 96 }}>Duration</th>
               <th>Notes</th>
             </tr>
           </thead>
@@ -364,6 +377,9 @@ const CompletionLog = () => {
                     {STATUS[r.status].label}
                   </Chip>
                 </td>
+                <td style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {r.duration || '—'}
+                </td>
                 <td>
                   <Typography level='body-sm' textColor='text.secondary'>
                     {r.notes}
@@ -373,7 +389,7 @@ const CompletionLog = () => {
             ))}
             {!isLoading && rows.length === 0 && (
               <tr>
-                <td colSpan={7}>
+                <td colSpan={8}>
                   <Typography
                     level='body-sm'
                     textColor='text.tertiary'

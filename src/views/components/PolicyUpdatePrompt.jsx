@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { HIDE } from '@/crewtak/features'
+
 import { useUserProfile } from '../../queries/UserQueries'
 import {
   acknowledgePolicyUpdate,
@@ -20,7 +22,7 @@ const PolicyUpdatePrompt = () => {
   const { data: userProfile } = useUserProfile()
 
   useEffect(() => {
-    if (!userProfile) return
+    if (!userProfile || HIDE.legal) return
 
     let timer = null
     let cancelled = false

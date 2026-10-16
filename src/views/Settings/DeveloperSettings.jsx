@@ -5,6 +5,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import { networkManager } from '../../hooks/NetworkManager'
 import useConfirmationModal from '../../hooks/useConfirmationModal'
 import { useSSEContext } from '../../hooks/useSSEContext'
@@ -869,7 +871,10 @@ const DeveloperSettings = () => {
         </Box>
       </Card>
 
-      <Card variant='outlined'>
+      <Card
+        variant='outlined'
+        sx={{ display: HIDE.legal ? 'none' : undefined }}
+      >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Typography level='title-lg'>Policy Update Notice</Typography>
           <Divider />

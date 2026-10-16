@@ -4,6 +4,8 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { useNotification } from '../../service/NotificationProvider'
 import { signUp } from '../../utils/Fetcher'
@@ -221,7 +223,11 @@ const SignupView = () => {
 
         <Typography
           level='body-xs'
-          sx={{ textAlign: 'center', color: 'text.secondary' }}
+          sx={{
+            textAlign: 'center',
+            color: 'text.secondary',
+            display: HIDE.legal ? 'none' : undefined,
+          }}
         >
           {t('signupTermsNotice')}
         </Typography>

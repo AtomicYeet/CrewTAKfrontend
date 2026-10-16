@@ -61,6 +61,15 @@ const useNow = interval => {
   return now
 }
 
+// Time left in the tour as HH:MM (hours can run past 24 on a 48-hour shift).
+// Rounded up so it never reads 00:00 while the shift is still on.
+const untilChange = (end, now) => {
+  const minutes = Math.max(0, Math.ceil((end - now) / 60000))
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+}
+
 const dueLabel = (date, now) => {
   const due = moment(date)
   const end = moment(due)
@@ -367,8 +376,7 @@ const WallDisplay = () => {
                     mt: 0.75,
                   }}
                 >
-                  {bounds.next} Shift on{' '}
-                  {moment(bounds.end).format('ddd HH:mm')}
+                  {untilChange(bounds.end, now)} until shift change
                 </Typography>
               )}
             </>

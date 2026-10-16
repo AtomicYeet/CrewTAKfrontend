@@ -14,6 +14,8 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import { authButtonSx, authInputSx } from './authStyles'
 
 const labelSx = { fontSize: '0.875rem', fontWeight: 600, mb: 0.75 }
@@ -141,6 +143,7 @@ export const AuthDivider = ({ children }) => {
 
 export const LegalLinks = () => {
   const { t } = useTranslation('auth')
+  if (HIDE.legal) return null // CrewTAK: internal app, no legal links
   return (
     <Typography
       level='body-xs'
