@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 import App from '@/App'
 import CompletionLog from '@/crewtak/CompletionLog'
+import ShiftInfo from '@/crewtak/ShiftInfo'
 import WallDisplay from '@/crewtak/WallDisplay'
 import ChoreEdit from '@/views/ChoreEdit/ChoreEdit'
 import Error from '@/views/Error'
@@ -310,6 +311,10 @@ const Router = createBrowserRouter([
       {
         path: '/display',
         element: <WallDisplay />,
+      },
+      {
+        path: '/shift',
+        element: <ShiftInfo />,
       },
       {
         path: '*',

@@ -2,6 +2,7 @@ import { Capacitor } from '@capacitor/core'
 import {
   Archive,
   ArrowBack,
+  BadgeOutlined,
   Checklist,
   FactCheckOutlined,
   FilterAlt,
@@ -58,6 +59,7 @@ const EXPANDED_NAV_WIDTH = 232
 const PUBLIC_PAGES = ['/landing', '/privacy', '/terms']
 const NAVBAR_TITLE_KEYS = {
   '/log': 'Completion log',
+  '/shift': 'Shift Info',
   '/activities': 'navigation.activities',
   '/archived': 'navigation.archived',
   '/chores': 'navigation.allTasks',
@@ -193,6 +195,11 @@ const NavBar = () => {
       to: '/display',
       label: 'Wall display',
       icon: <TvOutlined />,
+    },
+    {
+      to: '/shift',
+      label: 'Shift Info',
+      icon: <BadgeOutlined />,
     },
     {
       to: '/settings',
