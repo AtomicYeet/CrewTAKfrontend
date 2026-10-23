@@ -16,65 +16,28 @@ import {
   Sheet,
   Typography,
 } from '@mui/joy'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import moment from 'moment'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import PropTypes from 'prop-types'
 import { useEffect, useMemo, useState } from 'react'
 
 import { useCircleMembers } from '@/queries/UserQueries'
-import { apiClient } from '@/utils/ApiClient'
 
 import { ACCENT } from './brand'
-import { SHIFT_COLORS, shiftAt, shiftBoundsAt, shiftDayAt } from './shifts'
+import {
+  applyPick,
+  isPhoneSlot,
+  PHONES,
+  saveSlot,
+  shiftInfoQueryKey,
+  SLEEP_BLOCKS,
+  sleepSlot,
+  tourAt,
+  useShiftSlots,
+} from './shiftSlots'
+import { SHIFT_COLORS, shiftAt, shiftDayAt } from './shifts'
 
 // Shift Info: who carries each station phone this tour, and who has each
-// overnight sleep block. Picks are stored on the server per crew and per
-// 48-hour tour, so every device sees the same thing and a new tour starts
-// blank.
-
-const PHONES = [
-  { slot: 'phone.captain', label: "Captain's" },
-  { slot: 'phone.ff1', label: 'Firefighter 1' },
-  { slot: 'phone.ff2', label: 'Firefighter 2' },
-]
-
-const SLEEP_BLOCKS = [
-  { index: 0, label: '8p – 1130p' },
-  { index: 1, label: '1130p – 3a' },
-  { index: 2, label: '3a – 7a' },
-]
-
-const REFRESH_MS = 60 * 1000
-
-const fetchSlots = async tour => {
-  const resp = await apiClient.get(
-    `/crewtak/shift-info?tour=${encodeURIComponent(tour)}`,
-  )
-  if (!resp.ok) throw new Error('Could not load shift info')
-  const body = await resp.json()
-  const map = {}
-  ;(body.res || []).forEach(s => {
-    map[s.slot] = s.userId ?? null
-  })
-  return map
-}
-
-const saveSlot = async ({ tour, slot, userId }) => {
-  const resp = await apiClient.put(
-    '/crewtak/shift-info',
-    JSON.stringify({ tour, slot, userId }),
-  )
-  if (!resp.ok) {
-    let msg = 'Could not save'
-    try {
-      msg = (await resp.json()).error || msg
-    } catch {
-      // keep the default message
-    }
-    throw new Error(msg)
-  }
-  return resp.json()
-}
+// overnight sleep block. See shiftSlots.js for how picks are stored and reset.
 
 // Re-render every minute so the tour and shift day roll over on their own.
 const useMinuteClock = () => {
@@ -187,8 +150,7 @@ const ShiftInfo = () => {
 
   const shift = shiftAt(now)
   const shiftDay = shiftDayAt(now)
-  const bounds = shiftBoundsAt(now)
-  const tour = bounds ? moment(bounds.start).format('YYYY-MM-DD') : null
+  const tour = tourAt(now)
 
   const members = useMemo(
     () =>
@@ -205,13 +167,8 @@ const ShiftInfo = () => {
     return map
   }, [members])
 
-  const queryKey = ['crewtakShiftInfo', tour]
-  const { data: slots = {}, isError } = useQuery({
-    queryKey,
-    queryFn: () => fetchSlots(tour),
-    enabled: Boolean(tour),
-    refetchInterval: REFRESH_MS,
-  })
+  const queryKey = shiftInfoQueryKey(tour)
+  const { data: slots = {}, isError } = useShiftSlots(tour)
 
   const [error, setError] = useState(null)
   const mutation = useMutation({
@@ -220,7 +177,10 @@ const ShiftInfo = () => {
       setError(null)
       await queryClient.cancelQueries({ queryKey })
       const previous = queryClient.getQueryData(queryKey)
-      queryClient.setQueryData(queryKey, old => ({ ...old, [slot]: userId }))
+      // One phone per person: their old phone empties straight away.
+      queryClient.setQueryData(queryKey, old =>
+        applyPick(old || {}, slot, userId),
+      )
       return { previous }
     },
     onError: (err, _vars, ctx) => {
@@ -281,7 +241,11 @@ const ShiftInfo = () => {
         sx={{
           display: 'grid',
           gap: 2,
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(4, 1fr)',
+          },
           mb: 4,
         }}
       >
@@ -310,7 +274,7 @@ const ShiftInfo = () => {
         </Typography>
         <List size='lg' sx={{ '--ListItem-paddingX': '0px' }}>
           {SLEEP_BLOCKS.map(b => {
-            const slot = `sleep.${shiftDay}.${b.index}`
+            const slot = sleepSlot(shiftDay, b.index)
             return (
               <SleepRow
                 key={slot}
@@ -332,6 +296,12 @@ const ShiftInfo = () => {
           <List sx={{ maxHeight: '60vh', overflow: 'auto' }}>
             {members.map(m => {
               const selected = picking && slots[picking.slot] === m.userId
+              // Picking someone for a phone moves them off their current one.
+              const currentPhone =
+                picking &&
+                isPhoneSlot(picking.slot) &&
+                !selected &&
+                PHONES.find(p => slots[p.slot] === m.userId)
               return (
                 <ListItem key={m.userId}>
                   <ListItemButton
@@ -346,6 +316,11 @@ const ShiftInfo = () => {
                     </ListItemDecorator>
                     <ListItemContent>
                       {m.displayName || m.username}
+                      {currentPhone && (
+                        <Typography level='body-xs' sx={{ color: 'text.tertiary' }}>
+                          Has the {currentPhone.label} phone (will move)
+                        </Typography>
+                      )}
                     </ListItemContent>
                     {selected && <CheckRounded color='primary' />}
                   </ListItemButton>

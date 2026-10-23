@@ -141,7 +141,9 @@ const getInitialProject = () => {
   if (saved) {
     try {
       const project = JSON.parse(saved)
-      return project?.id || 'default'
+      // "All Projects" is a list view, not somewhere a task can live.
+      if (!project?.id || project.id === 'all') return 'default'
+      return project.id
     } catch {
       return 'default'
     }
@@ -202,7 +204,15 @@ const POINTS_SUGGESTIONS = {
 // parse so a fast type-then-Enter never creates from stale parsed state.
 const PARSE_DEBOUNCE_MS = 150
 
-const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
+const TaskInput = ({
+  // CrewTAK: when set (the Home screen's quick add), a new task starts out
+  // due today. It's still assigned to Anyone by default, as everywhere.
+  defaultDueToday = false,
+  initialMode,
+  isModalOpen,
+  onChoreUpdate,
+  onClose,
+}) => {
   const { t } = useTranslation('chores')
   // Claims the keyboard while open so background listeners (e.g. the project
   // selector's own Cmd+E) know to stay out of the way — see
@@ -430,6 +440,18 @@ const TaskInput = ({ initialMode, isModalOpen, onChoreUpdate, onClose }) => {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectAudienceKey])
+
+  // Pre-fill "due today" once each time the modal opens (see defaultDueToday).
+  const appliedDefaultDueRef = useRef(false)
+  useEffect(() => {
+    if (!isModalOpen) {
+      appliedDefaultDueRef.current = false
+      return
+    }
+    if (!defaultDueToday || appliedDefaultDueRef.current) return
+    appliedDefaultDueRef.current = true
+    setDueDateOnly(current => current || moment().format('YYYY-MM-DD'))
+  }, [isModalOpen, defaultDueToday])
 
   // Quick-capture widget entry points (donetick://chores/add?mode=voice|scan)
   // land here: open straight into the requested panel, once per modal open so

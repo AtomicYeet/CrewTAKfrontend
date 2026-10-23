@@ -241,7 +241,7 @@ const Error = () => {
       <Box sx={{ display: 'flex', gap: 3, mb: 5 }}>
         <Button
           component={Link}
-          to='/chores'
+          to='/tasks'
           variant='plain'
           color='neutral'
           size='lg'

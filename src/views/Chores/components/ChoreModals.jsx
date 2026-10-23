@@ -14,7 +14,7 @@ import WriteNFCModal from '../../Modals/Inputs/WriteNFCModal'
 const getNFCUrl = choreId =>
   Capacitor.getPlatform() === 'android' || Capacitor.getPlatform() === 'ios'
     ? `donetick://chores/${choreId}`
-    : `${window.location.origin}/chores/${choreId}`
+    : `${window.location.origin}/tasks/${choreId}`
 
 const ChoreModals = ({
   activeModal,

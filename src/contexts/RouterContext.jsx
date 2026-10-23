@@ -1,4 +1,9 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+  useLocation,
+} from 'react-router-dom'
 
 import App from '@/App'
 import CompletionLog from '@/crewtak/CompletionLog'
@@ -62,6 +67,18 @@ import ThingsView from '../views/Things/ThingsView'
 import TimerDetails from '../views/Timer/TimerDetails'
 import UserActivities from '../views/User/UserActivities'
 import UserPoints from '../views/User/UserPoints'
+
+// CrewTAK renamed /chores to /tasks. Old bookmarks, saved home-screen
+// shortcuts and saved default views still point at /chores, so forward them
+// (keeping the rest of the path and the query string).
+const LegacyChoresRedirect = () => {
+  const { pathname, search, hash } = useLocation()
+  const to = pathname.replace(/^\/(my\/)?chores/, (_m, my) =>
+    my ? '/my/tasks' : '/tasks',
+  )
+  return <Navigate to={`${to}${search}${hash}`} replace />
+}
+
 const Router = createBrowserRouter([
   {
     path: '/',
@@ -159,7 +176,7 @@ const Router = createBrowserRouter([
         ],
       },
       {
-        path: '/chores',
+        path: '/tasks',
         element: <MyChores />,
       },
       {
@@ -171,27 +188,27 @@ const Router = createBrowserRouter([
         element: <ArchivedTasks />,
       },
       {
-        path: '/chores/:choreId/edit',
+        path: '/tasks/:choreId/edit',
         element: <ChoreEdit />,
       },
       {
-        path: '/chores/:choreId',
+        path: '/tasks/:choreId',
         element: <ChoreView />,
       },
       {
-        path: '/chores/create',
+        path: '/tasks/create',
         element: <ChoreEdit />,
       },
       {
-        path: '/chores/:choreId/history',
+        path: '/tasks/:choreId/history',
         element: <ChoreHistory />,
       },
       {
-        path: '/chores/:choreId/timer',
+        path: '/tasks/:choreId/timer',
         element: <TimerDetails />,
       },
       {
-        path: '/my/chores',
+        path: '/my/tasks',
         element: <MyChores />,
       },
       {
@@ -315,6 +332,14 @@ const Router = createBrowserRouter([
       {
         path: '/shift',
         element: <ShiftInfo />,
+      },
+      {
+        path: '/chores/*',
+        element: <LegacyChoresRedirect />,
+      },
+      {
+        path: '/my/chores',
+        element: <LegacyChoresRedirect />,
       },
       {
         path: '*',

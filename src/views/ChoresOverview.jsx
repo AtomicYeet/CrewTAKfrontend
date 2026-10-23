@@ -168,7 +168,7 @@ const ChoresOverview = () => {
         <Grid item sm={6} justifyContent={'flex-end'} display={'flex'} gap={2}>
           <Button
             onClick={() => {
-              Navigate(`/chores/create`)
+              Navigate(`/tasks/create`)
             }}
           >
             {t('overview.newChore')}
@@ -198,7 +198,7 @@ const ChoresOverview = () => {
               </td>
               <td
                 onClick={() => {
-                  Navigate(`/chores/${chore.id}/edit`)
+                  Navigate(`/tasks/${chore.id}/edit`)
                 }}
               >
                 {chore.name || '--'}
@@ -303,7 +303,7 @@ const ChoresOverview = () => {
                     //   borderRadius: '50%',
                     // }}
                     onClick={() => {
-                      Navigate(`/chores/${chore.id}/edit`)
+                      Navigate(`/tasks/${chore.id}/edit`)
                     }}
                   >
                     <Edit />

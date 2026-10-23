@@ -1,4 +1,4 @@
-import { CheckCircleOutline } from '@mui/icons-material'
+import { CheckCircleOutline, ClearAll } from '@mui/icons-material'
 import { Box, Sheet, Typography } from '@mui/joy'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +13,15 @@ import { useNavigate } from 'react-router-dom'
  * The `filterId` values must stay in step with INSIGHT_FILTER_DEFS in
  * SmartInsightsCard, which is what /chores reads back out of the URL.
  */
-const TriageRow = ({ comingUp, dueToday, needsReview, overdue, unplanned }) => {
+const TriageRow = ({
+  clearingOverdue = false,
+  comingUp,
+  dueToday,
+  needsReview,
+  onClearOverdue,
+  overdue,
+  unplanned,
+}) => {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
 
@@ -70,10 +78,12 @@ const TriageRow = ({ comingUp, dueToday, needsReview, overdue, unplanned }) => {
 
   // One category on its own is a statement, not a comparison, so it spans the
   // row and reads left to right instead of sitting orphaned in the corner.
-  const solo = tiles.length === 1
+  // CrewTAK: a fourth button that skips every overdue task at once.
+  const showClear = overdue > 0 && Boolean(onClearOverdue)
+  const solo = tiles.length === 1 && !showClear
 
   return (
-    <Box sx={{ display: 'flex', gap: 1 }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
       {tiles.map(tile => (
         <Sheet
           key={tile.key}
@@ -81,7 +91,7 @@ const TriageRow = ({ comingUp, dueToday, needsReview, overdue, unplanned }) => {
           type='button'
           variant='soft'
           color={tile.color}
-          onClick={() => navigate(`/chores?filterId=${tile.filterId}`)}
+          onClick={() => navigate(`/tasks?filterId=${tile.filterId}`)}
           sx={{
             border: 'none',
             borderRadius: 'lg',
@@ -127,11 +137,61 @@ const TriageRow = ({ comingUp, dueToday, needsReview, overdue, unplanned }) => {
           </Typography>
         </Sheet>
       ))}
+      {showClear && (
+        <Sheet
+          component='button'
+          type='button'
+          variant='outlined'
+          color='danger'
+          disabled={clearingOverdue}
+          onClick={onClearOverdue}
+          aria-label='Clear all overdue tasks'
+          sx={{
+            alignItems: 'center',
+            borderRadius: 'lg',
+            borderWidth: 2,
+            cursor: clearingOverdue ? 'progress' : 'pointer',
+            display: 'flex',
+            flex: '1 1 0',
+            font: 'inherit',
+            gap: 1,
+            maxWidth: 190,
+            minWidth: 150,
+            opacity: clearingOverdue ? 0.6 : 1,
+            px: 1.5,
+            py: 1.25,
+            textAlign: 'start',
+            transition: 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)',
+            '&:hover': { transform: 'translateY(-2px)' },
+            '&:active': { transform: 'none' },
+            '@media (prefers-reduced-motion: reduce)': {
+              transition: 'none',
+              '&:hover': { transform: 'none' },
+            },
+          }}
+        >
+          <ClearAll sx={{ fontSize: 26, flexShrink: 0 }} />
+          <Typography
+            level='body-xs'
+            sx={{
+              color: 'inherit',
+              fontWeight: 800,
+              letterSpacing: '0.04em',
+              lineHeight: 1.2,
+              textTransform: 'uppercase',
+            }}
+          >
+            {clearingOverdue ? 'Clearing…' : 'Clear all overdue tasks'}
+          </Typography>
+        </Sheet>
+      )}
     </Box>
   )
 }
 
 TriageRow.propTypes = {
+  clearingOverdue: PropTypes.bool,
+  onClearOverdue: PropTypes.func,
   comingUp: PropTypes.number.isRequired,
   dueToday: PropTypes.number.isRequired,
   needsReview: PropTypes.number.isRequired,

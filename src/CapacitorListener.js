@@ -30,7 +30,7 @@ const routerNavigate = (path, { seedHome = false } = {}) => {
     // On a cold deep-link launch there is no real screen behind the target, so
     // seed the chore list as the back target before pushing the chore view.
     if (seedHome && ['/', '/home'].includes(window.location.pathname)) {
-      navigateFn('/chores', { replace: true })
+      navigateFn('/tasks', { replace: true })
     }
     navigateFn(path)
   } else {
@@ -42,7 +42,7 @@ const routerNavigate = (path, { seedHome = false } = {}) => {
 // local and push notifications so they all get consistent cold-start handling.
 const navigateToChore = (choreId, { autoComplete, isColdStart } = {}) => {
   if (choreId == null || choreId === '') return
-  const path = `/chores/${choreId}${autoComplete ? '?auto_complete=' + autoComplete : ''}`
+  const path = `/tasks/${choreId}${autoComplete ? '?auto_complete=' + autoComplete : ''}`
 
   // If we're already on the target page, skip (avoids redundant navigation).
   if (window.location.pathname + window.location.search === path) return
@@ -99,8 +99,8 @@ const handleUrlOpen = (url, isColdStart = false) => {
     }
     routerNavigate(
       mode === 'scan' || mode === 'voice'
-        ? `/chores?add_task=1&mode=${mode}`
-        : '/chores?add_task=1',
+        ? `/tasks?add_task=1&mode=${mode}`
+        : '/tasks?add_task=1',
     )
   } else if (url.startsWith('donetick://chores/')) {
     handleNFCChoreDeepLink(url, isColdStart)
@@ -306,7 +306,7 @@ const pushNotificationListenerRegistration = async () => {
           isColdStart: true,
         })
       } else {
-        routerNavigate('/chores')
+        routerNavigate('/tasks')
       }
     }
   })

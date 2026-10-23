@@ -621,7 +621,7 @@ const FilterView = () => {
                   }
                   onClick={() =>
                     navigate(
-                      `/chores?filterId=${encodeURIComponent(filter.id)}`,
+                      `/tasks?filterId=${encodeURIComponent(filter.id)}`,
                     )
                   }
                   key={filter.id}

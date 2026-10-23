@@ -249,7 +249,7 @@ export const getChoreTrailingActions = ({
       key='edit'
       onClick={() => {
         hapticMedium()
-        navigate(`/chores/${chore.id}/edit`)
+        navigate(`/tasks/${chore.id}/edit`)
       }}
     >
       <SwipeActionTile

@@ -62,7 +62,7 @@ const NAVBAR_TITLE_KEYS = {
   '/shift': 'Shift Info',
   '/activities': 'navigation.activities',
   '/archived': 'navigation.archived',
-  '/chores': 'navigation.allTasks',
+  '/tasks': 'navigation.allTasks',
   '/filters': 'navigation.filters',
   '/labels': 'navigation.labels',
   '/points': 'navigation.points',
@@ -106,7 +106,7 @@ const NavBar = () => {
       : location.pathname
   const navbarTitleKey = NAVBAR_TITLE_KEYS[normalizedPath]
   const supportsDynamicNavBar =
-    normalizedPath === '/chores' || /^\/labels\/[^/]+$/.test(normalizedPath)
+    normalizedPath === '/tasks' || /^\/labels\/[^/]+$/.test(normalizedPath)
   const dynamicNavBarConfig = supportsDynamicNavBar ? navBarConfig : null
   const navbarTitle =
     dynamicNavBarConfig?.title || (navbarTitleKey ? t(navbarTitleKey) : null)
@@ -146,7 +146,7 @@ const NavBar = () => {
       exact: true,
     },
     {
-      to: '/chores',
+      to: '/tasks',
       label: t('navigation.allTasks'),
       icon: <Checklist />,
     },
@@ -228,7 +228,7 @@ const NavBar = () => {
           variant='plain'
           onClick={() => {
             if (window.history.state?.idx > 0) navigate(-1)
-            else navigate('/chores', { replace: true })
+            else navigate('/tasks', { replace: true })
           }}
           aria-label={t('backFromSearch')}
           title={t('back')}
@@ -242,7 +242,7 @@ const NavBar = () => {
     if (!Capacitor.isNativePlatform()) return menuButton
 
     if (
-      ['/', '/home', '/chores'].includes(location.pathname) &&
+      ['/', '/home', '/tasks'].includes(location.pathname) &&
       !searchParams.get('filterId')
     ) {
       return isMobile ? null : menuButton
@@ -253,7 +253,7 @@ const NavBar = () => {
         size='md'
         variant='plain'
         onClick={() =>
-          location.pathname === '/chores' ? navigate('/') : navigate(-1)
+          location.pathname === '/tasks' ? navigate('/') : navigate(-1)
         }
         aria-label={
           searchParams.get('from') === 'calendar'

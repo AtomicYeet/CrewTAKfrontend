@@ -498,7 +498,7 @@ const ProjectView = () => {
     // For default project, use 'default', for others use project ID
     const projectIdentifier = project.id === 'default' ? 'default' : project.id
     setSelectedProjectWithCache(project)
-    navigate(`/chores?project=${encodeURIComponent(projectIdentifier)}`)
+    navigate(`/tasks?project=${encodeURIComponent(projectIdentifier)}`)
   }
 
   useEffect(() => {

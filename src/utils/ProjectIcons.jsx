@@ -11,6 +11,7 @@ import {
   FolderOpen,
   Games,
   Home,
+  LayersOutlined,
   LocalHospital,
   MusicNote,
   Palette,
@@ -55,6 +56,8 @@ const PROJECT_ICONS = [
 export default PROJECT_ICONS
 
 export const getIconComponent = iconValue => {
+  // CrewTAK: the synthesized "All Projects" view (not a real, pickable icon).
+  if (iconValue === 'AllProjects') return LayersOutlined
   const iconData = PROJECT_ICONS.find(icon => icon.value === iconValue)
   return iconData ? iconData.icon : FolderOpen
 }

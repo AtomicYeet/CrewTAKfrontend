@@ -145,7 +145,7 @@ const GettingStarted = () => {
           fullWidth
           startDecorator={<AutoAwesome />}
           onClick={() => {
-            navigate('/chores')
+            navigate('/tasks')
           }}
         >
           Start Now!

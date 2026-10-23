@@ -121,7 +121,7 @@ const hasHtmlTags = value => /<\/?[a-z][\s\S]*>/i.test(value)
 const getNFCUrl = choreId =>
   Capacitor.getPlatform() === 'android' || Capacitor.getPlatform() === 'ios'
     ? `donetick://chores/${choreId}`
-    : `${window.location.origin}/chores/${choreId}`
+    : `${window.location.origin}/tasks/${choreId}`
 
 const ChoreView = () => {
   const { t } = useTranslation('chores')
@@ -656,7 +656,7 @@ const ChoreView = () => {
               title: t('choreView.taskDeletedTitle'),
               message: t('choreView.taskDeletedMessage'),
             })
-            navigate('/chores')
+            navigate('/tasks')
           }
         } catch (error) {
           showError({
@@ -816,7 +816,7 @@ const ChoreView = () => {
           icon={<Checklist />}
           title={t('choreView.notFoundTitle')}
           description={t('choreView.notFoundDescription')}
-          primaryAction={{ label: t('archived.backToTasks'), to: '/chores' }}
+          primaryAction={{ label: t('archived.backToTasks'), to: '/tasks' }}
         />
       </Container>
     )
@@ -930,7 +930,7 @@ const ChoreView = () => {
                     handleChoreStart()
                   }
                 }}
-                onShowDetails={() => navigate(`/chores/${choreId}/timer`)}
+                onShowDetails={() => navigate(`/tasks/${choreId}/timer`)}
               />
             </Grid>
           )}
@@ -1014,7 +1014,7 @@ const ChoreView = () => {
             variant='plain'
             fullWidth
             onClick={() => {
-              navigate(`/chores/${choreId}/history`)
+              navigate(`/tasks/${choreId}/history`)
             }}
             sx={{
               flexDirection: 'column',
@@ -1039,7 +1039,7 @@ const ChoreView = () => {
               p: 1,
             }}
             onClick={() => {
-              navigate(`/chores/${choreId}/edit`)
+              navigate(`/tasks/${choreId}/edit`)
             }}
           >
             <Edit />
@@ -1491,7 +1491,7 @@ const ChoreView = () => {
                     handleChoreStart()
                   }
                 }}
-                onShowDetails={() => navigate(`/chores/${choreId}/timer`)}
+                onShowDetails={() => navigate(`/tasks/${choreId}/timer`)}
                 onResetTimer={handleResetTimer}
                 onClearAllTime={handleClearAllTime}
                 fullWidth

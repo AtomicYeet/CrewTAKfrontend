@@ -106,7 +106,7 @@ import { getIconComponent } from '../../utils/ProjectIcons'
 import { getSafeBottomPadding } from '../../utils/SafeAreaUtils.js'
 import { useSinglePageTaskEditor } from '../../utils/TaskEditorPreferences'
 import { generateUUID } from '../../utils/UUID'
-import { useProjectFilter } from '../Chores/hooks/useProjectFilter.js'
+import { projectIdForNewTask, useProjectFilter } from '../Chores/hooks/useProjectFilter.js'
 import LoadingComponent from '../components/Loading.jsx'
 import RichTextEditor from '../components/RichTextEditor.jsx'
 import SubTasks from '../components/SubTask.jsx'
@@ -226,8 +226,10 @@ const ChoreEdit = () => {
   const { projectsWithDefault, selectedProject, setSelectedProjectWithCache } =
     useProjectFilter(projects)
 
+  // "All Projects" is a list view, not a real project: new tasks made while
+  // it is selected go to the default project.
   const [projectId, setProjectId] = useState(
-    selectedProject ? selectedProject.id : 'default',
+    projectIdForNewTask(selectedProject),
   )
 
   const updateChoreMutation = useUpdateChore()
@@ -688,7 +690,7 @@ const ChoreEdit = () => {
         }
         dirtyGuard.current = false
         setSavedSnapshot(latestSnapshot.current)
-        Navigate(shouldCreateAnother ? '/chores/create' : '/chores', {
+        Navigate(shouldCreateAnother ? '/tasks/create' : '/tasks', {
           state: shouldCreateAnother ? { createAnother: true } : null,
         })
       })
@@ -811,7 +813,7 @@ const ChoreEdit = () => {
       // Cmd/Ctrl + Escape key to cancel
       if (event.key === 'Escape' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault()
-        Navigate(choreId ? `/chores/${choreId}` : '/chores')
+        Navigate(choreId ? `/tasks/${choreId}` : '/tasks')
         return
       }
     }
@@ -1047,7 +1049,7 @@ const ChoreEdit = () => {
         if (isConfirmed === true) {
           deleteChores.mutate([choreId], {
             onSuccess: () => {
-              Navigate('/chores')
+              Navigate('/tasks')
             },
             onError: error => {
               showError({
@@ -1098,7 +1100,7 @@ const ChoreEdit = () => {
           icon={<Checklist />}
           title={t('choreView.notFoundTitle')}
           description={t('choreView.notFoundDescription')}
-          primaryAction={{ label: t('archived.backToTasks'), to: '/chores' }}
+          primaryAction={{ label: t('archived.backToTasks'), to: '/tasks' }}
         />
       </Container>
     )
@@ -1106,7 +1108,7 @@ const ChoreEdit = () => {
   return (
     <WizardContainer
       maxWidth={false}
-      onClose={() => Navigate(choreId ? `/chores/${choreId}` : '/chores')}
+      onClose={() => Navigate(choreId ? `/tasks/${choreId}` : '/tasks')}
       onClickCapture={captureInitialValues}
       onChangeCapture={captureInitialValues}
       onKeyDownCapture={captureInitialValues}
@@ -1229,7 +1231,7 @@ const ChoreEdit = () => {
               color='neutral'
               variant='plain'
               onClick={() =>
-                Navigate(choreId ? `/chores/${choreId}` : '/chores')
+                Navigate(choreId ? `/tasks/${choreId}` : '/tasks')
               }
               sx={{ display: { xs: 'inline-flex', sm: 'none' } }}
             >
@@ -2923,7 +2925,7 @@ const ChoreEdit = () => {
               color='neutral'
               variant='plain'
               onClick={() => {
-                Navigate(choreId ? `/chores/${choreId}` : '/chores')
+                Navigate(choreId ? `/tasks/${choreId}` : '/tasks')
               }}
             >
               {t('taskEditor.cancel')}

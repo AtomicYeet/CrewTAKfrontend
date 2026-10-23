@@ -5,6 +5,7 @@ import {
   Check,
   CloudOff,
   EditCalendar,
+  EventRepeat,
   ExpandCircleDown,
   Person,
   PriorityHigh,
@@ -21,6 +22,8 @@ import {
   Container,
   Divider,
   IconButton,
+  Option,
+  Select,
   Typography,
 } from '@mui/joy'
 import { useMediaQuery } from '@mui/material'
@@ -30,6 +33,12 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { HIDE } from '@/crewtak/features'
+import {
+  expandRepeats,
+  loadRepeatHorizon,
+  REPEAT_HORIZON_OPTIONS,
+  saveRepeatHorizon,
+} from '@/crewtak/projectRepeats'
 
 import EmptyState from '../../components/common/EmptyState'
 import KeyboardShortcutHint from '../../components/common/KeyboardShortcutHint'
@@ -40,6 +49,7 @@ import { useChores } from '../../queries/ChoreQueries'
 import { useCircleMembers, useUserProfile } from '../../queries/UserQueries'
 import { useNotification } from '../../service/NotificationProvider'
 import {
+  buildActualDateGroups,
   ChoreFilters,
   ChoresGrouper,
   ChoreSorter,
@@ -72,7 +82,11 @@ import { useChoreModals } from './hooks/useChoreModals'
 import { useCustomFilters } from './hooks/useCustomFilters'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useMultiSelect } from './hooks/useMultiSelect'
-import { useProjectFilter } from './hooks/useProjectFilter'
+import {
+  ALL_PROJECTS,
+  isAllProjects,
+  useProjectFilter,
+} from './hooks/useProjectFilter'
 import {
   canScheduleNotification,
   scheduleChoreNotification,
@@ -181,6 +195,13 @@ const MyChores = () => {
     localStorage.getItem('choreCardViewMode') || 'default',
   )
   const [selectedCalendarDate, setSelectedCalendarDate] = useState(new Date())
+  // CrewTAK: how far ahead to show future repeats of repeating tasks (days);
+  // 0 hides them and shows only each task's next occurrence.
+  const [repeatHorizon, setRepeatHorizon] = useState(loadRepeatHorizon)
+  const changeRepeatHorizon = days => {
+    setRepeatHorizon(days)
+    saveRepeatHorizon(days)
+  }
   const [confirmModelConfig, setConfirmModelConfig] = useState({})
 
   const { projectsWithDefault, selectedProject, setSelectedProjectWithCache } =
@@ -304,11 +325,18 @@ const MyChores = () => {
         : hasCustomProjects
           ? t('toolbar.defaultProject')
           : t('common:navigation.allTasks')
+  // The title dropdown also offers "All Projects" (CrewTAK), an overview of
+  // every task at once. It is kept out of projectsWithDefault on purpose, since
+  // that list also feeds filter builders and "move to project" menus.
+  const projectPickerItems = useMemo(
+    () => [ALL_PROJECTS, ...projectsWithDefault],
+    [projectsWithDefault],
+  )
   const projectSelector = useMemo(
     () =>
       hasCustomProjects && !activeFilterId && !tempFilter
         ? {
-            items: projectsWithDefault,
+            items: projectPickerItems,
             onSelect: handleProjectSelect,
             selectedId: isDefaultProject ? 'default' : selectedProject.id,
             type: 'project',
@@ -319,7 +347,7 @@ const MyChores = () => {
       handleProjectSelect,
       hasCustomProjects,
       isDefaultProject,
-      projectsWithDefault,
+      projectPickerItems,
       selectedProject?.id,
       tempFilter,
     ],
@@ -508,7 +536,17 @@ const MyChores = () => {
       choresToGroup = filterByProject(chores, selectedProject.id)
     }
 
-    const sections = ChoresGrouper(
+    // CrewTAK: add each repeating task's later occurrences (date-based
+    // groupings only; they mean nothing when grouping by priority etc.).
+    const showRepeats =
+      repeatHorizon > 0 &&
+      (selectedChoreSection === 'default' ||
+        selectedChoreSection === 'due_date')
+    if (showRepeats) {
+      choresToGroup = expandRepeats(choresToGroup, repeatHorizon)
+    }
+
+    let sections = ChoresGrouper(
       selectedChoreSection,
       choresToGroup,
       ChoreFilters(impersonatedUser?.userId || userProfile?.id)[
@@ -516,6 +554,47 @@ const MyChores = () => {
       ],
       choreSortDirection,
     )
+
+    // With repeats shown, the broad buckets (Tomorrow / Next 7 Days / Later
+    // This Month / Future) get long, so lay that part out day by day like a
+    // calendar agenda instead.
+    if (showRepeats && selectedChoreSection === 'default') {
+      const FUTURE_BUCKETS = [
+        'Tomorrow',
+        'Next 7 Days',
+        'Later This Month',
+        'Future',
+      ]
+      const future = sections
+        .filter(s => FUTURE_BUCKETS.includes(s.name))
+        .flatMap(s => s.content)
+      if (future.length) {
+        const { dateGroups } = buildActualDateGroups(future)
+        const firstFutureIdx = sections.findIndex(s =>
+          FUTURE_BUCKETS.includes(s.name),
+        )
+        const rest = sections.filter(s => !FUTURE_BUCKETS.includes(s.name))
+        const tomorrowKey = new Date(
+          Date.now() + 24 * 60 * 60 * 1000,
+        ).toDateString()
+        const dayGroups = dateGroups.map(g => ({
+          ...g,
+          name:
+            g.content[0] &&
+            new Date(g.content[0].nextDueDate).toDateString() === tomorrowKey
+              ? `Tomorrow · ${g.name}`
+              : g.name,
+        }))
+        const insertAt = sections
+          .slice(0, firstFutureIdx)
+          .filter(s => !FUTURE_BUCKETS.includes(s.name)).length
+        sections = [
+          ...rest.slice(0, insertAt),
+          ...dayGroups,
+          ...rest.slice(insertAt),
+        ]
+      }
+    }
 
     return sections.map(section => ({
       ...section,
@@ -537,6 +616,7 @@ const MyChores = () => {
     selectedProject,
     impersonatedUser?.userId,
     userProfile?.id,
+    repeatHorizon,
   ])
 
   useEffect(() => {
@@ -589,6 +669,27 @@ const MyChores = () => {
     setOpenChoreSections(openSections)
   }, [choreSections])
 
+  // Selection works on real tasks only (future repeats are display-only), and
+  // a section counts as expanded unless it was closed on purpose (CrewTAK).
+  const selectableSections = useMemo(
+    () =>
+      choreSections.map(section => ({
+        ...section,
+        content: (section.content || []).filter(chore => !chore._projected),
+      })),
+    [choreSections],
+  )
+  const expandedSectionMap = useMemo(
+    () =>
+      Object.fromEntries(
+        choreSections.map((_section, index) => [
+          index,
+          openChoreSections[index] !== false,
+        ]),
+      ),
+    [choreSections, openChoreSections],
+  )
+
   // A global-search result can hand a query back to the task list as a scoped filter.
   useEffect(() => {
     const query = searchParams.get('search')
@@ -609,7 +710,7 @@ const MyChores = () => {
     const projectIdFromUrl = searchParams.get('project')
 
     if (projectIdFromUrl && projectIdFromUrl !== String(selectedProject?.id)) {
-      const project = projectsWithDefault.find(
+      const project = projectPickerItems.find(
         p => String(p.id) === projectIdFromUrl,
       )
       if (project) {
@@ -619,7 +720,7 @@ const MyChores = () => {
   }, [
     searchParams,
     projects,
-    projectsWithDefault,
+    projectPickerItems,
     selectedProject,
     setSelectedProjectWithCache,
   ])
@@ -771,7 +872,7 @@ const MyChores = () => {
       params.delete('filter')
       params.set('filterId', insightId)
       Navigate(
-        { pathname: '/chores', search: params.toString() },
+        { pathname: '/tasks', search: params.toString() },
         { replace: true },
       )
     } else if (
@@ -782,7 +883,7 @@ const MyChores = () => {
       // Only clear filterId if it was set by an insight (not a numeric saved filter)
       params.delete('filterId')
       Navigate(
-        { pathname: '/chores', search: params.toString() },
+        { pathname: '/tasks', search: params.toString() },
         { replace: true },
       )
     }
@@ -861,11 +962,11 @@ const MyChores = () => {
     searchFilter:
       hasQuickFilters || searchTerm?.length > 0 ? 'filtered' : 'All',
     filteredChores: getFilteredChores,
-    choreSections,
-    openChoreSections,
+    choreSections: selectableSections,
+    openChoreSections: expandedSectionMap,
     handlers: {
       onOpenTaskModal: () => setAddTaskModalOpen(true),
-      onNavigateToCreate: () => Navigate('/chores/create'),
+      onNavigateToCreate: () => Navigate('/tasks/create'),
       onFocusSearch: () => searchInputRef.current?.focus(),
       onCloseSearch: () => {
         setSearchTerm('')
@@ -874,11 +975,11 @@ const MyChores = () => {
       onEnableMultiSelectAndSelectAll: () => {
         toggleMultiSelectMode()
         setTimeout(() => {
-          selectAllVisibleChores(null, choreSections, openChoreSections)
+          selectAllVisibleChores(null, selectableSections, expandedSectionMap)
         }, 0)
       },
       onSelectAll: () =>
-        selectAllVisibleChores(null, choreSections, openChoreSections),
+        selectAllVisibleChores(null, selectableSections, expandedSectionMap),
       onClearSelection: clearSelection,
       onBulkComplete: handleBulkComplete,
       onBulkSkip: handleBulkSkip,
@@ -947,7 +1048,7 @@ const MyChores = () => {
 
     // Always navigate with params (preserves project param)
     Navigate(
-      { pathname: '/chores', search: params.toString() },
+      { pathname: '/tasks', search: params.toString() },
       { replace: true },
     )
   }
@@ -1018,15 +1119,25 @@ const MyChores = () => {
     }
   }
 
+  // CrewTAK: the calendar shows future repeats too (at least two months out,
+  // so the month grid isn't half empty), unless repeats are switched off.
+  const calendarChores = useMemo(
+    () =>
+      repeatHorizon > 0
+        ? expandRepeats(getFilteredChores, Math.max(repeatHorizon, 62))
+        : getFilteredChores,
+    [getFilteredChores, repeatHorizon],
+  )
+
   const selectedDateChores = useMemo(() => {
     if (!selectedCalendarDate) return []
 
     const selectedDate = selectedCalendarDate.toLocaleDateString()
-    return getFilteredChores.filter(chore => {
+    return calendarChores.filter(chore => {
       if (!chore.nextDueDate) return false
       return new Date(chore.nextDueDate).toLocaleDateString() === selectedDate
     })
-  }, [getFilteredChores, selectedCalendarDate])
+  }, [calendarChores, selectedCalendarDate])
 
   // The assignee filter ("Mine", "Available to me", ...) is applied inside
   // ChoresGrouper, not in projectFilteredChores, so it can hide every task
@@ -1047,7 +1158,9 @@ const MyChores = () => {
     hasAssigneeFilter,
   )
   const isCustomProjectSelected = Boolean(
-    selectedProject && selectedProject.id !== 'default',
+    selectedProject &&
+    selectedProject.id !== 'default' &&
+    !isAllProjects(selectedProject),
   )
   // Worth its own wording: the assignee filter is the one narrowing that is
   // easy to forget you left on, so name it rather than saying "filters".
@@ -1246,8 +1359,8 @@ const MyChores = () => {
               searchTerm?.length > 0 || hasQuickFilters || activeFilterId
                 ? getFilteredChores
                 : null,
-              choreSections,
-              openChoreSections,
+              selectableSections,
+              expandedSectionMap,
             )
           }
           onClear={clearSelection}
@@ -1269,7 +1382,7 @@ const MyChores = () => {
             searchTerm?.length > 0 || hasQuickFilters
               ? selectedChores.size === getFilteredChores.length
               : selectedChores.size ===
-                choreSections.flatMap(s => s.content || []).length
+                selectableSections.flatMap(s => s.content || []).length
           }
         />
 
@@ -1298,7 +1411,7 @@ const MyChores = () => {
               }}
               secondaryAction={{
                 label: t('chores:empty.moreOptions'),
-                onClick: () => Navigate('/chores/create'),
+                onClick: () => Navigate('/tasks/create'),
               }}
             />
           ) : isNarrowed &&
@@ -1374,13 +1487,48 @@ const MyChores = () => {
             onLongPressChore={enterMultiSelectWithChore}
           />
         )}
+        {searchTerm.length === 0 &&
+          chores.length > 0 &&
+          (viewMode === 'calendar' ||
+            selectedChoreSection === 'default' ||
+            selectedChoreSection === 'due_date') && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: 1,
+                mb: 1,
+              }}
+            >
+              <EventRepeat sx={{ fontSize: 18, color: 'text.tertiary' }} />
+              <Typography level='body-sm' sx={{ color: 'text.tertiary' }}>
+                Upcoming repeats
+              </Typography>
+              <Select
+                size='sm'
+                variant='outlined'
+                value={repeatHorizon}
+                onChange={(_e, value) => changeRepeatHorizon(value ?? 0)}
+                aria-label='How far ahead to show repeating tasks'
+                sx={{ minWidth: 120 }}
+              >
+                <Option value={0}>Off</Option>
+                {REPEAT_HORIZON_OPTIONS.map(o => (
+                  <Option key={o.days} value={o.days}>
+                    {o.label}
+                  </Option>
+                ))}
+              </Select>
+            </Box>
+          )}
         {viewMode === 'calendar' && (
           <>
             {/* Calendar Monthly View */}
             <Box sx={{ mb: 2 }}>
               {isLargeScreen ? (
                 <CalendarDual
-                  chores={getFilteredChores}
+                  chores={calendarChores}
                   onDateChange={date => {
                     setSelectedCalendarDate(date)
                   }}
@@ -1388,7 +1536,7 @@ const MyChores = () => {
               ) : (
                 <div className='calendar-dual'>
                   <CalendarMonthly
-                    chores={getFilteredChores}
+                    chores={calendarChores}
                     onDateChange={date => {
                       setSelectedCalendarDate(date)
                     }}
@@ -1456,15 +1604,20 @@ const MyChores = () => {
                     my: 0,
                     px: 0,
                   }}
-                  expanded={Boolean(openChoreSections[index])}
+                  expanded={openChoreSections[index] !== false}
                 >
                   <Divider orientation='horizontal'>
                     {(() => {
-                      const sectionSelectedCount = section.content.filter(
+                      // Future repeats aren't selectable (CrewTAK).
+                      const selectableContent = section.content.filter(
+                        chore => !chore._projected,
+                      )
+                      const sectionSelectedCount = selectableContent.filter(
                         chore => selectedChores.has(chore.id),
                       ).length
                       const allSelected =
-                        sectionSelectedCount === section.content.length
+                        selectableContent.length > 0 &&
+                        sectionSelectedCount === selectableContent.length
                       const partiallySelected =
                         sectionSelectedCount > 0 && !allSelected
                       return (
@@ -1487,12 +1640,12 @@ const MyChores = () => {
                               }
                               tabIndex={0}
                               onClick={() =>
-                                toggleSectionSelection(section.content)
+                                toggleSectionSelection(selectableContent)
                               }
                               onKeyDown={e => {
                                 if (e.key === 'Enter' || e.key === ' ') {
                                   e.preventDefault()
-                                  toggleSectionSelection(section.content)
+                                  toggleSectionSelection(selectableContent)
                                 }
                               }}
                               title={t('archived.selectSectionTitle')}
@@ -1531,14 +1684,14 @@ const MyChores = () => {
                             color='neutral'
                             size='md'
                             onClick={() => {
-                              if (openChoreSections[index]) {
-                                const newOpenChoreSections = {
+                              // CrewTAK: sections are open unless closed on
+                              // purpose, so day-by-day groups that appear as
+                              // the timeline moves start out open.
+                              if (openChoreSections[index] !== false) {
+                                setOpenChoreSectionsWithCache({
                                   ...openChoreSections,
-                                }
-                                delete newOpenChoreSections[index]
-                                setOpenChoreSectionsWithCache(
-                                  newOpenChoreSections,
-                                )
+                                  [index]: false,
+                                })
                               } else {
                                 setOpenChoreSectionsWithCache({
                                   ...openChoreSections,
@@ -1552,7 +1705,7 @@ const MyChores = () => {
                                 : undefined,
                             }}
                             endDecorator={
-                              openChoreSections[index] ? (
+                              openChoreSections[index] !== false ? (
                                 <ExpandCircleDown
                                   color='primary'
                                   sx={{ transform: 'rotate(180deg)' }}
@@ -1582,7 +1735,7 @@ const MyChores = () => {
                       },
                     }}
                   >
-                    {openChoreSections[index] && (
+                    {openChoreSections[index] !== false && (
                       <ChoreListView
                         chores={section.content}
                         viewMode={viewMode}
@@ -1621,7 +1774,7 @@ const MyChores = () => {
               position: 'relative',
             }}
             onClick={() => {
-              Navigate(`/chores/create`)
+              Navigate(`/tasks/create`)
             }}
             title={t('chores:list.createChore')}
           >

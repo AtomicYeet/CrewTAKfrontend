@@ -67,7 +67,7 @@ const buildQuickActions = t => [
     keywords: 'new task chore add create',
     // Reuses the widget deep-link param so this lands on the task list with the
     // quick-add modal open, instead of the full create page.
-    route: '/chores?add_task=1',
+    route: '/tasks?add_task=1',
   },
   {
     id: 'action:create-label',
@@ -100,7 +100,7 @@ const buildQuickActions = t => [
       id: 'action:tasks',
       title: t('search.actions.viewAllTasks'),
       keywords: 'tasks chores list all open',
-      route: '/chores',
+      route: '/tasks',
       icon: <InboxOutlined />,
     },
     {
@@ -415,7 +415,7 @@ const GlobalSearchPalette = ({
         provider: 'actions',
         title: t('search.actions.filterTasks', { query: query.trim() }),
         subtitle: t('search.actions.filterTasksSubtitle'),
-        route: `/chores?search=${encodeURIComponent(query.trim())}`,
+        route: `/tasks?search=${encodeURIComponent(query.trim())}`,
       },
     ]
   }, [

@@ -11,7 +11,8 @@ import EmptyState from '../../components/common/EmptyState'
 import { useImpersonateUser } from '../../contexts/ImpersonateUserContext'
 import { useChores } from '../../queries/ChoreQueries'
 import { useNotification } from '../../service/NotificationProvider'
-import { ChoreSorter } from '../../utils/Chores'
+import { apiClient } from '../../utils/ApiClient'
+import { ChoreSorter, ChoreStatus } from '../../utils/Chores'
 import { getHomeSectionsConfig } from '../../utils/HomeSectionsConfig'
 import { getSafeBottomPadding } from '../../utils/SafeAreaUtils'
 import ChoreModals from '../Chores/components/ChoreModals'
@@ -174,6 +175,68 @@ const HomeView = () => {
     userProfile,
   })
 
+  // CrewTAK: "Clear all overdue tasks" skips every overdue task in the crew
+  // on the server. Each one is logged as skipped by whoever pressed it.
+  const [clearingOverdue, setClearingOverdue] = useState(false)
+  const crewOverdueCount = chores.filter(
+    chore =>
+      chore.isActive !== false &&
+      chore.status !== ChoreStatus.PENDING_APPROVAL &&
+      chore.frequencyType !== 'trigger' &&
+      chore.frequencyType !== 'always' &&
+      chore.nextDueDate &&
+      new Date(chore.nextDueDate) < new Date(),
+  ).length
+  const clearOverdue = async () => {
+    setClearingOverdue(true)
+    try {
+      const resp = await apiClient.post(
+        '/crewtak/chores/clear-overdue',
+        JSON.stringify({}),
+      )
+      if (!resp.ok) throw new Error('Could not clear overdue tasks')
+      const body = await resp.json()
+      const skipped = body?.res?.skipped?.length ?? 0
+      const failed = body?.res?.failed?.length ?? 0
+      queryClient.invalidateQueries({ queryKey: ['chores'] })
+      queryClient.invalidateQueries({ queryKey: ['choresHistory'] })
+      await refetchChores()
+      if (failed > 0) {
+        showWarning({
+          title: 'Some tasks were not cleared',
+          message: `Skipped ${skipped}; ${failed} could not be skipped.`,
+        })
+      } else {
+        showSuccess({
+          title: 'Overdue tasks cleared',
+          message: `Skipped ${skipped} task${skipped === 1 ? '' : 's'}.`,
+        })
+      }
+    } catch (err) {
+      showError({ title: 'Clear overdue failed', message: err.message })
+    } finally {
+      setClearingOverdue(false)
+    }
+  }
+  const confirmClearOverdue = () => {
+    const n = crewOverdueCount
+    setConfirmModelConfig({
+      isOpen: true,
+      color: 'danger',
+      title: 'Clear all overdue tasks?',
+      message:
+        `This skips all ${n} overdue task${n === 1 ? '' : 's'} for the whole crew. ` +
+        'Each one is logged as skipped by you, and repeating tasks move to ' +
+        'their next upcoming date.',
+      confirmText: 'Skip them all',
+      cancelText: 'Cancel',
+      onClose: isConfirmed => {
+        setConfirmModelConfig({})
+        if (isConfirmed === true) clearOverdue()
+      },
+    })
+  }
+
   const openCapture = mode => {
     setCaptureMode(mode)
     setCaptureOpen(true)
@@ -207,6 +270,8 @@ const HomeView = () => {
   const homeSections = {
     glance: (
       <TriageRow
+        clearingOverdue={clearingOverdue}
+        onClearOverdue={confirmClearOverdue}
         comingUp={upcoming.length}
         dueToday={dueToday.length}
         needsReview={needsReview.length}
@@ -235,7 +300,7 @@ const HomeView = () => {
                 })
           }
           action={t('home.review.action')}
-          actionTo='/chores?filterId=pending-approval'
+          actionTo='/tasks?filterId=pending-approval'
         />
         {/* The same card again — for a pending-approval task it renders
             approve / reject in the leading slot, so signing off happens
@@ -253,7 +318,7 @@ const HomeView = () => {
         <SectionHeader
           title={t('home.overdue.title')}
           action={t('home.overdue.action')}
-          actionTo='/chores?filterId=overdue'
+          actionTo='/tasks?filterId=overdue'
         />
         <HomeChoreList
           chores={overduePreview}
@@ -270,7 +335,7 @@ const HomeView = () => {
             <SectionHeader
               title={t('home.nextUp.title')}
               action={t('home.nextUp.action')}
-              actionTo='/chores?filterId=due-next-two-days'
+              actionTo='/tasks?filterId=due-next-two-days'
             />
             <HomeChoreList
               chores={nextUp}
@@ -286,7 +351,7 @@ const HomeView = () => {
             <SectionHeader
               title={t('home.nextUpFallback.title')}
               action={t('home.nextUpFallback.action')}
-              actionTo='/chores?filterId=due-this-week'
+              actionTo='/tasks?filterId=due-this-week'
             />
             <HomeChoreList
               chores={nextUpFallback}
@@ -315,7 +380,7 @@ const HomeView = () => {
             </Typography>
             <Button
               component={Link}
-              to='/chores'
+              to='/tasks'
               variant='plain'
               size='sm'
               sx={{ justifySelf: 'start', mt: 0.5, mx: -1 }}
@@ -468,6 +533,7 @@ const HomeView = () => {
 
       {captureOpen && (
         <TaskInput
+          defaultDueToday
           isModalOpen={captureOpen}
           initialMode={captureMode}
           onChoreUpdate={() =>

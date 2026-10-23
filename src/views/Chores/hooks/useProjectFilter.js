@@ -1,6 +1,25 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+// CrewTAK: a synthesized "project" that means "every task from every
+// project". It only exists as a view on the task list; it is never stored on
+// a task, so task-creation screens must treat it like the default project
+// (see isAllProjects).
+export const ALL_PROJECTS = Object.freeze({
+  id: 'all',
+  name: 'All Projects',
+  description: 'Every task from every project',
+  color: '#455a64',
+  icon: 'AllProjects',
+})
+
+export const isAllProjects = project => project?.id === ALL_PROJECTS.id
+
+// The project a brand-new task should land in, given the list's current
+// selection. "All Projects" is not a real project, so it falls back to default.
+export const projectIdForNewTask = project =>
+  !project || isAllProjects(project) ? 'default' : project.id
+
 export const useProjectFilter = (projects, projectsLoaded = false) => {
   const [, setSearchParams] = useSearchParams()
   const [selectedProject, setSelectedProject] = useState(() => {
@@ -58,6 +77,7 @@ export const useProjectFilter = (projects, projectsLoaded = false) => {
   useEffect(() => {
     if (!projectsLoaded) return
     if (!selectedProject || selectedProject.id === 'default') return
+    if (isAllProjects(selectedProject)) return
 
     if (!projects.some(p => p.id === selectedProject.id)) {
       setSelectedProjectWithCache(null)

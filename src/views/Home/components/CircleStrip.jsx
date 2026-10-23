@@ -91,7 +91,7 @@ const CircleStrip = ({ members }) => {
             variant='plain'
             color='neutral'
             onClick={() =>
-              navigate(`/chores?filterId=assignedTo:${member.userId}`)
+              navigate(`/tasks?filterId=assignedTo:${member.userId}`)
             }
             // The ring is decoration to a screen reader; the sentence it stands
             // for is what gets read out.

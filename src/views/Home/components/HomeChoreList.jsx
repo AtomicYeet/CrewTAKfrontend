@@ -53,7 +53,7 @@ const HomeChoreList = ({ chores, onAction, performers, userProfile }) => {
               t,
               userProfile,
             })}
-            onClick={() => navigate(`/chores/${chore.id}`)}
+            onClick={() => navigate(`/tasks/${chore.id}`)}
           >
             <CompactChoreCard
               chore={chore}

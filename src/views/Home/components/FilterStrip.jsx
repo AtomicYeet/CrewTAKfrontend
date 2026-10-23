@@ -38,7 +38,7 @@ const FilterStrip = ({ filters }) => {
           variant='soft'
           color='neutral'
           onClick={() =>
-            navigate(`/chores?filterId=${encodeURIComponent(filter.id)}`)
+            navigate(`/tasks?filterId=${encodeURIComponent(filter.id)}`)
           }
           sx={{
             alignItems: 'center',

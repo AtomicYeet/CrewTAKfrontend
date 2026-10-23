@@ -54,7 +54,7 @@ registerSearchProvider({
         keywords: [...labels, project?.name, ...assignees]
           .filter(Boolean)
           .join(' '),
-        route: `/chores/${chore.id}`,
+        route: `/tasks/${chore.id}`,
         updatedAt: chore.updatedAt || chore.createdAt,
       })
     }),
@@ -85,7 +85,7 @@ registerSearchProvider({
           body: note,
           keywords: `${HISTORY_STATUS[entry.status] || 'activity'} ${member?.displayName || ''}`,
           route: entry.choreId
-            ? `/chores/${entry.choreId}/history`
+            ? `/tasks/${entry.choreId}/history`
             : HIDE.activities
               ? '/log'
               : '/activities',
@@ -106,7 +106,7 @@ registerSearchProvider({
         subtitle: 'Project',
         body: stripHtml(project.description),
         keywords: 'folder project',
-        route: `/chores?project=${encodeURIComponent(project.id)}`,
+        route: `/tasks?project=${encodeURIComponent(project.id)}`,
         updatedAt: project.updatedAt,
       }),
     ),
@@ -139,7 +139,7 @@ registerSearchProvider({
         title: member.displayName || member.username || 'Crew member',
         subtitle: 'Crew member',
         keywords: `${member.username || ''} person member assignee tasks assigned`,
-        route: `/chores?filterId=assignedTo:${member.userId}`,
+        route: `/tasks?filterId=assignedTo:${member.userId}`,
       }),
     ),
 })

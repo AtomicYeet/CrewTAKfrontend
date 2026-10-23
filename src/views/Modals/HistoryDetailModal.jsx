@@ -169,7 +169,7 @@ function HistoryDetailModal({ config }) {
               startDecorator={<OpenInNew sx={{ fontSize: 16 }} />}
               onClick={() => {
                 config?.onClose?.()
-                navigate(`/chores/${entry.choreId}`)
+                navigate(`/tasks/${entry.choreId}`)
               }}
             >
               {t('detail.openTask')}

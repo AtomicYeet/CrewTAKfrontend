@@ -463,7 +463,7 @@ const ChoreHistory = () => {
           icon={<EventBusy />}
           title={t('empty.title')}
           description={t('empty.description')}
-          primaryAction={{ label: t('empty.backToTasks'), to: '/chores' }}
+          primaryAction={{ label: t('empty.backToTasks'), to: '/tasks' }}
         />
       </Container>
     )

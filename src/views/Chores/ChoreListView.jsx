@@ -1,9 +1,12 @@
 import '@meauxt/react-swipeable-list/dist/styles.css'
 
 import { SwipeableList, Type as ListType } from '@meauxt/react-swipeable-list'
+import { Box } from '@mui/joy'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+
+import ProjectedChoreCard from '@/crewtak/ProjectedChoreCard'
 
 import ChoreActionMenu from '../components/ChoreActionMenu'
 import ArchivedChoreCard from './ArchivedChoreCard'
@@ -101,7 +104,40 @@ const ChoreListView = ({
   // so at the default 0.5 the swipe always commits before you can see the
   // actions, let alone pick one. 0.8 leaves room to open the tray and tap,
   // and keeps the full-swipe commit a deliberately long drag.
+  // CrewTAK: future repeats (display-only copies, `_projected`) can't be
+  // swiped, completed or selected, so they render as plain rows between runs
+  // of real, swipeable tasks, keeping the list in date order.
   const renderChores = chores => {
+    if (!chores.some(c => c._projected)) return renderSwipeable(chores)
+    const blocks = []
+    let run = []
+    const flush = () => {
+      if (run.length) {
+        blocks.push(
+          <Box key={`run-${blocks.length}`}>{renderSwipeable(run)}</Box>,
+        )
+      }
+      run = []
+    }
+    chores.forEach(chore => {
+      if (chore._projected) {
+        flush()
+        blocks.push(
+          <ProjectedChoreCard
+            key={chore._projectedKey}
+            chore={chore}
+            performers={membersData?.res}
+          />,
+        )
+      } else {
+        run.push(chore)
+      }
+    })
+    flush()
+    return blocks
+  }
+
+  const renderSwipeable = chores => {
     return (
       <SwipeableList
         type={ListType.IOS}
@@ -128,7 +164,7 @@ const ChoreListView = ({
               if (isMultiSelectMode) {
                 toggleChoreSelection(chore.id)
               } else {
-                navigate(`/chores/${chore.id}`)
+                navigate(`/tasks/${chore.id}`)
               }
             }}
             longPressEnabled={Boolean(onLongPressChore)}

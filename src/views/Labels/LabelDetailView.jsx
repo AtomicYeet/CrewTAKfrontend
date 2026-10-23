@@ -349,7 +349,7 @@ const LabelDetailView = () => {
           icon={<Style />}
           title={t('detail.emptyTitle')}
           description={t('detail.emptyDescription', { label: label.name })}
-          primaryAction={{ label: t('detail.browseTasks'), to: '/chores' }}
+          primaryAction={{ label: t('detail.browseTasks'), to: '/tasks' }}
         />
       ) : visibleChores.length === 0 ? (
         <EmptyState

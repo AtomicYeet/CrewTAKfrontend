@@ -15,7 +15,7 @@ const GlobalSearchPage = () => {
 
   const handleClose = () => {
     if (window.history.state?.idx > 0) navigate(-1)
-    else navigate('/chores', { replace: true })
+    else navigate('/tasks', { replace: true })
   }
 
   return (

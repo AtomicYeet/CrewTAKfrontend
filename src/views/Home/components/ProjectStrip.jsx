@@ -71,7 +71,7 @@ const ProjectStrip = ({ projects }) => {
             type='button'
             variant='soft'
             color='neutral'
-            onClick={() => navigate(`/chores?project=${project.id}`)}
+            onClick={() => navigate(`/tasks?project=${project.id}`)}
             sx={{
               alignItems: 'center',
               // Sheet renders a real <button> here, so the user-agent border

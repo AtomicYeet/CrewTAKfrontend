@@ -1,4 +1,4 @@
-import { HomeRounded } from '@mui/icons-material'
+import { Bedtime, HomeRounded, PhoneInTalk } from '@mui/icons-material'
 import { Box, Chip, IconButton, Typography } from '@mui/joy'
 import { useQueryClient } from '@tanstack/react-query'
 import moment from 'moment'
@@ -11,6 +11,13 @@ import { useCircleMembers } from '@/queries/UserQueries'
 
 import LogoSrc from '../assets/logo.svg'
 import { ACCENT, BRAND_BLUE } from './brand'
+import {
+  PHONES,
+  SLEEP_BLOCKS,
+  sleepSlot,
+  tourAt,
+  useShiftSlots,
+} from './shiftSlots'
 import { shiftAt, shiftBoundsAt, shiftDayAt } from './shifts'
 import Wordmark from './Wordmark'
 
@@ -211,6 +218,83 @@ const Empty = ({ children }) => (
 
 Empty.propTypes = { children: PropTypes.node }
 
+// Small header panel: phone holders (left of the clock) or tonight's sleep
+// blocks (right of the clock). Read-only here; picks are made on /shift.
+const AssignmentPanel = ({ icon, rows, title }) => (
+  <Box
+    sx={{
+      bgcolor: PANEL,
+      border: `1px solid ${BORDER}`,
+      borderRadius: '14px',
+      minWidth: 0,
+      px: 'clamp(10px, 1vw, 18px)',
+      py: 'clamp(6px, 0.7vw, 12px)',
+    }}
+  >
+    <Typography
+      startDecorator={icon}
+      sx={{
+        color: MUTED,
+        fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
+        fontWeight: 700,
+        letterSpacing: '0.1em',
+        mb: 0.5,
+        textTransform: 'uppercase',
+      }}
+    >
+      {title}
+    </Typography>
+    <Box
+      sx={{
+        columnGap: 'clamp(8px, 0.9vw, 16px)',
+        display: 'grid',
+        gridTemplateColumns: 'auto minmax(0, 1fr)',
+        rowGap: 0.25,
+      }}
+    >
+      {rows.map(r => (
+        <Box key={r.key} sx={{ display: 'contents' }}>
+          <Typography
+            sx={{
+              color: MUTED,
+              fontSize: 'clamp(0.8rem, 1vw, 1.15rem)',
+              fontVariantNumeric: 'tabular-nums',
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {r.label}
+          </Typography>
+          <Typography
+            sx={{
+              color: r.name ? '#fff' : 'rgba(255,255,255,0.3)',
+              fontSize: 'clamp(0.85rem, 1.1vw, 1.3rem)',
+              fontWeight: 700,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {r.name || '—'}
+          </Typography>
+        </Box>
+      ))}
+    </Box>
+  </Box>
+)
+
+AssignmentPanel.propTypes = {
+  icon: PropTypes.node,
+  rows: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      name: PropTypes.string,
+    }),
+  ).isRequired,
+  title: PropTypes.string.isRequired,
+}
+
 const WallDisplay = () => {
   useWakeLock()
   const navigate = useNavigate()
@@ -239,6 +323,21 @@ const WallDisplay = () => {
     ;(membersData?.res || []).forEach(m => map.set(m.userId, m.displayName))
     return map
   }, [membersData])
+
+  // Phone holders and tonight's sleep blocks (from Shift Info).
+  const { data: slots = {} } = useShiftSlots(tourAt(now))
+  const slotName = slot =>
+    slots[slot] == null ? null : membersById.get(slots[slot]) || 'Former member'
+  const phoneRows = PHONES.map(p => ({
+    key: p.slot,
+    label: p.short,
+    name: slotName(p.slot),
+  }))
+  const sleepRows = SLEEP_BLOCKS.map(b => ({
+    key: `sleep-${b.index}`,
+    label: b.label,
+    name: shiftDay ? slotName(sleepSlot(shiftDay, b.index)) : null,
+  }))
 
   const { dueToday, overdue, upNext } = useMemo(() => {
     const chores = (choresData?.res || []).filter(
@@ -306,11 +405,27 @@ const WallDisplay = () => {
         sx={{
           alignItems: 'center',
           display: 'grid',
-          gap: 2,
-          gridTemplateColumns: '1fr auto 1fr',
+          gap: 'clamp(10px, 1.2vw, 20px)',
+          // Wide screens: logo | phones | clock | sleep | shift, all one row.
+          // Narrower screens move phones and sleep to a second row.
+          gridTemplateAreas: {
+            xs: `"brand clock shift" "phones phones sleep"`,
+            lg: `"brand phones clock sleep shift"`,
+          },
+          gridTemplateColumns: {
+            xs: 'auto 1fr auto',
+            lg: 'auto minmax(0, 1fr) auto minmax(0, 1fr) auto',
+          },
         }}
       >
-        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1.5 }}>
+        <Box
+          sx={{
+            alignItems: 'center',
+            display: 'flex',
+            gap: 1.5,
+            gridArea: 'brand',
+          }}
+        >
           {/* Touchscreens have no back button, so give them a way out. */}
           <IconButton
             aria-label='Back to tasks'
@@ -344,7 +459,15 @@ const WallDisplay = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ gridArea: 'phones', minWidth: 0 }}>
+          <AssignmentPanel
+            icon={<PhoneInTalk sx={{ fontSize: '1.1em' }} />}
+            rows={phoneRows}
+            title='Phones'
+          />
+        </Box>
+
+        <Box sx={{ gridArea: 'clock', textAlign: 'center' }}>
           <Typography
             sx={{
               color: '#fff',
@@ -369,7 +492,15 @@ const WallDisplay = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ justifySelf: 'end', textAlign: 'right' }}>
+        <Box sx={{ gridArea: 'sleep', minWidth: 0 }}>
+          <AssignmentPanel
+            icon={<Bedtime sx={{ fontSize: '1.1em' }} />}
+            rows={sleepRows}
+            title={shiftDay ? `Sleep · Day ${shiftDay}` : 'Sleep'}
+          />
+        </Box>
+
+        <Box sx={{ gridArea: 'shift', justifySelf: 'end', textAlign: 'right' }}>
           {shift && (
             <>
               <Chip

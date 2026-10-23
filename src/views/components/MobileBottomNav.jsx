@@ -58,11 +58,11 @@ const HIDDEN_ROUTES = [
 ]
 
 const isTaskDetailRoute = pathname =>
-  /^\/chores\/(create|[^/]+\/(?:edit|timer))$/.test(pathname)
+  /^\/tasks\/(create|[^/]+\/(?:edit|timer))$/.test(pathname)
 
 const isItemActive = (item, pathname) => {
   if (item.id === 'tasks') {
-    return pathname === '/chores' || pathname === '/my/chores'
+    return pathname === '/tasks' || pathname === '/my/tasks'
   }
   const to = item.to?.startsWith('/') ? item.to : `/${item.to}`
   return pathname === to

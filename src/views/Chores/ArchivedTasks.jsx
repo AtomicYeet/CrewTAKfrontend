@@ -770,7 +770,7 @@ const ArchivedTasks = () => {
           variant='outlined'
           color='neutral'
           startDecorator={<Close />}
-          onClick={() => navigate('/chores')}
+          onClick={() => navigate('/tasks')}
           sx={{ ml: 'auto' }}
         >
           Close
@@ -1144,7 +1144,7 @@ const ArchivedTasks = () => {
             icon={<Archive />}
             title={t('archived.emptyTitle')}
             description={t('archived.emptyDescription')}
-            primaryAction={{ label: t('archived.backToTasks'), to: '/chores' }}
+            primaryAction={{ label: t('archived.backToTasks'), to: '/tasks' }}
           />
         )
       ) : (

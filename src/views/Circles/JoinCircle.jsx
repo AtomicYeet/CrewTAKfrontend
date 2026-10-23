@@ -53,7 +53,7 @@ const JoinCircleView = () => {
           showAcknowledgment(
             t('joinCircle.requestSentBody'),
             t('joinCircle.requestSentTitle'),
-            () => navigate('/chores'),
+            () => navigate('/tasks'),
             t('joinCircle.gotIt'),
             'success',
           )
@@ -64,7 +64,7 @@ const JoinCircleView = () => {
           } else {
             showError(t('joinCircle.joinFailed'))
           }
-          navigate('/chores')
+          navigate('/tasks')
         }
       })
       .catch(() => {
@@ -114,7 +114,7 @@ const JoinCircleView = () => {
         fullWidth
         size='lg'
         sx={authButtonSx}
-        onClick={() => navigate('/chores')}
+        onClick={() => navigate('/tasks')}
       >
         {t('joinCircle.goToDonetick')}
       </Button>
@@ -177,7 +177,7 @@ const JoinCircleView = () => {
           sx={authButtonSx}
           onClick={() => {
             clearPendingInvite()
-            navigate('/chores')
+            navigate('/tasks')
           }}
         >
           {t('common:cancel')}

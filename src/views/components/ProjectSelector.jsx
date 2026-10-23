@@ -28,6 +28,7 @@ import LABEL_COLORS, {
 } from '../../utils/Colors'
 import { canCreateProject } from '../../utils/entitlements'
 import { getIconComponent } from '../../utils/ProjectIcons'
+import { ALL_PROJECTS } from '../Chores/hooks/useProjectFilter'
 import ProjectModal from '../Modals/Inputs/ProjectModal'
 import { useProjects } from '../Projects/ProjectQueries'
 import { ProjectAccessIcon } from '../Projects/ProjectVisibilityField'
@@ -36,6 +37,8 @@ const ProjectSelector = ({
   onProjectSelect,
   selectedProject = 'Default Project',
   showKeyboardShortcuts = false,
+  // CrewTAK: offer the "All Projects" overview at the top of the menu.
+  showAllOption = false,
 }) => {
   const { t } = useTranslation('projects')
   const { data: projects = [], isLoading } = useProjects()
@@ -56,9 +59,9 @@ const ProjectSelector = ({
   const defaultProjects = projects
 
   // Check if selected project still exists, if not fallback to default
-  const selectedProjectExists = defaultProjects.some(
-    p => p.name === selectedProject,
-  )
+  const isAllSelected = showAllOption && selectedProject === ALL_PROJECTS.name
+  const selectedProjectExists =
+    isAllSelected || defaultProjects.some(p => p.name === selectedProject)
   const effectiveSelectedProject = selectedProjectExists
     ? selectedProject
     : 'Default Project'
@@ -205,9 +208,9 @@ const ProjectSelector = ({
   }, [anchorEl])
 
   // Find the currently selected project
-  const currentProject = defaultProjects.find(
-    p => p.name === effectiveSelectedProject,
-  )
+  const currentProject = isAllSelected
+    ? ALL_PROJECTS
+    : defaultProjects.find(p => p.name === effectiveSelectedProject)
 
   return (
     <>
@@ -333,6 +336,62 @@ const ProjectSelector = ({
         </MenuItem>
 
         <Divider sx={{ my: 1 }} />
+
+        {showAllOption && (
+          <MenuItem
+            key='all-projects'
+            onClick={() => handleProjectSelect(ALL_PROJECTS)}
+            onMouseEnter={() => setIsKeyboardNavigating(false)}
+            sx={{
+              borderRadius: 'var(--joy-radius-sm)',
+              backgroundColor: isAllSelected
+                ? 'var(--joy-palette-primary-softBg)'
+                : 'transparent',
+            }}
+          >
+            <ListItemDecorator>
+              <Avatar
+                size='sm'
+                sx={{ width: 24, height: 24, bgcolor: ALL_PROJECTS.color }}
+              >
+                {(() => {
+                  const AllIcon = getIconComponent(ALL_PROJECTS.icon)
+                  return <AllIcon sx={{ fontSize: 14, color: '#fff' }} />
+                })()}
+              </Avatar>
+            </ListItemDecorator>
+            <ListItemContent>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography
+                  level='body-sm'
+                  sx={{ fontWeight: isAllSelected ? 600 : 400 }}
+                >
+                  {ALL_PROJECTS.name}
+                </Typography>
+                {isAllSelected && (
+                  <Check
+                    sx={{
+                      fontSize: '16px',
+                      color: 'var(--joy-palette-primary-500)',
+                    }}
+                  />
+                )}
+              </Box>
+              <Typography
+                level='body-xs'
+                sx={{ color: 'var(--joy-palette-text-tertiary)' }}
+              >
+                {ALL_PROJECTS.description}
+              </Typography>
+            </ListItemContent>
+          </MenuItem>
+        )}
 
         <MenuItem
           key={'default-project'}

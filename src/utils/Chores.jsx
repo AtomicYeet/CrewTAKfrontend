@@ -109,7 +109,7 @@ const buildPastDateGroups = (chores, dateField) => {
   return { dateGroups, anytime }
 }
 
-const buildActualDateGroups = (chores, dateField = 'nextDueDate') => {
+export const buildActualDateGroups = (chores, dateField = 'nextDueDate') => {
   const groupedByDate = {}
   const anytime = []
 
@@ -438,6 +438,8 @@ export const ChoreFilters = userId => ({
 
 // Project filter function - separate from ChoreFilters since it's independent
 export const filterByProject = (chores, selectedProject) => {
+  // CrewTAK: the "All Projects" overview shows every task regardless of project.
+  if (selectedProject === 'all') return chores
   if (
     !selectedProject ||
     selectedProject === 'Default Project' ||

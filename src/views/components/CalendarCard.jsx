@@ -245,7 +245,7 @@ const CalendarCard = ({ chores }) => {
                 <Box
                   key={idx}
                   onClick={() => {
-                    Navigate('/chores/' + chore.id)
+                    Navigate('/tasks/' + chore.id)
                   }}
                   sx={{
                     display: 'flex',

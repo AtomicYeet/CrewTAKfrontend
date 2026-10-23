@@ -13,7 +13,7 @@ export const BOTTOM_NAV_ITEM_POOL = [
   },
   {
     id: 'tasks',
-    to: '/chores',
+    to: '/tasks',
     iconName: 'Checklist',
     translationKey: 'navigation.tasks',
     translationDefault: 'Tasks',

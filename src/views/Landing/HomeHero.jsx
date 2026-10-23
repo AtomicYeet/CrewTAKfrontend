@@ -103,7 +103,7 @@ const HomeHero = () => {
         if (window.location.hostname === 'donetick.com') {
           window.location.href = 'https://app.donetick.com/chores'
         } else {
-          navigate('/chores')
+          navigate('/tasks')
         }
       }}
     >

@@ -6,7 +6,7 @@ export const DEFAULT_VIEW = 'home'
 
 export const DEFAULT_VIEW_PATHS = {
   home: '/home',
-  tasks: '/chores',
+  tasks: '/tasks',
 }
 
 const STORAGE_KEY = 'defaultView'

@@ -21,7 +21,7 @@ const Landing = () => {
   useEffect(() => {
     // if the host is https://app.donetick.com/ then redirect to https://app.donetick.com/my/chores:
     if (window.location.host === 'app.donetick.com') {
-      Navigate('/chores')
+      Navigate('/tasks')
     }
     AOS.init({
       once: false, // whether animation should happen only once - while scrolling down

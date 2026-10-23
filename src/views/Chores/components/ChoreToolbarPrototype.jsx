@@ -654,6 +654,7 @@ const ChoreToolbar = ({
               <ProjectSelector
                 selectedProject={selectedProject?.name || 'Default Project'}
                 onProjectSelect={onProjectSelect}
+                showAllOption
                 showKeyboardShortcuts={showKeyboardShortcuts}
               />
             </Box>

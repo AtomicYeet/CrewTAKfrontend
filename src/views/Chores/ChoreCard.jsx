@@ -257,7 +257,7 @@ const ChoreCard = ({
               //   if (isMultiSelectMode) {
               //     onSelectionToggle()
               //   } else {
-              //     navigate(`/chores/${chore.id}`)
+              //     navigate(`/tasks/${chore.id}`)
               //   }
               // }}
             >

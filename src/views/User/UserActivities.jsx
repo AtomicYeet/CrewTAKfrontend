@@ -1388,7 +1388,7 @@ const UserActivites = () => {
                       : t('activities.periodLastDays', { count: tabValue }),
                 })
           }
-          primaryAction={{ label: t('empty.backToTasks'), to: '/chores' }}
+          primaryAction={{ label: t('empty.backToTasks'), to: '/tasks' }}
         />
       ) : (
         <Box sx={{ minWidth: 0, width: '100%' }}>

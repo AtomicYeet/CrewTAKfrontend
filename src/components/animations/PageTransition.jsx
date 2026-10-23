@@ -8,9 +8,9 @@ import { useLocation } from 'react-router-dom'
 const routeHierarchy = {
   '/': 0,
   '/home': 0,
-  '/my/chores': 0,
-  '/chores': 1,
-  '/chores/create': 2,
+  '/my/tasks': 0,
+  '/tasks': 1,
+  '/tasks/create': 2,
   '/settings': 1,
   '/things': 1,
   '/activities': 1,
@@ -30,17 +30,17 @@ const getRouteLevel = pathname => {
   }
 
   // Check for dynamic routes (e.g., /chores/123/edit)
-  if (pathname.includes('/chores/') && pathname.includes('/edit')) {
+  if (pathname.includes('/tasks/') && pathname.includes('/edit')) {
     return 3
   }
-  if (pathname.includes('/chores/') && pathname.includes('/history')) {
+  if (pathname.includes('/tasks/') && pathname.includes('/history')) {
     return 3
   }
-  if (pathname.includes('/chores/') && pathname.includes('/timer')) {
+  if (pathname.includes('/tasks/') && pathname.includes('/timer')) {
     return 3
   }
   if (
-    pathname.includes('/chores/') &&
+    pathname.includes('/tasks/') &&
     !pathname.includes('/edit') &&
     !pathname.includes('/history') &&
     !pathname.includes('/timer')

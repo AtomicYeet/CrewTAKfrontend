@@ -169,7 +169,11 @@ export const useCustomFilters = (chores, membersData, labels, projects) => {
     currentState => {
       const conditions = []
 
-      if (currentState.selectedProject) {
+      // "All Projects" (CrewTAK) means no project condition at all.
+      if (
+        currentState.selectedProject &&
+        currentState.selectedProject.id !== 'all'
+      ) {
         conditions.push({
           type: 'project',
           operator: 'is',

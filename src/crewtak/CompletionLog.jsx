@@ -526,7 +526,7 @@ const LogEntryDialog = ({ entry, onClose }) => {
               <Button
                 variant='plain'
                 startDecorator={<OpenInNew />}
-                onClick={() => navigate(`/chores/${entry.choreId}`)}
+                onClick={() => navigate(`/tasks/${entry.choreId}`)}
                 disabled={!entry.choreId}
               >
                 Open task

@@ -11,7 +11,7 @@ const PaymentCancelledView = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate('/chores')
+      navigate('/tasks')
     }, 5000)
     return () => clearTimeout(timer)
   }, [navigate])

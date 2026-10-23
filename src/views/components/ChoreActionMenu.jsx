@@ -229,17 +229,17 @@ const ChoreActionMenu = ({
   }
 
   const handleEdit = () => {
-    navigate(`/chores/${chore.id}/edit`)
+    navigate(`/tasks/${chore.id}/edit`)
     handleMenuClose()
   }
 
   const handleClone = () => {
-    navigate(`/chores/${chore.id}/edit?clone=true`)
+    navigate(`/tasks/${chore.id}/edit?clone=true`)
     handleMenuClose()
   }
 
   const handleView = () => {
-    navigate(`/chores/${chore.id}`)
+    navigate(`/tasks/${chore.id}`)
     handleMenuClose()
   }
 
@@ -267,7 +267,7 @@ const ChoreActionMenu = ({
   }
 
   const handleHistory = () => {
-    navigate(`/chores/${chore.id}/history`)
+    navigate(`/tasks/${chore.id}/history`)
     handleMenuClose()
   }
 

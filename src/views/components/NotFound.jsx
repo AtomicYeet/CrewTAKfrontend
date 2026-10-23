@@ -16,7 +16,7 @@ const NotFound = () => {
         description={t('notFound.description')}
         primaryAction={{
           label: t('notFound.goToMyTasks'),
-          to: '/chores',
+          to: '/tasks',
           startDecorator: <HomeRounded />,
         }}
         secondaryAction={{ label: t('notFound.logIn'), to: '/login' }}
