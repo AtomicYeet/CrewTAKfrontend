@@ -1,4 +1,4 @@
-import { Bedtime, HomeRounded, PhoneInTalk } from '@mui/icons-material'
+import { HomeRounded, PhoneInTalk, Visibility } from '@mui/icons-material'
 import { Box, Chip, IconButton, Typography } from '@mui/joy'
 import { useQueryClient } from '@tanstack/react-query'
 import moment from 'moment'
@@ -218,8 +218,8 @@ const Empty = ({ children }) => (
 
 Empty.propTypes = { children: PropTypes.node }
 
-// Small header panel: phone holders (left of the clock) or tonight's sleep
-// blocks (right of the clock). Read-only here; picks are made on /shift.
+// Small header panel: phone holders (left of the clock) or tonight's watch
+// times (right of the clock), centered in the box. Read-only here; picks are made on /shift.
 const AssignmentPanel = ({ icon, rows, title }) => (
   <Box
     sx={{
@@ -235,6 +235,7 @@ const AssignmentPanel = ({ icon, rows, title }) => (
       startDecorator={icon}
       sx={{
         color: MUTED,
+        justifyContent: 'center',
         fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
         fontWeight: 700,
         letterSpacing: '0.1em',
@@ -248,7 +249,8 @@ const AssignmentPanel = ({ icon, rows, title }) => (
       sx={{
         columnGap: 'clamp(8px, 0.9vw, 16px)',
         display: 'grid',
-        gridTemplateColumns: 'auto minmax(0, 1fr)',
+        gridTemplateColumns: 'auto minmax(0, auto)',
+        justifyContent: 'center',
         rowGap: 0.25,
       }}
     >
@@ -494,9 +496,9 @@ const WallDisplay = () => {
 
         <Box sx={{ gridArea: 'sleep', minWidth: 0 }}>
           <AssignmentPanel
-            icon={<Bedtime sx={{ fontSize: '1.1em' }} />}
+            icon={<Visibility sx={{ fontSize: '1.1em' }} />}
             rows={sleepRows}
-            title={shiftDay ? `Sleep · Day ${shiftDay}` : 'Sleep'}
+            title={shiftDay ? `Watch Times · Day ${shiftDay}` : 'Watch Times'}
           />
         </Box>
 

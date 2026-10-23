@@ -7,10 +7,12 @@ import { shiftBoundsAt } from './shifts'
 
 // Shared by Shift Info (/shift) and the Wall Display (/display).
 //
-// Picks are stored on the server per crew and per 48-hour tour. Sleep blocks
-// are also keyed by shift day, so they start empty again every morning when
-// the shift day rolls over (Day 1 → Day 2 → next tour's Day 1). A person can
-// hold only one phone: assigning them to a phone clears their old one.
+// Picks are stored on the server per crew and per 48-hour tour. Watch times
+// (stored as sleep.<day>.<n>) are also keyed by shift day, so they start empty
+// again every morning when the shift day rolls over (Day 1 → Day 2 → next
+// tour's Day 1). Within each group a person holds one slot at most: one phone,
+// one watch time per day, one company assignment. Assigning them somewhere
+// new clears their old slot in that group.
 
 export const PHONES = [
   { slot: 'phone.captain', label: "Captain's", short: 'Captain' },
@@ -19,6 +21,14 @@ export const PHONES = [
   { slot: 'phone.ops', label: 'Ops', short: 'Ops' },
 ]
 
+export const COMPANIES = [
+  { slot: 'company.5181', label: '5181 Crash Truck' },
+  { slot: 'company.5182', label: '5182 Crash Truck' },
+  { slot: 'company.5184', label: '5184 Fire/EMS' },
+  { slot: 'company.5132', label: '5132 EMS' },
+]
+
+// Watch times. (Kept under the old "sleep" name in storage.)
 export const SLEEP_BLOCKS = [
   { index: 0, label: '8p – 1130p' },
   { index: 1, label: '1130p – 3a' },
@@ -28,6 +38,14 @@ export const SLEEP_BLOCKS = [
 export const sleepSlot = (shiftDay, index) => `sleep.${shiftDay}.${index}`
 
 export const isPhoneSlot = slot => slot.startsWith('phone.')
+
+// Slots sharing a group can't share a person (mirrors the server).
+export const exclusiveGroup = slot => {
+  if (slot.startsWith('phone.')) return 'phone.'
+  if (slot.startsWith('company.')) return 'company.'
+  if (slot.startsWith('sleep.')) return slot.slice(0, slot.lastIndexOf('.') + 1)
+  return null
+}
 
 export const SHIFT_INFO_REFRESH_MS = 60 * 1000
 
@@ -72,9 +90,10 @@ export const saveSlot = async ({ tour, slot, userId }) => {
 // (mirrors the server, for an instant optimistic update).
 export const applyPick = (slots, slot, userId) => {
   const next = { ...slots }
-  if (userId != null && isPhoneSlot(slot)) {
+  const group = exclusiveGroup(slot)
+  if (userId != null && group) {
     Object.keys(next).forEach(key => {
-      if (key !== slot && isPhoneSlot(key) && next[key] === userId) {
+      if (key !== slot && key.startsWith(group) && next[key] === userId) {
         next[key] = null
       }
     })

@@ -1,4 +1,9 @@
-import { Bedtime, CheckRounded, PhoneInTalk } from '@mui/icons-material'
+import {
+  CheckRounded,
+  LocalFireDepartment,
+  PhoneInTalk,
+  Visibility,
+} from '@mui/icons-material'
 import {
   Avatar,
   Box,
@@ -17,6 +22,7 @@ import {
   Typography,
 } from '@mui/joy'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import moment from 'moment'
 import PropTypes from 'prop-types'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -25,7 +31,8 @@ import { useCircleMembers } from '@/queries/UserQueries'
 import { ACCENT } from './brand'
 import {
   applyPick,
-  isPhoneSlot,
+  COMPANIES,
+  exclusiveGroup,
   PHONES,
   saveSlot,
   shiftInfoQueryKey,
@@ -37,7 +44,7 @@ import {
 import { SHIFT_COLORS, shiftAt, shiftDayAt } from './shifts'
 
 // Shift Info: who carries each station phone this tour, and who has each
-// overnight sleep block. See shiftSlots.js for how picks are stored and reset.
+// overnight watch time, and which company each person rides. See shiftSlots.js for how picks are stored and reset.
 
 // Re-render every minute so the tour and shift day roll over on their own.
 const useMinuteClock = () => {
@@ -118,7 +125,7 @@ const SleepRow = ({ label, name, onClick }) => (
           alignItems: 'center',
           display: 'grid',
           gap: 2,
-          gridTemplateColumns: 'minmax(110px, 140px) 24px 1fr',
+          gridTemplateColumns: 'minmax(110px, 170px) 24px 1fr',
         }}
       >
         <Typography level='title-md' sx={{ fontVariantNumeric: 'tabular-nums' }}>
@@ -205,6 +212,15 @@ const ShiftInfo = () => {
     return nameById.get(id) || 'Former member'
   }
 
+  const slotLabel = slot => {
+    const phone = PHONES.find(p => p.slot === slot)
+    if (phone) return `the ${phone.label} phone`
+    const company = COMPANIES.find(c => c.slot === slot)
+    if (company) return company.label
+    const block = SLEEP_BLOCKS.find(b => slot.endsWith(`.${b.index}`))
+    return block ? `the ${block.label} watch` : 'another spot'
+  }
+
   return (
     <Container maxWidth='md' sx={{ py: 3 }}>
       <Box
@@ -218,11 +234,32 @@ const ShiftInfo = () => {
         }}
       >
         <Typography level='h2'>Shift Info</Typography>
-        {shift && (
-          <Chip color={SHIFT_COLORS[shift]} size='lg' variant='solid'>
-            {shift} Shift · Day {shiftDay}
-          </Chip>
-        )}
+        <Box
+          sx={{
+            alignItems: 'center',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 1.5,
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Box sx={{ textAlign: 'right' }}>
+            <Typography
+              level='title-lg'
+              sx={{ fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}
+            >
+              {moment(now).format('HH:mm')}
+            </Typography>
+            <Typography level='body-sm' sx={{ color: 'text.secondary' }}>
+              {moment(now).format('dddd D MMMM YYYY')}
+            </Typography>
+          </Box>
+          {shift && (
+            <Chip color={SHIFT_COLORS[shift]} size='lg' variant='solid'>
+              {shift} Shift · Day {shiftDay}
+            </Chip>
+          )}
+        </Box>
       </Box>
 
       {(error || isError) && (
@@ -263,10 +300,10 @@ const ShiftInfo = () => {
 
       <Typography
         level='title-sm'
-        startDecorator={<Bedtime sx={{ fontSize: 18 }} />}
+        startDecorator={<Visibility sx={{ fontSize: 18 }} />}
         sx={{ letterSpacing: '0.08em', mb: 1, textTransform: 'uppercase' }}
       >
-        Sleep Blocks
+        Watch Times
       </Typography>
       <Sheet variant='outlined' sx={{ borderRadius: 'lg', p: 1.5 }}>
         <Typography level='h4' sx={{ px: 1.5, pt: 0.5 }}>
@@ -281,11 +318,36 @@ const ShiftInfo = () => {
                 label={b.label}
                 name={nameFor(slot)}
                 onClick={() =>
-                  setPicking({ slot, title: `Sleep ${b.label}` })
+                  setPicking({ slot, title: `Watch ${b.label}` })
                 }
               />
             )
           })}
+        </List>
+      </Sheet>
+
+      <Typography
+        level='title-sm'
+        startDecorator={<LocalFireDepartment sx={{ fontSize: 18 }} />}
+        sx={{
+          letterSpacing: '0.08em',
+          mb: 1,
+          mt: 4,
+          textTransform: 'uppercase',
+        }}
+      >
+        Company Assignments
+      </Typography>
+      <Sheet variant='outlined' sx={{ borderRadius: 'lg', p: 1.5 }}>
+        <List size='lg' sx={{ '--ListItem-paddingX': '0px' }}>
+          {COMPANIES.map(co => (
+            <SleepRow
+              key={co.slot}
+              label={co.label}
+              name={nameFor(co.slot)}
+              onClick={() => setPicking({ slot: co.slot, title: co.label })}
+            />
+          ))}
         </List>
       </Sheet>
 
@@ -296,12 +358,16 @@ const ShiftInfo = () => {
           <List sx={{ maxHeight: '60vh', overflow: 'auto' }}>
             {members.map(m => {
               const selected = picking && slots[picking.slot] === m.userId
-              // Picking someone for a phone moves them off their current one.
-              const currentPhone =
-                picking &&
-                isPhoneSlot(picking.slot) &&
+              // Picking someone moves them off their current slot in the
+              // same group (phone, watch time, company).
+              const group = picking && exclusiveGroup(picking.slot)
+              const currentSlot =
+                group &&
                 !selected &&
-                PHONES.find(p => slots[p.slot] === m.userId)
+                Object.keys(slots).find(
+                  k => k.startsWith(group) && slots[k] === m.userId,
+                )
+              const currentLabel = currentSlot && slotLabel(currentSlot)
               return (
                 <ListItem key={m.userId}>
                   <ListItemButton
@@ -316,9 +382,9 @@ const ShiftInfo = () => {
                     </ListItemDecorator>
                     <ListItemContent>
                       {m.displayName || m.username}
-                      {currentPhone && (
+                      {currentLabel && (
                         <Typography level='body-xs' sx={{ color: 'text.tertiary' }}>
-                          Has the {currentPhone.label} phone (will move)
+                          Has {currentLabel} (will move)
                         </Typography>
                       )}
                     </ListItemContent>
