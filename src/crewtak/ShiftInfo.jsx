@@ -34,6 +34,8 @@ import {
   COMPANIES,
   exclusiveGroup,
   PHONES,
+  rigMembers,
+  rigSlot,
   saveSlot,
   shiftInfoQueryKey,
   SLEEP_BLOCKS,
@@ -215,8 +217,6 @@ const ShiftInfo = () => {
   const slotLabel = slot => {
     const phone = PHONES.find(p => p.slot === slot)
     if (phone) return `the ${phone.label} phone`
-    const company = COMPANIES.find(c => c.slot === slot)
-    if (company) return company.label
     const block = SLEEP_BLOCKS.find(b => slot.endsWith(`.${b.index}`))
     return block ? `the ${block.label} watch` : 'another spot'
   }
@@ -340,14 +340,21 @@ const ShiftInfo = () => {
       </Typography>
       <Sheet variant='outlined' sx={{ borderRadius: 'lg', p: 1.5 }}>
         <List size='lg' sx={{ '--ListItem-paddingX': '0px' }}>
-          {COMPANIES.map(co => (
-            <SleepRow
-              key={co.slot}
-              label={co.label}
-              name={nameFor(co.slot)}
-              onClick={() => setPicking({ slot: co.slot, title: co.label })}
-            />
-          ))}
+          {COMPANIES.map(co => {
+            const names = rigMembers(slots, co)
+              .map(id => nameById.get(id) || 'Former member')
+              .join(', ')
+            return (
+              <SleepRow
+                key={co.slot}
+                label={co.label}
+                name={names || null}
+                onClick={() =>
+                  setPicking({ rig: co, slot: co.slot, title: co.label })
+                }
+              />
+            )
+          })}
         </List>
       </Sheet>
 
@@ -355,8 +362,56 @@ const ShiftInfo = () => {
         <ModalDialog sx={{ maxWidth: 420, width: '100%' }}>
           <ModalClose />
           <DialogTitle>{picking?.title}</DialogTitle>
+          {picking?.rig && (
+            <Typography level='body-sm' sx={{ color: 'text.tertiary' }}>
+              Tap everyone on this rig. People can be on more than one rig.
+            </Typography>
+          )}
           <List sx={{ maxHeight: '60vh', overflow: 'auto' }}>
-            {members.map(m => {
+            {picking?.rig &&
+              members.map(m => {
+                const slot = rigSlot(picking.rig, m.userId)
+                const on = slots[slot] === m.userId
+                return (
+                  <ListItem key={m.userId}>
+                    <ListItemButton
+                      selected={on}
+                      onClick={() =>
+                        tour &&
+                        mutation.mutate({
+                          tour,
+                          slot,
+                          userId: on ? null : m.userId,
+                        })
+                      }
+                      sx={{ borderRadius: 'md' }}
+                    >
+                      <ListItemDecorator>
+                        <Avatar size='sm' src={m.image || undefined}>
+                          {initials(m.displayName || m.username)}
+                        </Avatar>
+                      </ListItemDecorator>
+                      <ListItemContent>
+                        {m.displayName || m.username}
+                      </ListItemContent>
+                      {on && <CheckRounded color='primary' />}
+                    </ListItemButton>
+                  </ListItem>
+                )
+              })}
+            {picking?.rig && (
+              <ListItem>
+                <ListItemButton
+                  color='primary'
+                  variant='soft'
+                  onClick={() => setPicking(null)}
+                  sx={{ borderRadius: 'md', justifyContent: 'center' }}
+                >
+                  Done
+                </ListItemButton>
+              </ListItem>
+            )}
+            {!picking?.rig && members.map(m => {
               const selected = picking && slots[picking.slot] === m.userId
               // Picking someone moves them off their current slot in the
               // same group (phone, watch time, company).
@@ -393,7 +448,7 @@ const ShiftInfo = () => {
                 </ListItem>
               )
             })}
-            {picking && slots[picking.slot] != null && (
+            {picking && !picking.rig && slots[picking.slot] != null && (
               <ListItem>
                 <ListItemButton
                   color='danger'

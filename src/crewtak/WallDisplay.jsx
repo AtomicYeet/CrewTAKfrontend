@@ -1,4 +1,9 @@
-import { HomeRounded, PhoneInTalk, Visibility } from '@mui/icons-material'
+import {
+  HomeRounded,
+  LocalFireDepartment,
+  PhoneInTalk,
+  Visibility,
+} from '@mui/icons-material'
 import { Box, Chip, IconButton, Typography } from '@mui/joy'
 import { useQueryClient } from '@tanstack/react-query'
 import moment from 'moment'
@@ -12,7 +17,9 @@ import { useCircleMembers } from '@/queries/UserQueries'
 import LogoSrc from '../assets/logo.svg'
 import { ACCENT, BRAND_BLUE } from './brand'
 import {
+  COMPANIES,
   PHONES,
+  rigMembers,
   SLEEP_BLOCKS,
   sleepSlot,
   tourAt,
@@ -226,6 +233,11 @@ const AssignmentPanel = ({ icon, rows, title }) => (
       bgcolor: PANEL,
       border: `1px solid ${BORDER}`,
       borderRadius: '14px',
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      justifyContent: 'center',
       minWidth: 0,
       px: 'clamp(10px, 1vw, 18px)',
       py: 'clamp(6px, 0.7vw, 12px)',
@@ -335,6 +347,14 @@ const WallDisplay = () => {
     label: p.short,
     name: slotName(p.slot),
   }))
+  const rigRows = COMPANIES.map(co => ({
+    key: co.slot,
+    label: co.short,
+    name:
+      rigMembers(slots, co)
+        .map(id => membersById.get(id) || 'Former member')
+        .join(', ') || null,
+  }))
   const sleepRows = SLEEP_BLOCKS.map(b => ({
     key: `sleep-${b.index}`,
     label: b.label,
@@ -410,13 +430,15 @@ const WallDisplay = () => {
           gap: 'clamp(10px, 1.2vw, 20px)',
           // Wide screens: logo | phones | clock | sleep | shift, all one row.
           // Narrower screens move phones and sleep to a second row.
+          // Wide screens: logo | phones | watch | clock | rigs | shift.
+          // Narrower screens put the three panels on a second row.
           gridTemplateAreas: {
-            xs: `"brand clock shift" "phones phones sleep"`,
-            lg: `"brand phones clock sleep shift"`,
+            xs: `"brand clock shift" "phones sleep rigs"`,
+            xl: `"brand phones sleep clock rigs shift"`,
           },
           gridTemplateColumns: {
-            xs: 'auto 1fr auto',
-            lg: 'auto minmax(0, 1fr) auto minmax(0, 1fr) auto',
+            xs: 'repeat(3, minmax(0, 1fr))',
+            xl: 'auto repeat(2, minmax(0, 1fr)) auto minmax(0, 1fr) auto',
           },
         }}
       >
@@ -461,7 +483,7 @@ const WallDisplay = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ gridArea: 'phones', minWidth: 0 }}>
+        <Box sx={{ alignSelf: 'stretch', gridArea: 'phones', minWidth: 0 }}>
           <AssignmentPanel
             icon={<PhoneInTalk sx={{ fontSize: '1.1em' }} />}
             rows={phoneRows}
@@ -494,11 +516,19 @@ const WallDisplay = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ gridArea: 'sleep', minWidth: 0 }}>
+        <Box sx={{ alignSelf: 'stretch', gridArea: 'sleep', minWidth: 0 }}>
           <AssignmentPanel
             icon={<Visibility sx={{ fontSize: '1.1em' }} />}
             rows={sleepRows}
             title={shiftDay ? `Watch Times · Day ${shiftDay}` : 'Watch Times'}
+          />
+        </Box>
+
+        <Box sx={{ alignSelf: 'stretch', gridArea: 'rigs', minWidth: 0 }}>
+          <AssignmentPanel
+            icon={<LocalFireDepartment sx={{ fontSize: '1.1em' }} />}
+            rows={rigRows}
+            title='Rig Assignments'
           />
         </Box>
 

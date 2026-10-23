@@ -10,9 +10,11 @@ import { shiftBoundsAt } from './shifts'
 // Picks are stored on the server per crew and per 48-hour tour. Watch times
 // (stored as sleep.<day>.<n>) are also keyed by shift day, so they start empty
 // again every morning when the shift day rolls over (Day 1 → Day 2 → next
-// tour's Day 1). Within each group a person holds one slot at most: one phone,
-// one watch time per day, one company assignment. Assigning them somewhere
-// new clears their old slot in that group.
+// tour's Day 1). A person holds one phone and one watch time per day at most;
+// assigning them somewhere new clears their old slot in that group.
+//
+// Rig (company) assignments are many-to-many and reset at shift change: each
+// person-on-rig pairing is its own slot, company.<rig>.u<userId>.
 
 export const PHONES = [
   { slot: 'phone.captain', label: "Captain's", short: 'Captain' },
@@ -22,11 +24,20 @@ export const PHONES = [
 ]
 
 export const COMPANIES = [
-  { slot: 'company.5181', label: '5181 Crash Truck' },
-  { slot: 'company.5182', label: '5182 Crash Truck' },
-  { slot: 'company.5184', label: '5184 Fire/EMS' },
-  { slot: 'company.5132', label: '5132 EMS' },
+  { slot: 'company.5181', label: '5181 Crash Truck', short: '5181 Crash' },
+  { slot: 'company.5182', label: '5182 Crash Truck', short: '5182 Crash' },
+  { slot: 'company.5184', label: '5184 Fire/EMS', short: '5184 Fire/EMS' },
+  { slot: 'company.5132', label: '5132 EMS', short: '5132 EMS' },
 ]
+
+// The slot recording that `userId` is on rig `co`.
+export const rigSlot = (co, userId) => `${co.slot}.u${userId}`
+
+// Everyone currently on rig `co`, as user ids.
+export const rigMembers = (slots, co) =>
+  Object.keys(slots)
+    .filter(k => k.startsWith(`${co.slot}.u`) && slots[k] != null)
+    .map(k => slots[k])
 
 // Watch times. (Kept under the old "sleep" name in storage.)
 export const SLEEP_BLOCKS = [
@@ -42,7 +53,6 @@ export const isPhoneSlot = slot => slot.startsWith('phone.')
 // Slots sharing a group can't share a person (mirrors the server).
 export const exclusiveGroup = slot => {
   if (slot.startsWith('phone.')) return 'phone.'
-  if (slot.startsWith('company.')) return 'company.'
   if (slot.startsWith('sleep.')) return slot.slice(0, slot.lastIndexOf('.') + 1)
   return null
 }
