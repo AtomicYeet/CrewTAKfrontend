@@ -227,7 +227,7 @@ Empty.propTypes = { children: PropTypes.node }
 
 // Small header panel: phone holders (left of the clock) or tonight's watch
 // times (right of the clock), centered in the box. Read-only here; picks are made on /shift.
-const AssignmentPanel = ({ icon, rows, title }) => (
+const AssignmentPanel = ({ icon, rows, title, wrap = false }) => (
   <Box
     sx={{
       bgcolor: PANEL,
@@ -284,9 +284,10 @@ const AssignmentPanel = ({ icon, rows, title }) => (
               color: r.name ? '#fff' : 'rgba(255,255,255,0.3)',
               fontSize: 'clamp(0.85rem, 1.1vw, 1.3rem)',
               fontWeight: 700,
+              lineHeight: 1.25,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              whiteSpace: wrap ? 'normal' : 'nowrap',
             }}
           >
             {r.name || '—'}
@@ -307,6 +308,8 @@ AssignmentPanel.propTypes = {
     }),
   ).isRequired,
   title: PropTypes.string.isRequired,
+  // Let long values (several people on one rig) wrap instead of cutting off.
+  wrap: PropTypes.bool,
 }
 
 const WallDisplay = () => {
@@ -438,7 +441,7 @@ const WallDisplay = () => {
           },
           gridTemplateColumns: {
             xs: 'repeat(3, minmax(0, 1fr))',
-            xl: 'auto repeat(2, minmax(0, 1fr)) auto minmax(0, 1fr) auto',
+            xl: 'auto repeat(2, minmax(0, 1fr)) auto minmax(0, 1.6fr) auto',
           },
         }}
       >
@@ -529,6 +532,7 @@ const WallDisplay = () => {
             icon={<LocalFireDepartment sx={{ fontSize: '1.1em' }} />}
             rows={rigRows}
             title='Rig Assignments'
+            wrap
           />
         </Box>
 
