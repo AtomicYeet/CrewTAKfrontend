@@ -441,7 +441,7 @@ const WallDisplay = () => {
           },
           gridTemplateColumns: {
             xs: 'repeat(3, minmax(0, 1fr))',
-            xl: 'auto repeat(2, minmax(0, 1fr)) auto minmax(0, 1.6fr) auto',
+            xl: 'auto minmax(0, 1fr) minmax(0, 1.2fr) auto minmax(0, 1.4fr) auto',
           },
         }}
       >
@@ -491,6 +491,7 @@ const WallDisplay = () => {
             icon={<PhoneInTalk sx={{ fontSize: '1.1em' }} />}
             rows={phoneRows}
             title='Phones'
+            wrap
           />
         </Box>
 
@@ -523,7 +524,8 @@ const WallDisplay = () => {
           <AssignmentPanel
             icon={<Visibility sx={{ fontSize: '1.1em' }} />}
             rows={sleepRows}
-            title={shiftDay ? `Watch Times · Day ${shiftDay}` : 'Watch Times'}
+            title={shiftDay ? `Watch · Day ${shiftDay}` : 'Watch Times'}
+            wrap
           />
         </Box>
 
