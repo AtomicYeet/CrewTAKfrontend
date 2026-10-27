@@ -2,6 +2,7 @@ import {
   CheckRounded,
   LocalFireDepartment,
   PhoneInTalk,
+  RestaurantMenu,
   Visibility,
 } from '@mui/icons-material'
 import {
@@ -10,6 +11,8 @@ import {
   Chip,
   Container,
   DialogTitle,
+  FormHelperText,
+  Input,
   List,
   ListItem,
   ListItemButton,
@@ -32,11 +35,16 @@ import { ACCENT } from './brand'
 import {
   applyPick,
   COMPANIES,
+  DINNER_NOTE_MAX,
+  dinnerNoteSlot,
+  dinnerPrefix,
   exclusiveGroup,
+  pairMembers,
+  pairSlot,
   PHONES,
   rigMembers,
-  rigSlot,
   saveSlot,
+  SHIFT_DAYS,
   shiftInfoQueryKey,
   SLEEP_BLOCKS,
   sleepSlot,
@@ -45,8 +53,10 @@ import {
 } from './shiftSlots'
 import { SHIFT_COLORS, shiftAt, shiftDayAt } from './shifts'
 
-// Shift Info: who carries each station phone this tour, and who has each
-// overnight watch time, and which company each person rides. See shiftSlots.js for how picks are stored and reset.
+// Shift Info: who carries each station phone this tour, who has each overnight
+// watch time on Day 1 and Day 2, which company each person rides, and the
+// dinner plan for each day. See shiftSlots.js for how picks are stored and
+// reset.
 
 // Re-render every minute so the tour and shift day roll over on their own.
 const useMinuteClock = () => {
@@ -152,6 +162,64 @@ SleepRow.propTypes = {
   onClick: PropTypes.func.isRequired,
 }
 
+// "Day 1" / "Day 2" heading, with a Today chip on the current shift day.
+const DayHeading = ({ day, today }) => (
+  <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, px: 1.5, pt: 0.5 }}>
+    <Typography level='h4'>Day {day}</Typography>
+    {today && (
+      <Chip color='primary' size='sm' variant='soft'>
+        Today
+      </Chip>
+    )}
+  </Box>
+)
+
+DayHeading.propTypes = {
+  day: PropTypes.number.isRequired,
+  today: PropTypes.bool,
+}
+
+// What's for dinner. Saves when the box loses focus or on Enter; picks up
+// other people's edits while it isn't being typed in.
+const DinnerNote = ({ day, onSave, value }) => {
+  const [draft, setDraft] = useState(value)
+  const [editing, setEditing] = useState(false)
+  useEffect(() => {
+    if (!editing) setDraft(value)
+  }, [value, editing])
+
+  const save = () => {
+    setEditing(false)
+    if (draft.trim() !== value.trim()) onSave(draft.trim())
+  }
+
+  return (
+    <Box sx={{ px: 1.5, pb: 1 }}>
+      <Input
+        aria-label={`Day ${day} dinner description`}
+        placeholder="What's for dinner?"
+        value={draft}
+        onFocus={() => setEditing(true)}
+        onChange={e => setDraft(e.target.value.slice(0, DINNER_NOTE_MAX))}
+        onBlur={save}
+        onKeyDown={e => {
+          if (e.key === 'Enter') e.target.blur()
+        }}
+        slotProps={{ input: { maxLength: DINNER_NOTE_MAX } }}
+      />
+      <FormHelperText sx={{ justifyContent: 'flex-end' }}>
+        {draft.length}/{DINNER_NOTE_MAX}
+      </FormHelperText>
+    </Box>
+  )
+}
+
+DinnerNote.propTypes = {
+  day: PropTypes.number.isRequired,
+  onSave: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
+}
+
 const ShiftInfo = () => {
   const now = useMinuteClock()
   const queryClient = useQueryClient()
@@ -182,13 +250,13 @@ const ShiftInfo = () => {
   const [error, setError] = useState(null)
   const mutation = useMutation({
     mutationFn: saveSlot,
-    onMutate: async ({ slot, userId }) => {
+    onMutate: async ({ slot, userId, note }) => {
       setError(null)
       await queryClient.cancelQueries({ queryKey })
       const previous = queryClient.getQueryData(queryKey)
       // One phone per person: their old phone empties straight away.
       queryClient.setQueryData(queryKey, old =>
-        applyPick(old || {}, slot, userId),
+        applyPick(old || {}, slot, userId, note),
       )
       return { previous }
     },
@@ -199,7 +267,8 @@ const ShiftInfo = () => {
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })
 
-  // The slot whose picker is open: { slot, title }.
+  // The slot whose picker is open: { slot, title }, or for a multi-pick
+  // (rig crew, dinner cooks) { prefix, hint, title }.
   const [picking, setPicking] = useState(null)
 
   const assign = userId => {
@@ -218,7 +287,8 @@ const ShiftInfo = () => {
     const phone = PHONES.find(p => p.slot === slot)
     if (phone) return `the ${phone.label} phone`
     const block = SLEEP_BLOCKS.find(b => slot.endsWith(`.${b.index}`))
-    return block ? `the ${block.label} watch` : 'another spot'
+    const day = slot.split('.')[1]
+    return block ? `the Day ${day} ${block.label} watch` : 'another spot'
   }
 
   return (
@@ -305,26 +375,39 @@ const ShiftInfo = () => {
       >
         Watch Times
       </Typography>
-      <Sheet variant='outlined' sx={{ borderRadius: 'lg', p: 1.5 }}>
-        <Typography level='h4' sx={{ px: 1.5, pt: 0.5 }}>
-          Shift Day {shiftDay ?? '—'}
-        </Typography>
-        <List size='lg' sx={{ '--ListItem-paddingX': '0px' }}>
-          {SLEEP_BLOCKS.map(b => {
-            const slot = sleepSlot(shiftDay, b.index)
-            return (
-              <SleepRow
-                key={slot}
-                label={b.label}
-                name={nameFor(slot)}
-                onClick={() =>
-                  setPicking({ slot, title: `Watch ${b.label}` })
-                }
-              />
-            )
-          })}
-        </List>
-      </Sheet>
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+        }}
+      >
+        {SHIFT_DAYS.map(day => (
+          <Sheet
+            key={day}
+            data-testid={`watch-day-${day}`}
+            variant='outlined'
+            sx={{ borderRadius: 'lg', p: 1.5 }}
+          >
+            <DayHeading day={day} today={day === shiftDay} />
+            <List size='lg' sx={{ '--ListItem-paddingX': '0px' }}>
+              {SLEEP_BLOCKS.map(b => {
+                const slot = sleepSlot(day, b.index)
+                return (
+                  <SleepRow
+                    key={slot}
+                    label={b.label}
+                    name={nameFor(slot)}
+                    onClick={() =>
+                      setPicking({ slot, title: `Day ${day} watch ${b.label}` })
+                    }
+                  />
+                )
+              })}
+            </List>
+          </Sheet>
+        ))}
+      </Box>
 
       <Typography
         level='title-sm'
@@ -350,7 +433,11 @@ const ShiftInfo = () => {
                 label={co.label}
                 name={names || null}
                 onClick={() =>
-                  setPicking({ rig: co, slot: co.slot, title: co.label })
+                  setPicking({
+                    hint: 'Tap everyone on this rig. People can be on more than one rig.',
+                    prefix: co.slot,
+                    title: co.label,
+                  })
                 }
               />
             )
@@ -358,19 +445,77 @@ const ShiftInfo = () => {
         </List>
       </Sheet>
 
+      <Typography
+        level='title-sm'
+        startDecorator={<RestaurantMenu sx={{ fontSize: 18 }} />}
+        sx={{
+          letterSpacing: '0.08em',
+          mb: 1,
+          mt: 4,
+          textTransform: 'uppercase',
+        }}
+      >
+        Dinner Plans
+      </Typography>
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+        }}
+      >
+        {SHIFT_DAYS.map(day => {
+          const prefix = dinnerPrefix(day)
+          const cooks = pairMembers(slots, prefix)
+            .map(id => nameById.get(id) || 'Former member')
+            .join(', ')
+          return (
+            <Sheet
+              key={day}
+              data-testid={`dinner-day-${day}`}
+              variant='outlined'
+              sx={{ borderRadius: 'lg', p: 1.5 }}
+            >
+              <DayHeading day={day} today={day === shiftDay} />
+              <List size='lg' sx={{ '--ListItem-paddingX': '0px' }}>
+                <SleepRow
+                  label='Cooking'
+                  name={cooks || null}
+                  onClick={() =>
+                    setPicking({
+                      hint: "Tap everyone cooking. Pick as many as you need.",
+                      prefix,
+                      title: `Day ${day} dinner`,
+                    })
+                  }
+                />
+              </List>
+              <DinnerNote
+                day={day}
+                value={slots[dinnerNoteSlot(day)] || ''}
+                onSave={note =>
+                  tour &&
+                  mutation.mutate({ tour, slot: dinnerNoteSlot(day), note })
+                }
+              />
+            </Sheet>
+          )
+        })}
+      </Box>
+
       <Modal open={Boolean(picking)} onClose={() => setPicking(null)}>
         <ModalDialog sx={{ maxWidth: 420, width: '100%' }}>
           <ModalClose />
           <DialogTitle>{picking?.title}</DialogTitle>
-          {picking?.rig && (
+          {picking?.hint && (
             <Typography level='body-sm' sx={{ color: 'text.tertiary' }}>
-              Tap everyone on this rig. People can be on more than one rig.
+              {picking.hint}
             </Typography>
           )}
           <List sx={{ maxHeight: '60vh', overflow: 'auto' }}>
-            {picking?.rig &&
+            {picking?.prefix &&
               members.map(m => {
-                const slot = rigSlot(picking.rig, m.userId)
+                const slot = pairSlot(picking.prefix, m.userId)
                 const on = slots[slot] === m.userId
                 return (
                   <ListItem key={m.userId}>
@@ -399,7 +544,7 @@ const ShiftInfo = () => {
                   </ListItem>
                 )
               })}
-            {picking?.rig && (
+            {picking?.prefix && (
               <ListItem>
                 <ListItemButton
                   color='primary'
@@ -411,7 +556,7 @@ const ShiftInfo = () => {
                 </ListItemButton>
               </ListItem>
             )}
-            {!picking?.rig && members.map(m => {
+            {picking && !picking.prefix && members.map(m => {
               const selected = picking && slots[picking.slot] === m.userId
               // Picking someone moves them off their current slot in the
               // same group (phone, watch time, company).
@@ -448,7 +593,7 @@ const ShiftInfo = () => {
                 </ListItem>
               )
             })}
-            {picking && !picking.rig && slots[picking.slot] != null && (
+            {picking && !picking.prefix && slots[picking.slot] != null && (
               <ListItem>
                 <ListItemButton
                   color='danger'

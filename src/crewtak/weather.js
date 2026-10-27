@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 
+import { apiClient } from '@/utils/ApiClient'
+
 // Live weather for the wall display: the National Weather Service forecast
-// for Appleton International Airport and the latest KATW METAR. Fetched
-// straight from the browser (both APIs allow it), so no backend is involved.
+// for Appleton International Airport (fetched by the browser) and the latest
+// KATW METAR (fetched by the CrewTAK server).
 
 export const STATION = 'KATW'
 // Appleton International Airport.
@@ -49,48 +51,22 @@ export const useForecast = () => {
 
 const cToF = c => (c == null ? null : Math.round((c * 9) / 5 + 32))
 
-// Latest METAR at the airport. Asks both the Aviation Weather Center and
-// NWS (NWS often runs an hour behind) and keeps whichever is newer.
-const awcMetar = async () => {
-  const res = await fetch(
-    `https://aviationweather.gov/api/data/metar?ids=${STATION}&format=json`,
-  )
-  if (!res.ok) throw new Error(`AWC ${res.status}`)
-  const [m] = await res.json()
-  if (!m?.rawOb) throw new Error('AWC empty')
-  return {
-    raw: m.rawOb.trim(),
-    tempF: cToF(m.temp),
-    text: '',
-    time: m.obsTime ? new Date(m.obsTime * 1000) : null,
-  }
-}
-
-const nwsMetar = async () => {
-  const data = await nwsGet(`${NWS}/stations/${STATION}/observations/latest`)
-  const p = data?.properties || {}
-  return {
-    raw: (p.rawMessage || '').trim(),
-    tempF: cToF(p.temperature?.value),
-    text: p.textDescription || '',
-    time: p.timestamp ? new Date(p.timestamp) : null,
-  }
-}
-
+// Latest METAR at the airport, fetched by the CrewTAK server (it checks the
+// Aviation Weather Center and NWS and keeps the newer report).
 export const useMetar = () =>
   useQuery({
     queryKey: ['weather', 'metar', STATION],
     queryFn: async () => {
-      const [awc, nws] = await Promise.allSettled([awcMetar(), nwsMetar()])
-      const got = [awc, nws]
-        .filter(r => r.status === 'fulfilled' && r.value.raw)
-        .map(r => r.value)
-        .sort((a, b) => (b.time || 0) - (a.time || 0))
-      if (!got.length) throw new Error('No METAR')
-      const best = got[0]
-      // NWS has the plain-English sky description; borrow it if missing.
-      if (!best.text && nws.status === 'fulfilled') best.text = nws.value.text
-      return best
+      const resp = await apiClient.get('/crewtak/weather/metar')
+      if (!resp.ok) throw new Error('No METAR')
+      const { res } = await resp.json()
+      if (!res?.raw) throw new Error('No METAR')
+      return {
+        raw: res.raw,
+        tempF: cToF(res.tempC),
+        text: res.text || '',
+        time: res.time ? new Date(res.time) : null,
+      }
     },
     refetchInterval: 5 * 60 * 1000,
     refetchIntervalInBackground: true,

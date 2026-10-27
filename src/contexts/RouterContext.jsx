@@ -8,6 +8,7 @@ import {
 import App from '@/App'
 import CompletionLog from '@/crewtak/CompletionLog'
 import ShiftInfo from '@/crewtak/ShiftInfo'
+import Training from '@/crewtak/Training'
 import WallDisplay from '@/crewtak/WallDisplay'
 import ChoreEdit from '@/views/ChoreEdit/ChoreEdit'
 import Error from '@/views/Error'
@@ -332,6 +333,10 @@ const Router = createBrowserRouter([
       {
         path: '/shift',
         element: <ShiftInfo />,
+      },
+      {
+        path: '/training',
+        element: <Training />,
       },
       {
         path: '/chores/*',

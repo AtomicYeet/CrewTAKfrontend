@@ -28,6 +28,7 @@ import {
   COMPANIES,
   PHONES,
   rigMembers,
+  SHIFT_DAYS,
   SLEEP_BLOCKS,
   sleepSlot,
   tourAt,
@@ -239,28 +240,14 @@ const Empty = ({ children }) => (
 
 Empty.propTypes = { children: PropTypes.node }
 
-// Small header panel: phone holders (left of the clock) or tonight's watch
-// times (right of the clock), centered in the box. Read-only here; picks are made on /shift.
-const AssignmentPanel = ({ icon, rows, title, wrap = false }) => (
-  <Box
-    sx={{
-      bgcolor: PANEL,
-      border: `1px solid ${BORDER}`,
-      borderRadius: '14px',
-      boxSizing: 'border-box',
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      justifyContent: 'center',
-      minWidth: 0,
-      px: 'clamp(10px, 1vw, 18px)',
-      py: 'clamp(6px, 0.7vw, 12px)',
-    }}
-  >
+// Title plus label/name rows, centered. Used on its own in a panel, or twice
+// side by side for the two watch-time days.
+const PanelBody = ({ icon, rows, title, titleColor = MUTED, wrap = false }) => (
+  <Box sx={{ minWidth: 0 }}>
     <Typography
       startDecorator={icon}
       sx={{
-        color: MUTED,
+        color: titleColor,
         justifyContent: 'center',
         fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
         fontWeight: 700,
@@ -312,19 +299,66 @@ const AssignmentPanel = ({ icon, rows, title, wrap = false }) => (
   </Box>
 )
 
-AssignmentPanel.propTypes = {
+const panelRows = PropTypes.arrayOf(
+  PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    name: PropTypes.string,
+  }),
+)
+
+PanelBody.propTypes = {
   icon: PropTypes.node,
-  rows: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
-      name: PropTypes.string,
-    }),
-  ).isRequired,
+  rows: panelRows.isRequired,
   title: PropTypes.string.isRequired,
+  titleColor: PropTypes.string,
   // Let long values (several people on one rig) wrap instead of cutting off.
   wrap: PropTypes.bool,
 }
+
+const panelSx = {
+  bgcolor: PANEL,
+  border: `1px solid ${BORDER}`,
+  borderRadius: '14px',
+  boxSizing: 'border-box',
+  display: 'flex',
+  height: '100%',
+  minWidth: 0,
+  px: 'clamp(10px, 1vw, 18px)',
+  py: 'clamp(6px, 0.7vw, 12px)',
+}
+
+// One assignment panel (phones, rigs). Read-only; picks are made on /shift.
+const AssignmentPanel = props => (
+  <Box sx={{ ...panelSx, flexDirection: 'column', justifyContent: 'center' }}>
+    <PanelBody {...props} />
+  </Box>
+)
+
+AssignmentPanel.propTypes = PanelBody.propTypes
+
+// Several PanelBody columns in one panel, e.g. Watch Day 1 | Watch Day 2.
+const SplitPanel = ({ columns, testId }) => (
+  <Box
+    data-testid={testId}
+    sx={{
+      ...panelSx,
+      alignItems: 'center',
+      gap: 'clamp(12px, 2vw, 40px)',
+      justifyContent: 'space-evenly',
+    }}
+  >
+    {columns.map(col => (
+      <PanelBody key={col.title} {...col} />
+    ))}
+  </Box>
+)
+
+SplitPanel.propTypes = {
+  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  testId: PropTypes.string,
+}
+
 
 const WEATHER_ICONS = {
   clearNight: { Icon: NightsStay, color: '#c9d6ff' },
@@ -575,10 +609,17 @@ const WallDisplay = () => {
         .map(id => membersById.get(id) || 'Former member')
         .join(', ') || null,
   }))
-  const sleepRows = SLEEP_BLOCKS.map(b => ({
-    key: `sleep-${b.index}`,
-    label: b.label,
-    name: shiftDay ? slotName(sleepSlot(shiftDay, b.index)) : null,
+  const watchColumns = SHIFT_DAYS.map(day => ({
+    icon: <Visibility sx={{ fontSize: '1.1em' }} />,
+    rows: SLEEP_BLOCKS.map(b => ({
+      key: `sleep-${day}-${b.index}`,
+      label: b.label,
+      name: slotName(sleepSlot(day, b.index)),
+    })),
+    title: `Watch · Day ${day}`,
+    // The current shift day's title stands out.
+    titleColor: day === shiftDay ? '#fff' : MUTED,
+    wrap: true,
   }))
 
   const { dueToday, overdue, upNext } = useMemo(() => {
@@ -785,12 +826,7 @@ const WallDisplay = () => {
           </Box>
 
           <Box sx={{ minWidth: 0 }}>
-            <AssignmentPanel
-              icon={<Visibility sx={{ fontSize: '1.1em' }} />}
-              rows={sleepRows}
-              title={shiftDay ? `Watch · Day ${shiftDay}` : 'Watch Times'}
-              wrap
-            />
+            <SplitPanel columns={watchColumns} testId='display-watch' />
           </Box>
 
           <Box sx={{ minWidth: 0 }}>

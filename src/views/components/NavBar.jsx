@@ -14,6 +14,7 @@ import {
   MenuRounded,
   ReportProblem,
   SearchRounded,
+  SchoolOutlined,
   SettingsOutlined,
   SpaceDashboard,
   Toll,
@@ -60,6 +61,7 @@ const PUBLIC_PAGES = ['/landing', '/privacy', '/terms']
 const NAVBAR_TITLE_KEYS = {
   '/log': 'Completion log',
   '/shift': 'Shift Info',
+  '/training': 'Training',
   '/activities': 'navigation.activities',
   '/archived': 'navigation.archived',
   '/tasks': 'navigation.allTasks',
@@ -200,6 +202,11 @@ const NavBar = () => {
       to: '/shift',
       label: 'Shift Info',
       icon: <BadgeOutlined />,
+    },
+    {
+      to: '/training',
+      label: 'Training',
+      icon: <SchoolOutlined />,
     },
     {
       to: '/settings',

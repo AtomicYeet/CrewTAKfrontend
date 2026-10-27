@@ -15,6 +15,9 @@ import { shiftBoundsAt } from './shifts'
 //
 // Rig (company) assignments are many-to-many and reset at shift change: each
 // person-on-rig pairing is its own slot, company.<rig>.u<userId>.
+//
+// Dinner plans are per shift day: who's cooking (many-to-many, like rigs,
+// dinner.<day>.u<userId>) and a short description (dinner.<day>.note).
 
 export const PHONES = [
   { slot: 'phone.captain', label: "Captain's", short: 'Captain' },
@@ -30,14 +33,28 @@ export const COMPANIES = [
   { slot: 'company.5132', label: '5132 EMS', short: '5132 EMS' },
 ]
 
+// Many-to-many picks: `prefix` is a rig (company.5181) or a dinner day
+// (dinner.1); each person picked is the slot <prefix>.u<userId>.
+export const pairSlot = (prefix, userId) => `${prefix}.u${userId}`
+
+// Everyone currently picked under `prefix`, as user ids.
+export const pairMembers = (slots, prefix) =>
+  Object.keys(slots)
+    .filter(k => k.startsWith(`${prefix}.u`) && slots[k] != null)
+    .map(k => slots[k])
+
 // The slot recording that `userId` is on rig `co`.
-export const rigSlot = (co, userId) => `${co.slot}.u${userId}`
+export const rigSlot = (co, userId) => pairSlot(co.slot, userId)
 
 // Everyone currently on rig `co`, as user ids.
-export const rigMembers = (slots, co) =>
-  Object.keys(slots)
-    .filter(k => k.startsWith(`${co.slot}.u`) && slots[k] != null)
-    .map(k => slots[k])
+export const rigMembers = (slots, co) => pairMembers(slots, co.slot)
+
+export const SHIFT_DAYS = [1, 2]
+
+export const DINNER_NOTE_MAX = 255
+export const dinnerPrefix = day => `dinner.${day}`
+export const dinnerNoteSlot = day => `dinner.${day}.note`
+export const isNoteSlot = slot => slot.endsWith('.note')
 
 // Watch times. (Kept under the old "sleep" name in storage.)
 export const SLEEP_BLOCKS = [
@@ -74,15 +91,16 @@ export const fetchSlots = async tour => {
   const body = await resp.json()
   const map = {}
   ;(body.res || []).forEach(s => {
-    map[s.slot] = s.userId ?? null
+    // Description slots hold text; everything else holds a user id.
+    map[s.slot] = isNoteSlot(s.slot) ? s.note || '' : (s.userId ?? null)
   })
   return map
 }
 
-export const saveSlot = async ({ tour, slot, userId }) => {
+export const saveSlot = async ({ tour, slot, userId = null, note }) => {
   const resp = await apiClient.put(
     '/crewtak/shift-info',
-    JSON.stringify({ tour, slot, userId }),
+    JSON.stringify({ tour, slot, userId, note }),
   )
   if (!resp.ok) {
     let msg = 'Could not save'
@@ -98,8 +116,12 @@ export const saveSlot = async ({ tour, slot, userId }) => {
 
 // What the slot map looks like right after `slot` is given to `userId`
 // (mirrors the server, for an instant optimistic update).
-export const applyPick = (slots, slot, userId) => {
+export const applyPick = (slots, slot, userId, note) => {
   const next = { ...slots }
+  if (isNoteSlot(slot)) {
+    next[slot] = (note || '').trim()
+    return next
+  }
   const group = exclusiveGroup(slot)
   if (userId != null && group) {
     Object.keys(next).forEach(key => {
