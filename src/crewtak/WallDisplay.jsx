@@ -358,7 +358,7 @@ const WeatherDay = ({ day }) => {
           fontWeight: 700,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
-          width: '5.6em',
+          width: '6.8em',
         }}
       >
         {day.label}
