@@ -49,35 +49,52 @@ export const useForecast = () => {
 
 const cToF = c => (c == null ? null : Math.round((c * 9) / 5 + 32))
 
-// Latest observation at the airport, including the raw METAR text. If NWS
-// has the observation but not the raw text, ask the Aviation Weather Center.
+// Latest METAR at the airport. Asks both the Aviation Weather Center and
+// NWS (NWS often runs an hour behind) and keeps whichever is newer.
+const awcMetar = async () => {
+  const res = await fetch(
+    `https://aviationweather.gov/api/data/metar?ids=${STATION}&format=json`,
+  )
+  if (!res.ok) throw new Error(`AWC ${res.status}`)
+  const [m] = await res.json()
+  if (!m?.rawOb) throw new Error('AWC empty')
+  return {
+    raw: m.rawOb.trim(),
+    tempF: cToF(m.temp),
+    text: '',
+    time: m.obsTime ? new Date(m.obsTime * 1000) : null,
+  }
+}
+
+const nwsMetar = async () => {
+  const data = await nwsGet(`${NWS}/stations/${STATION}/observations/latest`)
+  const p = data?.properties || {}
+  return {
+    raw: (p.rawMessage || '').trim(),
+    tempF: cToF(p.temperature?.value),
+    text: p.textDescription || '',
+    time: p.timestamp ? new Date(p.timestamp) : null,
+  }
+}
+
 export const useMetar = () =>
   useQuery({
     queryKey: ['weather', 'metar', STATION],
     queryFn: async () => {
-      const data = await nwsGet(`${NWS}/stations/${STATION}/observations/latest`)
-      const p = data?.properties || {}
-      let raw = (p.rawMessage || '').trim()
-      if (!raw) {
-        try {
-          const res = await fetch(
-            `https://aviationweather.gov/api/data/metar?ids=${STATION}&format=raw`,
-          )
-          if (res.ok) raw = (await res.text()).trim().split('\n')[0] || ''
-        } catch {
-          // Not reachable from this browser; show what NWS gave us.
-        }
-      }
-      return {
-        raw,
-        tempF: cToF(p.temperature?.value),
-        text: p.textDescription || '',
-        time: p.timestamp ? new Date(p.timestamp) : null,
-      }
+      const [awc, nws] = await Promise.allSettled([awcMetar(), nwsMetar()])
+      const got = [awc, nws]
+        .filter(r => r.status === 'fulfilled' && r.value.raw)
+        .map(r => r.value)
+        .sort((a, b) => (b.time || 0) - (a.time || 0))
+      if (!got.length) throw new Error('No METAR')
+      const best = got[0]
+      // NWS has the plain-English sky description; borrow it if missing.
+      if (!best.text && nws.status === 'fulfilled') best.text = nws.value.text
+      return best
     },
-    refetchInterval: 10 * 60 * 1000,
+    refetchInterval: 5 * 60 * 1000,
     refetchIntervalInBackground: true,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 2 * 60 * 1000,
     retry: 2,
   })
 
@@ -91,10 +108,8 @@ export const todayTomorrow = periods => {
     low: night?.temperature ?? null,
     short: (day || night)?.shortForecast || '',
     isNight: !day,
-    pop: Math.max(
-      day?.probabilityOfPrecipitation?.value ?? 0,
-      night?.probabilityOfPrecipitation?.value ?? 0,
-    ),
+    // Chance of precipitation for the period whose wording is shown.
+    pop: (day || night)?.probabilityOfPrecipitation?.value ?? 0,
   })
   const [p0, p1, p2, p3] = periods
   if (p0.isDaytime) {

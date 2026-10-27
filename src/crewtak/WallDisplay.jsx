@@ -339,7 +339,7 @@ const WEATHER_ICONS = {
   wind: { Icon: Air, color: '#cfd8e3' },
 }
 
-// One forecast card: label, icon, high/low, short wording.
+// One forecast row: label, icon, high/low with the short wording under it.
 const WeatherDay = ({ day }) => {
   if (!day) return null
   const { Icon, color } =
@@ -349,55 +349,52 @@ const WeatherDay = ({ day }) => {
       ? `${day.high}° / ${day.low}°`
       : `${day.high ?? day.low ?? '—'}°`
   return (
-    <Box sx={{ minWidth: 0, textAlign: 'center' }}>
+    <Box sx={{ alignItems: 'center', display: 'flex', gap: 'clamp(6px, 0.6vw, 12px)' }}>
       <Typography
         sx={{
           color: MUTED,
+          flexShrink: 0,
           fontSize: 'clamp(0.65rem, 0.8vw, 0.9rem)',
           fontWeight: 700,
-          letterSpacing: '0.1em',
+          letterSpacing: '0.08em',
           textTransform: 'uppercase',
+          width: '5.6em',
         }}
       >
         {day.label}
       </Typography>
-      <Box
-        sx={{
-          alignItems: 'center',
-          display: 'flex',
-          gap: 'clamp(4px, 0.5vw, 10px)',
-          justifyContent: 'center',
-        }}
-      >
-        <Icon sx={{ color, fontSize: 'clamp(1.4rem, 2.2vw, 2.4rem)' }} />
+      <Icon
+        sx={{ color, flexShrink: 0, fontSize: 'clamp(1.3rem, 2vw, 2.2rem)' }}
+      />
+      <Box sx={{ minWidth: 0 }}>
         <Typography
           sx={{
             color: '#fff',
-            fontSize: 'clamp(1rem, 1.5vw, 1.7rem)',
+            fontSize: 'clamp(0.95rem, 1.35vw, 1.55rem)',
             fontVariantNumeric: 'tabular-nums',
             fontWeight: 800,
+            lineHeight: 1.1,
             whiteSpace: 'nowrap',
           }}
         >
           {temps}
         </Typography>
+        <Typography
+          title={day.short}
+          sx={{
+            color: MUTED,
+            fontSize: 'clamp(0.65rem, 0.8vw, 0.9rem)',
+            fontWeight: 600,
+            maxWidth: 'clamp(100px, 8vw, 160px)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {day.short}
+          {day.pop >= 20 ? ` · ${day.pop}%` : ''}
+        </Typography>
       </Box>
-      <Typography
-        title={day.short}
-        sx={{
-          color: MUTED,
-          fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
-          fontWeight: 600,
-          maxWidth: 'clamp(110px, 9vw, 180px)',
-          mx: 'auto',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {day.short}
-        {day.pop >= 20 ? ` · ${day.pop}%` : ''}
-      </Typography>
     </Box>
   )
 }
@@ -413,10 +410,9 @@ WeatherDay.propTypes = {
   }),
 }
 
-// Today / tomorrow forecast plus the current airport temperature.
+// Today / tomorrow forecast for Appleton International.
 const WeatherWidget = () => {
   const { data: periods, isError } = useForecast()
-  const { data: metar } = useMetar()
   const { today, tomorrow } = todayTomorrow(periods)
   return (
     <Box
@@ -438,10 +434,9 @@ const WeatherWidget = () => {
       {today || tomorrow ? (
         <Box
           sx={{
-            display: 'grid',
-            gap: 'clamp(10px, 1.2vw, 22px)',
-            gridTemplateColumns: 'repeat(2, minmax(0, auto))',
-            justifyContent: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'clamp(6px, 0.8vw, 14px)',
           }}
         >
           <WeatherDay day={today} />
@@ -450,20 +445,6 @@ const WeatherWidget = () => {
       ) : (
         <Typography sx={{ color: MUTED, fontWeight: 600 }}>
           {isError ? 'Weather unavailable' : 'Loading weather…'}
-        </Typography>
-      )}
-      {metar?.tempF != null && (
-        <Typography
-          sx={{
-            color: MUTED,
-            fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
-            fontWeight: 600,
-            mt: 0.5,
-            textAlign: 'center',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Now {metar.tempF}°F{metar.text ? ` · ${metar.text}` : ''}
         </Typography>
       )}
     </Box>
@@ -519,6 +500,19 @@ const MetarStrip = () => {
       >
         {metar.raw}
       </Typography>
+      {metar.tempF != null && (
+        <Typography
+          sx={{
+            color: '#fff',
+            flexShrink: 0,
+            fontSize: 'clamp(0.75rem, 0.95vw, 1.05rem)',
+            fontWeight: 700,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Now {metar.tempF}°F{metar.text ? ` · ${metar.text}` : ''}
+        </Typography>
+      )}
       {ageMin != null && (
         <Typography
           sx={{
@@ -725,7 +719,7 @@ const WallDisplay = () => {
           <Typography
             sx={{
               color: '#fff',
-              fontSize: 'clamp(2rem, 4.2vw, 4.6rem)',
+              fontSize: 'clamp(1.9rem, 3.6vw, 4.2rem)',
               fontVariantNumeric: 'tabular-nums',
               fontWeight: 800,
               letterSpacing: '-0.02em',
