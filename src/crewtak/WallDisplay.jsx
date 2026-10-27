@@ -648,17 +648,10 @@ const WallDisplay = () => {
           alignItems: 'center',
           display: 'grid',
           gap: 'clamp(10px, 1.2vw, 20px)',
-          // Wide screens: home+weather | phones | watch | clock | rigs | shift,
-          // with the METAR line underneath. Narrower screens put the three
-          // assignment panels on a second row.
-          gridTemplateAreas: {
-            xs: `"brand clock shift" "phones sleep rigs" "metar metar metar"`,
-            xl: `"brand phones sleep clock rigs shift" "metar metar metar metar metar metar"`,
-          },
-          gridTemplateColumns: {
-            xs: 'repeat(3, minmax(0, 1fr))',
-            xl: 'auto minmax(0, 1fr) minmax(0, 1.2fr) auto minmax(0, 1.4fr) auto',
-          },
+          // home+weather | clock | shift, then the METAR line, then the
+          // phones / watch / rigs panels.
+          gridTemplateAreas: `"brand clock shift" "metar metar metar" "panels panels panels"`,
+          gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
         }}
       >
         <Box
@@ -687,15 +680,6 @@ const WallDisplay = () => {
             <HomeRounded sx={{ fontSize: 'clamp(24px, 2vw, 36px)' }} />
           </IconButton>
           <WeatherWidget />
-        </Box>
-
-        <Box sx={{ alignSelf: 'stretch', gridArea: 'phones', minWidth: 0 }}>
-          <AssignmentPanel
-            icon={<PhoneInTalk sx={{ fontSize: '1.1em' }} />}
-            rows={phoneRows}
-            title='Phones'
-            wrap
-          />
         </Box>
 
         {/* Date on top, then local | Zulu. */}
@@ -744,24 +728,6 @@ const WallDisplay = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ alignSelf: 'stretch', gridArea: 'sleep', minWidth: 0 }}>
-          <AssignmentPanel
-            icon={<Visibility sx={{ fontSize: '1.1em' }} />}
-            rows={sleepRows}
-            title={shiftDay ? `Watch · Day ${shiftDay}` : 'Watch Times'}
-            wrap
-          />
-        </Box>
-
-        <Box sx={{ alignSelf: 'stretch', gridArea: 'rigs', minWidth: 0 }}>
-          <AssignmentPanel
-            icon={<LocalFireDepartment sx={{ fontSize: '1.1em' }} />}
-            rows={rigRows}
-            title='Rig Assignments'
-            wrap
-          />
-        </Box>
-
         <Box sx={{ gridArea: 'shift', justifySelf: 'end', textAlign: 'right' }}>
           {shift && (
             <>
@@ -799,6 +765,43 @@ const WallDisplay = () => {
         </Box>
 
         <MetarStrip />
+
+        {/* Phones, watch times and rigs in their own row under the METAR. */}
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 'clamp(10px, 1.2vw, 20px)',
+            gridArea: 'panels',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            <AssignmentPanel
+              icon={<PhoneInTalk sx={{ fontSize: '1.1em' }} />}
+              rows={phoneRows}
+              title='Phones'
+              wrap
+            />
+          </Box>
+
+          <Box sx={{ minWidth: 0 }}>
+            <AssignmentPanel
+              icon={<Visibility sx={{ fontSize: '1.1em' }} />}
+              rows={sleepRows}
+              title={shiftDay ? `Watch · Day ${shiftDay}` : 'Watch Times'}
+              wrap
+            />
+          </Box>
+
+          <Box sx={{ minWidth: 0 }}>
+            <AssignmentPanel
+              icon={<LocalFireDepartment sx={{ fontSize: '1.1em' }} />}
+              rows={rigRows}
+              title='Rig Assignments'
+              wrap
+            />
+          </Box>
+        </Box>
       </Box>
 
       {/* Columns */}
