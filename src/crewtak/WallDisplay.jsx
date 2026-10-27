@@ -1,8 +1,17 @@
 import {
+  AcUnit,
+  Air,
+  Cloud,
+  FilterDrama,
+  Foggy,
   HomeRounded,
   LocalFireDepartment,
+  NightsStay,
   PhoneInTalk,
+  Thunderstorm,
   Visibility,
+  WaterDrop,
+  WbSunny,
 } from '@mui/icons-material'
 import { Box, Chip, IconButton, Typography } from '@mui/joy'
 import { useQueryClient } from '@tanstack/react-query'
@@ -14,7 +23,6 @@ import { useNavigate } from 'react-router-dom'
 import { useChores, useChoresHistory } from '@/queries/ChoreQueries'
 import { useCircleMembers } from '@/queries/UserQueries'
 
-import LogoSrc from '../assets/logo.svg'
 import { ACCENT, BRAND_BLUE } from './brand'
 import {
   COMPANIES,
@@ -26,7 +34,13 @@ import {
   useShiftSlots,
 } from './shiftSlots'
 import { shiftAt, shiftBoundsAt, shiftDayAt } from './shifts'
-import Wordmark from './Wordmark'
+import {
+  conditionKind,
+  STATION,
+  todayTomorrow,
+  useForecast,
+  useMetar,
+} from './weather'
 
 // Full-screen station board for a wall TV or tablet. Read-only: crews check
 // tasks off on their own phones so the log shows who did what.
@@ -312,6 +326,215 @@ AssignmentPanel.propTypes = {
   wrap: PropTypes.bool,
 }
 
+const WEATHER_ICONS = {
+  clearNight: { Icon: NightsStay, color: '#c9d6ff' },
+  cloud: { Icon: Cloud, color: '#cfd8e3' },
+  fog: { Icon: Foggy, color: '#b8c2cc' },
+  partly: { Icon: FilterDrama, color: '#ffd666' },
+  partlyNight: { Icon: FilterDrama, color: '#c9d6ff' },
+  rain: { Icon: WaterDrop, color: BRAND_BLUE[300] },
+  snow: { Icon: AcUnit, color: '#e6f4ff' },
+  storm: { Icon: Thunderstorm, color: '#ffd666' },
+  sun: { Icon: WbSunny, color: '#ffd666' },
+  wind: { Icon: Air, color: '#cfd8e3' },
+}
+
+// One forecast card: label, icon, high/low, short wording.
+const WeatherDay = ({ day }) => {
+  if (!day) return null
+  const { Icon, color } =
+    WEATHER_ICONS[conditionKind(day.short, day.isNight)] || WEATHER_ICONS.sun
+  const temps =
+    day.high != null && day.low != null
+      ? `${day.high}° / ${day.low}°`
+      : `${day.high ?? day.low ?? '—'}°`
+  return (
+    <Box sx={{ minWidth: 0, textAlign: 'center' }}>
+      <Typography
+        sx={{
+          color: MUTED,
+          fontSize: 'clamp(0.65rem, 0.8vw, 0.9rem)',
+          fontWeight: 700,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+        }}
+      >
+        {day.label}
+      </Typography>
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          gap: 'clamp(4px, 0.5vw, 10px)',
+          justifyContent: 'center',
+        }}
+      >
+        <Icon sx={{ color, fontSize: 'clamp(1.4rem, 2.2vw, 2.4rem)' }} />
+        <Typography
+          sx={{
+            color: '#fff',
+            fontSize: 'clamp(1rem, 1.5vw, 1.7rem)',
+            fontVariantNumeric: 'tabular-nums',
+            fontWeight: 800,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {temps}
+        </Typography>
+      </Box>
+      <Typography
+        title={day.short}
+        sx={{
+          color: MUTED,
+          fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
+          fontWeight: 600,
+          maxWidth: 'clamp(110px, 9vw, 180px)',
+          mx: 'auto',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {day.short}
+        {day.pop >= 20 ? ` · ${day.pop}%` : ''}
+      </Typography>
+    </Box>
+  )
+}
+
+WeatherDay.propTypes = {
+  day: PropTypes.shape({
+    high: PropTypes.number,
+    isNight: PropTypes.bool,
+    label: PropTypes.string,
+    low: PropTypes.number,
+    pop: PropTypes.number,
+    short: PropTypes.string,
+  }),
+}
+
+// Today / tomorrow forecast plus the current airport temperature.
+const WeatherWidget = () => {
+  const { data: periods, isError } = useForecast()
+  const { data: metar } = useMetar()
+  const { today, tomorrow } = todayTomorrow(periods)
+  return (
+    <Box
+      data-testid='weather-widget'
+      sx={{
+        alignSelf: 'stretch',
+        bgcolor: PANEL,
+        border: `1px solid ${BORDER}`,
+        borderRadius: '14px',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        minWidth: 0,
+        px: 'clamp(10px, 1vw, 18px)',
+        py: 'clamp(6px, 0.7vw, 12px)',
+      }}
+    >
+      {today || tomorrow ? (
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 'clamp(10px, 1.2vw, 22px)',
+            gridTemplateColumns: 'repeat(2, minmax(0, auto))',
+            justifyContent: 'center',
+          }}
+        >
+          <WeatherDay day={today} />
+          <WeatherDay day={tomorrow} />
+        </Box>
+      ) : (
+        <Typography sx={{ color: MUTED, fontWeight: 600 }}>
+          {isError ? 'Weather unavailable' : 'Loading weather…'}
+        </Typography>
+      )}
+      {metar?.tempF != null && (
+        <Typography
+          sx={{
+            color: MUTED,
+            fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
+            fontWeight: 600,
+            mt: 0.5,
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Now {metar.tempF}°F{metar.text ? ` · ${metar.text}` : ''}
+        </Typography>
+      )}
+    </Box>
+  )
+}
+
+// Thin full-width line with the latest raw METAR from the airport.
+const MetarStrip = () => {
+  const { data: metar } = useMetar()
+  if (!metar?.raw) return null
+  const ageMin = metar.time
+    ? Math.round((Date.now() - metar.time.getTime()) / 60000)
+    : null
+  return (
+    <Box
+      data-testid='metar-strip'
+      sx={{
+        alignItems: 'center',
+        bgcolor: PANEL,
+        border: `1px solid ${BORDER}`,
+        borderRadius: '10px',
+        display: 'flex',
+        gap: 1.5,
+        gridArea: 'metar',
+        minWidth: 0,
+        px: 'clamp(10px, 1vw, 18px)',
+        py: 'clamp(4px, 0.45vw, 8px)',
+      }}
+    >
+      <Typography
+        sx={{
+          color: ACCENT,
+          flexShrink: 0,
+          fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
+          fontWeight: 800,
+          letterSpacing: '0.1em',
+        }}
+      >
+        {STATION} METAR
+      </Typography>
+      <Typography
+        sx={{
+          color: '#fff',
+          flex: 1,
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+          fontSize: 'clamp(0.8rem, 1vw, 1.15rem)',
+          fontWeight: 600,
+          minWidth: 0,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {metar.raw}
+      </Typography>
+      {ageMin != null && (
+        <Typography
+          sx={{
+            color: ageMin > 90 ? '#ff7875' : MUTED,
+            flexShrink: 0,
+            fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
+            fontWeight: 600,
+          }}
+        >
+          {ageMin < 1 ? 'just now' : `${ageMin} min ago`}
+        </Typography>
+      )}
+    </Box>
+  )
+}
+
 const WallDisplay = () => {
   useWakeLock()
   const navigate = useNavigate()
@@ -431,13 +654,12 @@ const WallDisplay = () => {
           alignItems: 'center',
           display: 'grid',
           gap: 'clamp(10px, 1.2vw, 20px)',
-          // Wide screens: logo | phones | clock | sleep | shift, all one row.
-          // Narrower screens move phones and sleep to a second row.
-          // Wide screens: logo | phones | watch | clock | rigs | shift.
-          // Narrower screens put the three panels on a second row.
+          // Wide screens: home+weather | phones | watch | clock | rigs | shift,
+          // with the METAR line underneath. Narrower screens put the three
+          // assignment panels on a second row.
           gridTemplateAreas: {
-            xs: `"brand clock shift" "phones sleep rigs"`,
-            xl: `"brand phones sleep clock rigs shift"`,
+            xs: `"brand clock shift" "phones sleep rigs" "metar metar metar"`,
+            xl: `"brand phones sleep clock rigs shift" "metar metar metar metar metar metar"`,
           },
           gridTemplateColumns: {
             xs: 'repeat(3, minmax(0, 1fr))',
@@ -448,9 +670,11 @@ const WallDisplay = () => {
         <Box
           sx={{
             alignItems: 'center',
+            alignSelf: 'stretch',
             display: 'flex',
             gap: 1.5,
             gridArea: 'brand',
+            minWidth: 0,
           }}
         >
           {/* Touchscreens have no back button, so give them a way out. */}
@@ -468,22 +692,7 @@ const WallDisplay = () => {
           >
             <HomeRounded sx={{ fontSize: 'clamp(24px, 2vw, 36px)' }} />
           </IconButton>
-          <Box
-            component='img'
-            src={LogoSrc}
-            alt=''
-            sx={{ height: 'clamp(36px, 3.4vw, 64px)', width: 'auto' }}
-          />
-          <Typography
-            sx={{
-              color: '#fff',
-              fontSize: 'clamp(1.4rem, 2.4vw, 2.6rem)',
-              fontWeight: 800,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            <Wordmark />
-          </Typography>
+          <WeatherWidget />
         </Box>
 
         <Box sx={{ alignSelf: 'stretch', gridArea: 'phones', minWidth: 0 }}>
@@ -495,28 +704,49 @@ const WallDisplay = () => {
           />
         </Box>
 
-        <Box sx={{ gridArea: 'clock', textAlign: 'center' }}>
-          <Typography
-            sx={{
-              color: '#fff',
-              fontSize: 'clamp(2.6rem, 5.5vw, 6rem)',
-              fontVariantNumeric: 'tabular-nums',
-              fontWeight: 800,
-              letterSpacing: '-0.03em',
-              lineHeight: 1,
-            }}
-          >
-            {moment(now).format('HH:mm')}
-          </Typography>
+        {/* Date on top, then local | Zulu. */}
+        <Box
+          data-testid='display-clock'
+          sx={{ gridArea: 'clock', textAlign: 'center' }}
+        >
           <Typography
             sx={{
               color: MUTED,
               fontSize: 'clamp(0.9rem, 1.3vw, 1.4rem)',
-              fontWeight: 600,
-              mt: 0.5,
+              fontWeight: 700,
+              letterSpacing: '0.06em',
+              mb: 0.5,
+              textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
             }}
           >
-            {moment(now).format('dddd D MMMM')}
+            {moment(now).format('ddd, MMMM D')}
+          </Typography>
+          <Typography
+            sx={{
+              color: '#fff',
+              fontSize: 'clamp(2rem, 4.2vw, 4.6rem)',
+              fontVariantNumeric: 'tabular-nums',
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              lineHeight: 1,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {moment(now).format('HH:mm')}
+            <Box
+              component='span'
+              sx={{ color: 'rgba(255,255,255,0.3)', fontWeight: 300, mx: '0.3em' }}
+            >
+              |
+            </Box>
+            {moment(now).utc().format('HH:mm')}
+            <Box
+              component='span'
+              sx={{ color: MUTED, fontSize: '0.45em', fontWeight: 700, ml: '0.15em' }}
+            >
+              Z
+            </Box>
           </Typography>
         </Box>
 
@@ -561,15 +791,20 @@ const WallDisplay = () => {
                     color: MUTED,
                     fontSize: 'clamp(0.85rem, 1.15vw, 1.25rem)',
                     fontWeight: 600,
+                    lineHeight: 1.3,
                     mt: 0.75,
                   }}
                 >
-                  {untilChange(bounds.end, now)} until shift change
+                  {untilChange(bounds.end, now)}
+                  <br />
+                  until shift change
                 </Typography>
               )}
             </>
           )}
         </Box>
+
+        <MetarStrip />
       </Box>
 
       {/* Columns */}
