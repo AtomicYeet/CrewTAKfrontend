@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { offlineDB } from '../utils/OfflineDB'
+import { isCrewAdmin } from '../crewtak/useCrewAdmin'
 import { isParentUser } from '../utils/UserHelpers'
 import GlobalSearchPalette from './GlobalSearchPalette'
 import { getSearchProviders } from './searchProviders'
@@ -112,6 +113,7 @@ export const GlobalSearchProvider = ({ children }) => {
         labels,
         members,
         isParent: isParentUser(profile),
+        isCrewAdmin: isCrewAdmin(profile, members),
         t,
         choresById: new Map(chores.map(item => [String(item.id), item])),
         projectsById: new Map(projects.map(item => [String(item.id), item])),

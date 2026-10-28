@@ -22,7 +22,6 @@ import { useNotification } from '../../service/NotificationProvider'
 import { apiClient } from '../../utils/ApiClient'
 import { getPendingInvite } from '../../utils/PendingInvite'
 import { saveTokens } from '../../utils/TokenStorage'
-import { buildChildUsername, getUserDisplayInfo } from '../../utils/UserHelpers'
 import {
   AuthDivider,
   AuthPasswordField,
@@ -34,55 +33,6 @@ import {
 import AuthShell from './AuthShell'
 import { authButtonSx } from './authStyles'
 import MFAVerificationModal from './MFAVerificationModal'
-
-const SegmentedControl = ({ onChange, options, value }) => (
-  <Box
-    role='tablist'
-    sx={{
-      display: 'flex',
-      p: 0.5,
-      gap: 0.5,
-      borderRadius: '12px',
-      bgcolor: 'neutral.softBg',
-      mb: 2.5,
-    }}
-  >
-    {options.map(option => {
-      const selected = option.value === value
-      return (
-        <Box
-          key={option.value}
-          component='button'
-          type='button'
-          role='tab'
-          aria-selected={selected}
-          onClick={() => onChange(option.value)}
-          sx={{
-            flex: 1,
-            border: 'none',
-            cursor: 'pointer',
-            borderRadius: '9px',
-            py: 1,
-            fontSize: '0.875rem',
-            fontFamily: 'inherit',
-            fontWeight: 600,
-            color: selected ? 'text.primary' : 'text.secondary',
-            bgcolor: selected ? 'background.surface' : 'transparent',
-            boxShadow: selected ? 'xs' : 'none',
-            transition: 'background-color 180ms ease, color 180ms ease',
-            '&:focus-visible': {
-              outline: '2px solid',
-              outlineColor: 'primary.500',
-              outlineOffset: '2px',
-            },
-          }}
-        >
-          {option.label}
-        </Box>
-      )
-    })}
-  </Box>
-)
 
 const LoginView = () => {
   const { t } = useTranslation('auth')
@@ -96,19 +46,6 @@ const LoginView = () => {
   const [isAppleSignInSupported, setIsAppleSignInSupported] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Child login state
-  const [loginType, setLoginType] = useState('primary')
-  const [parentUsername, setParentUsername] = useState('')
-  const [childName, setChildName] = useState('')
-
-  // Clear fields when switching login modes
-  const handleLoginModeChange = newValue => {
-    setLoginType(newValue)
-    setUsername('')
-    setParentUsername('')
-    setChildName('')
-    setPassword('')
-  }
   const { data: resource } = useResource()
   const { showError } = useNotification()
   const { isAuthenticated, login: authLogin, user } = useAuth()
@@ -156,30 +93,12 @@ const LoginView = () => {
   const handleSubmit = async e => {
     e.preventDefault()
 
-    // Validation for child login
-    if (loginType === 'sub') {
-      if (!parentUsername.trim()) {
-        showError({
-          title: t('validationError'),
-          message: t('primaryUsernameRequired'),
-        })
-        return
-      }
-      if (!childName.trim()) {
-        showError({
-          title: t('validationError'),
-          message: t('subNameRequired'),
-        })
-        return
-      }
-    } else {
-      if (!username.trim()) {
-        showError({
-          title: t('validationError'),
-          message: t('usernameRequired'),
-        })
-        return
-      }
+    if (!username.trim()) {
+      showError({
+        title: t('validationError'),
+        message: t('usernameRequired'),
+      })
+      return
     }
 
     if (!password) {
@@ -190,11 +109,7 @@ const LoginView = () => {
       return
     }
 
-    // Determine the actual username to send
-    const actualUsername =
-      loginType === 'sub'
-        ? buildChildUsername(parentUsername, childName)
-        : username
+    const actualUsername = username.trim()
 
     setIsSubmitting(true)
     let result
@@ -489,11 +404,6 @@ const LoginView = () => {
           />
           <Box sx={{ textAlign: 'center' }}>
             <Typography level='title-md'>{displayName}</Typography>
-            {getUserDisplayInfo(userProfile).userType === 'child' && (
-              <Typography level='body-xs' sx={{ color: 'text.secondary' }}>
-                {t('subAccount')}
-              </Typography>
-            )}
           </Box>
 
           <Button
@@ -521,49 +431,20 @@ const LoginView = () => {
           onSubmit={handleSubmit}
           sx={{ display: 'flex', flexDirection: 'column' }}
         >
-          <SegmentedControl
-            value={loginType}
-            onChange={handleLoginModeChange}
-            options={[
-              { value: 'primary', label: t('primaryAccount') },
-              { value: 'sub', label: t('subAccount') },
-            ]}
-          />
-
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {loginType === 'primary' ? (
-              <AuthTextField
-                label={t('username')}
-                id='username'
-                name='username'
-                autoComplete='username'
-                placeholder={t('yourUsername')}
-                autoFocus
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-              />
-            ) : (
-              <>
-                <AuthTextField
-                  label={t('primaryAccountUsernameLabel')}
-                  id='parentUsername'
-                  name='parentUsername'
-                  autoComplete='username'
-                  placeholder={t('primaryUsernamePlaceholder')}
-                  autoFocus
-                  value={parentUsername}
-                  onChange={e => setParentUsername(e.target.value)}
-                />
-                <AuthTextField
-                  label={t('subAccountNameLabel')}
-                  id='childName'
-                  name='childName'
-                  placeholder={t('subNamePlaceholder')}
-                  value={childName}
-                  onChange={e => setChildName(e.target.value)}
-                />
-              </>
-            )}
+            <AuthTextField
+              label={t('username')}
+              id='username'
+              name='username'
+              autoComplete='username'
+              slotProps={{
+                input: { autoCapitalize: 'none', autoCorrect: 'off' },
+              }}
+              placeholder={t('yourUsername')}
+              autoFocus
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+            />
 
             <Box>
               <AuthPasswordField
@@ -590,7 +471,7 @@ const LoginView = () => {
           </Box>
 
           <AuthSubmitButton loading={isSubmitting} sx={{ mt: 3 }}>
-            {loginType === 'sub' ? t('signInAsSubAccount') : t('signIn')}
+            {t('signIn')}
           </AuthSubmitButton>
         </Box>
       )}

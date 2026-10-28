@@ -20,14 +20,16 @@ import {
 import { HIDE } from '@/crewtak/features'
 
 // Single source of truth for the settings sections: id, icon, and access
-// gating. Titles/descriptions live in locales/settings.json under
+// gating (parentOnly = owner only, unless crewAdmin also lets crew admins in).
+// Titles/descriptions live in locales/settings.json under
 // `overview.sections.<id>`, keyed off the same ids.
 export const SETTINGS_SECTIONS = [
   { id: 'bridge', icon: CloudQueue, parentOnly: true, isBeta: true },
   { id: 'profile', icon: Person },
-  { id: 'circle', icon: Circle, parentOnly: true },
+  { id: 'circle', icon: Circle, parentOnly: true, crewAdmin: true },
   { id: 'account', icon: AccountCircle, parentOnly: true },
-  { id: 'subaccounts', icon: FamilyRestroom },
+  // CrewTAK: crew admins (not just the owner) manage crew logins.
+  { id: 'subaccounts', icon: FamilyRestroom, parentOnly: true, crewAdmin: true },
   { id: 'notifications', icon: Notifications },
   { id: 'mfa', icon: Security, parentOnly: true },
   { id: 'apitokens', icon: Api, parentOnly: true },

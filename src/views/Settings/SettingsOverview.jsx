@@ -30,6 +30,7 @@ import { SETTINGS_SECTIONS } from '../../constants/settingsSections'
 import { useUserProfile } from '../../queries/UserQueries'
 import { isCloudInstance } from '../../service/FeedbackService'
 import { isPlusAccount } from '../../utils/Helpers'
+import { useCrewAdmin } from '../../crewtak/useCrewAdmin'
 import { isParentUser } from '../../utils/UserHelpers'
 import ErrorReportModal from '../Modals/ErrorReportModal'
 import FeedbackModal from '../Modals/FeedbackModal'
@@ -38,6 +39,7 @@ const SettingsOverview = () => {
   const { t } = useTranslation('settings')
   const navigate = useNavigate()
   const { data: userProfile } = useUserProfile()
+  const crewAdmin = useCrewAdmin()
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const [bugReportOpen, setBugReportOpen] = useState(false)
   // Bridge is a relay for self-hosted instances; donetick.com users have no
@@ -86,7 +88,7 @@ const SettingsOverview = () => {
   }
 
   const parentOnlyIds = SETTINGS_SECTIONS.filter(
-    section => section.parentOnly,
+    section => section.parentOnly && !(crewAdmin && section.crewAdmin),
   ).map(section => section.id)
 
   // Filter settings based on user type

@@ -21,6 +21,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useCrewAdmin } from '../../crewtak/useCrewAdmin'
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { PAYWALL_REASON, usePaywall } from '../../contexts/PaywallContext'
 import useConfirmationModal from '../../hooks/useConfirmationModal'
@@ -59,7 +60,8 @@ const ChildUserSettings = () => {
   const [selectedChildId, setSelectedChildId] = useState(null)
   const [deletingChildId, setDeletingChildId] = useState(null)
 
-  const isParentUser = userProfile?.userType === 0 && !userProfile?.parentUserId
+  // CrewTAK: the owner or anyone with the crew admin role.
+  const isParentUser = useCrewAdmin()
 
   const openCreateModal = () => {
     if (!isPlusAccount(userProfile)) {

@@ -146,8 +146,11 @@ registerSearchProvider({
 
 registerSearchProvider({
   id: 'settings',
-  getDocuments: ({ isParent, t }) =>
-    SETTINGS_SECTIONS.filter(({ parentOnly }) => !parentOnly || isParent).map(
+  getDocuments: ({ isParent, isCrewAdmin, t }) =>
+    SETTINGS_SECTIONS.filter(
+      ({ parentOnly, crewAdmin }) =>
+        !parentOnly || isParent || (crewAdmin && isCrewAdmin),
+    ).map(
       ({ id }) =>
         document('settings', {
           id: `setting:${id}`,

@@ -27,7 +27,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
         newErrors.childName = t('childUsers.errNameMin')
       } else if (childName.length > 20) {
         newErrors.childName = t('childUsers.errNameMax')
-      } else if (!/^[a-z.-]+$/.test(childName)) {
+      } else if (!/^[a-z0-9.@-]+$/.test(childName)) {
         newErrors.childName = t('childUsers.errNameChars')
       }
     }
