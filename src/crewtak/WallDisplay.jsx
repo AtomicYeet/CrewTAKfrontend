@@ -3,7 +3,6 @@ import {
   Air,
   Cloud,
   Dehaze,
-  EditRounded,
   FilterDrama,
   FlashOn,
   HomeRounded,
@@ -249,16 +248,10 @@ Empty.propTypes = { children: PropTypes.node }
 const CELL_GAP = 'clamp(4px, 0.45vw, 8px)'
 
 const PanelBody = ({ icon, rows, title, titleColor = MUTED, wrap = false }) => {
-  const editable = rows.some(r => r.onClick)
   return (
     <Box sx={{ minWidth: 0 }}>
       <Typography
         startDecorator={icon}
-        endDecorator={
-          editable ? (
-            <EditRounded sx={{ fontSize: '1em', opacity: 0.45 }} />
-          ) : undefined
-        }
         sx={{
           color: titleColor,
           justifyContent: 'center',
@@ -621,15 +614,15 @@ const MetarStrip = () => {
   )
 }
 
-const WallDisplay = () => {
-  useWakeLock()
-  const navigate = useNavigate()
+// Overdue / Due today / Done this shift. Off for now; flip
+// SHOW_TASK_COLUMNS to bring them back.
+const SHOW_TASK_COLUMNS = false
+
+const TaskColumns = ({ bounds, membersById, now, shiftColor }) => {
   const queryClient = useQueryClient()
-  const now = useNow(CLOCK_MS)
   const { data: choresData } = useChores(false)
   // Two days of history always covers the whole 48-hour shift.
   const { data: history } = useChoresHistory(3, true)
-  const { data: membersData } = useCircleMembers()
 
   // Pull fresh data every minute even when no live update arrives.
   useEffect(() => {
@@ -639,6 +632,158 @@ const WallDisplay = () => {
     }, REFRESH_MS)
     return () => clearInterval(id)
   }, [queryClient])
+
+  const { dueToday, overdue, upNext } = useMemo(() => {
+    const chores = (choresData?.res || []).filter(
+      c => c.isActive !== false && c.nextDueDate,
+    )
+    const endOfToday = moment(now).endOf('day')
+    const endOfTomorrow = moment(now).add(1, 'day').endOf('day')
+    const sorted = [...chores].sort(
+      (a, b) => new Date(a.nextDueDate) - new Date(b.nextDueDate),
+    )
+    return {
+      overdue: sorted.filter(c => moment(c.nextDueDate).isBefore(now)),
+      dueToday: sorted.filter(
+        c =>
+          !moment(c.nextDueDate).isBefore(now) &&
+          moment(c.nextDueDate).isSameOrBefore(endOfToday),
+      ),
+      upNext: sorted.filter(
+        c =>
+          moment(c.nextDueDate).isAfter(endOfToday) &&
+          moment(c.nextDueDate).isSameOrBefore(endOfTomorrow),
+      ),
+    }
+  }, [choresData, now])
+
+  const doneThisShift = useMemo(() => {
+    if (!bounds) return []
+    const names = new Map((choresData?.res || []).map(c => [c.id, c.name]))
+    return (history || [])
+      .filter(
+        h =>
+          h.status === 1 &&
+          h.performedAt &&
+          new Date(h.performedAt) >= bounds.start,
+      )
+      .sort((a, b) => new Date(b.performedAt) - new Date(a.performedAt))
+      .map(h => ({
+        id: h.id,
+        name: names.get(h.choreId) || h.choreName || 'Task',
+        by: membersById.get(h.completedBy) || '',
+        at: moment(h.performedAt).format('HH:mm'),
+      }))
+  }, [history, bounds, choresData, membersById])
+
+  return (
+    <Box
+      sx={{
+        display: 'grid',
+        gap: 'clamp(12px, 1.4vw, 24px)',
+        gridTemplateColumns: {
+          xs: '1fr',
+          md: 'repeat(3, minmax(0, 1fr))',
+        },
+        minHeight: 0,
+      }}
+    >
+      <Column title='Overdue' count={overdue.length} accent='#ff4d4f'>
+        {overdue.length === 0 ? (
+          <Empty>Nothing overdue.</Empty>
+        ) : (
+          overdue.map(c => (
+            <Row
+              key={c.id}
+              name={c.name}
+              meta={dueLabel(c.nextDueDate, now)}
+              metaColor='#ff7875'
+            />
+          ))
+        )}
+      </Column>
+
+      <Column
+        title='Due today'
+        count={dueToday.length}
+        accent={BRAND_BLUE[400]}
+      >
+        {dueToday.length === 0 ? (
+          <Empty>All of today&apos;s tasks are done.</Empty>
+        ) : (
+          dueToday.map(c => (
+            <Row
+              key={c.id}
+              name={c.name}
+              meta={
+                c.status === 1 ? 'In progress' : dueLabel(c.nextDueDate, now)
+              }
+              metaColor={c.status === 1 ? ACCENT : undefined}
+            />
+          ))
+        )}
+        {upNext.length > 0 && (
+          <>
+            <Typography
+              sx={{
+                color: MUTED,
+                fontSize: 'clamp(0.85rem, 1.1vw, 1.15rem)',
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                px: 1.5,
+                pt: 2,
+                pb: 0.5,
+                textTransform: 'uppercase',
+              }}
+            >
+              Tomorrow
+            </Typography>
+            {upNext.map(c => (
+              <Row
+                key={c.id}
+                name={c.name}
+                meta={dueLabel(c.nextDueDate, now)}
+                dim
+              />
+            ))}
+          </>
+        )}
+      </Column>
+
+      <Column
+        title='Done this shift'
+        count={doneThisShift.length}
+        accent={shiftColor}
+      >
+        {doneThisShift.length === 0 ? (
+          <Empty>Nothing checked off yet this shift.</Empty>
+        ) : (
+          doneThisShift.map(h => (
+            <Row
+              key={h.id}
+              name={h.name}
+              meta={h.by ? `${h.by} · ${h.at}` : h.at}
+              done
+            />
+          ))
+        )}
+      </Column>
+    </Box>
+  )
+}
+
+TaskColumns.propTypes = {
+  bounds: PropTypes.shape({ end: PropTypes.instanceOf(Date), start: PropTypes.instanceOf(Date) }),
+  membersById: PropTypes.instanceOf(Map).isRequired,
+  now: PropTypes.instanceOf(Date).isRequired,
+  shiftColor: PropTypes.string.isRequired,
+}
+
+const WallDisplay = () => {
+  useWakeLock()
+  const navigate = useNavigate()
+  const now = useNow(CLOCK_MS)
+  const { data: membersData } = useCircleMembers()
 
   const shift = shiftAt(now)
   const shiftDay = shiftDayAt(now)
@@ -696,49 +841,6 @@ const WallDisplay = () => {
     titleColor: day === shiftDay ? '#fff' : MUTED,
     wrap: true,
   }))
-
-  const { dueToday, overdue, upNext } = useMemo(() => {
-    const chores = (choresData?.res || []).filter(
-      c => c.isActive !== false && c.nextDueDate,
-    )
-    const endOfToday = moment(now).endOf('day')
-    const endOfTomorrow = moment(now).add(1, 'day').endOf('day')
-    const sorted = [...chores].sort(
-      (a, b) => new Date(a.nextDueDate) - new Date(b.nextDueDate),
-    )
-    return {
-      overdue: sorted.filter(c => moment(c.nextDueDate).isBefore(now)),
-      dueToday: sorted.filter(
-        c =>
-          !moment(c.nextDueDate).isBefore(now) &&
-          moment(c.nextDueDate).isSameOrBefore(endOfToday),
-      ),
-      upNext: sorted.filter(
-        c =>
-          moment(c.nextDueDate).isAfter(endOfToday) &&
-          moment(c.nextDueDate).isSameOrBefore(endOfTomorrow),
-      ),
-    }
-  }, [choresData, now])
-
-  const doneThisShift = useMemo(() => {
-    if (!bounds) return []
-    const names = new Map((choresData?.res || []).map(c => [c.id, c.name]))
-    return (history || [])
-      .filter(
-        h =>
-          h.status === 1 &&
-          h.performedAt &&
-          new Date(h.performedAt) >= bounds.start,
-      )
-      .sort((a, b) => new Date(b.performedAt) - new Date(a.performedAt))
-      .map(h => ({
-        id: h.id,
-        name: names.get(h.choreId) || h.choreName || 'Task',
-        by: membersById.get(h.completedBy) || '',
-        at: moment(h.performedAt).format('HH:mm'),
-      }))
-  }, [history, bounds, choresData, membersById])
 
   const shiftColor = SHIFT_HEX[shift] || ACCENT
 
@@ -915,99 +1017,18 @@ const WallDisplay = () => {
         </Box>
       </Box>
 
-      {/* Columns */}
-      <Box
-        sx={{
-          display: 'grid',
-          gap: 'clamp(12px, 1.4vw, 24px)',
-          gridTemplateColumns: {
-            xs: '1fr',
-            md: 'repeat(3, minmax(0, 1fr))',
-          },
-          minHeight: 0,
-        }}
-      >
-        <Column title='Overdue' count={overdue.length} accent='#ff4d4f'>
-          {overdue.length === 0 ? (
-            <Empty>Nothing overdue.</Empty>
-          ) : (
-            overdue.map(c => (
-              <Row
-                key={c.id}
-                name={c.name}
-                meta={dueLabel(c.nextDueDate, now)}
-                metaColor='#ff7875'
-              />
-            ))
-          )}
-        </Column>
-
-        <Column
-          title='Due today'
-          count={dueToday.length}
-          accent={BRAND_BLUE[400]}
-        >
-          {dueToday.length === 0 ? (
-            <Empty>All of today&apos;s tasks are done.</Empty>
-          ) : (
-            dueToday.map(c => (
-              <Row
-                key={c.id}
-                name={c.name}
-                meta={
-                  c.status === 1 ? 'In progress' : dueLabel(c.nextDueDate, now)
-                }
-                metaColor={c.status === 1 ? ACCENT : undefined}
-              />
-            ))
-          )}
-          {upNext.length > 0 && (
-            <>
-              <Typography
-                sx={{
-                  color: MUTED,
-                  fontSize: 'clamp(0.85rem, 1.1vw, 1.15rem)',
-                  fontWeight: 700,
-                  letterSpacing: '0.06em',
-                  px: 1.5,
-                  pt: 2,
-                  pb: 0.5,
-                  textTransform: 'uppercase',
-                }}
-              >
-                Tomorrow
-              </Typography>
-              {upNext.map(c => (
-                <Row
-                  key={c.id}
-                  name={c.name}
-                  meta={dueLabel(c.nextDueDate, now)}
-                  dim
-                />
-              ))}
-            </>
-          )}
-        </Column>
-
-        <Column
-          title='Done this shift'
-          count={doneThisShift.length}
-          accent={shiftColor}
-        >
-          {doneThisShift.length === 0 ? (
-            <Empty>Nothing checked off yet this shift.</Empty>
-          ) : (
-            doneThisShift.map(h => (
-              <Row
-                key={h.id}
-                name={h.name}
-                meta={h.by ? `${h.by} · ${h.at}` : h.at}
-                done
-              />
-            ))
-          )}
-        </Column>
-      </Box>
+      {/* Task columns are switched off for now (SHOW_TASK_COLUMNS); the
+          row stays as empty space so the panels above keep their size. */}
+      {SHOW_TASK_COLUMNS ? (
+        <TaskColumns
+          bounds={bounds}
+          membersById={membersById}
+          now={now}
+          shiftColor={shiftColor}
+        />
+      ) : (
+        <Box aria-hidden data-testid='display-blank' sx={{ minHeight: 0 }} />
+      )}
 
       {picker}
       {pickError && (
