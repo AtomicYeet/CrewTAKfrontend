@@ -1,8 +1,16 @@
-import { FormControl, FormHelperText, Input, Typography } from '@mui/joy'
+import {
+  FormControl,
+  FormHelperText,
+  Input,
+  Option,
+  Select,
+  Typography,
+} from '@mui/joy'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import ModalActions from '../../../components/common/ModalActions'
+import { CREW_SHIFTS } from '../../../crewtak/crewShift'
 import { useResponsiveModal } from '../../../hooks/useResponsiveModal'
 
 function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
@@ -13,6 +21,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
   const [displayName, setDisplayName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [crewShift, setCrewShift] = useState('')
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -73,6 +82,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
         childName: childName.trim(),
         displayName: displayName.trim() || childName.trim(),
         password,
+        crewShift,
       })
       handleClose()
     } catch (error) {
@@ -87,6 +97,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
     setDisplayName('')
     setPassword('')
     setConfirmPassword('')
+    setCrewShift('')
     setErrors({})
     setTouched({})
     setIsSubmitting(false)
@@ -163,6 +174,25 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
         {errors.displayName && (
           <FormHelperText>{errors.displayName}</FormHelperText>
         )}
+      </FormControl>
+
+      <FormControl sx={{ mb: 2 }}>
+        <Typography level='body2' mb={1}>
+          Shift
+        </Typography>
+        <Select
+          aria-label='Shift'
+          placeholder='Not set'
+          value={crewShift || null}
+          onChange={(_e, value) => setCrewShift(value || '')}
+        >
+          <Option value=''>Not set</Option>
+          {CREW_SHIFTS.map(s => (
+            <Option key={s.value} value={s.value}>
+              {s.label}
+            </Option>
+          ))}
+        </Select>
       </FormControl>
 
       <FormControl error={!!errors.password} sx={{ mb: 2 }}>

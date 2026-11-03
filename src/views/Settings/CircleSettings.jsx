@@ -28,6 +28,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import { CrewShiftTag } from '../../crewtak/crewShift'
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { useUserProfile } from '../../queries/UserQueries'
 import { useNotification } from '../../service/NotificationProvider'
@@ -581,6 +582,7 @@ const CircleSettings = () => {
                             : t('circleSettings.pendingApproval')}
                         </Chip>
                       </Box>
+                      <CrewShiftTag shift={member.crewShift} />
                       <Typography
                         level='body-xs'
                         textColor={

@@ -3,6 +3,7 @@ import {
   Air,
   Cloud,
   Dehaze,
+  EditRounded,
   FilterDrama,
   FlashOn,
   HomeRounded,
@@ -24,6 +25,7 @@ import { useChores, useChoresHistory } from '@/queries/ChoreQueries'
 import { useCircleMembers } from '@/queries/UserQueries'
 
 import { ACCENT, BRAND_BLUE } from './brand'
+import { useShiftPicker } from './ShiftPicker'
 import {
   COMPANIES,
   PHONES,
@@ -32,7 +34,6 @@ import {
   SLEEP_BLOCKS,
   sleepSlot,
   tourAt,
-  useShiftSlots,
 } from './shiftSlots'
 import { shiftAt, shiftBoundsAt, shiftDayAt } from './shifts'
 import {
@@ -43,8 +44,10 @@ import {
   useMetar,
 } from './weather'
 
-// Full-screen station board for a wall TV or tablet. Read-only: crews check
-// tasks off on their own phones so the log shows who did what.
+// Full-screen station board for a wall TV or tablet. Tasks are read-only:
+// crews check them off on their own phones so the log shows who did what.
+// Phones, watch times and rigs can be changed right here by tapping a row;
+// the picks are the same ones Shift Info (/shift) shows and saves.
 
 const REFRESH_MS = 60 * 1000
 const CLOCK_MS = 15 * 1000
@@ -241,69 +244,119 @@ const Empty = ({ children }) => (
 Empty.propTypes = { children: PropTypes.node }
 
 // Title plus label/name rows, centered. Used on its own in a panel, or twice
-// side by side for the two watch-time days.
-const PanelBody = ({ icon, rows, title, titleColor = MUTED, wrap = false }) => (
-  <Box sx={{ minWidth: 0 }}>
-    <Typography
-      startDecorator={icon}
-      sx={{
-        color: titleColor,
-        justifyContent: 'center',
-        fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
-        fontWeight: 700,
-        letterSpacing: '0.1em',
-        mb: 0.5,
-        textTransform: 'uppercase',
-      }}
-    >
-      {title}
-    </Typography>
-    <Box
-      sx={{
-        columnGap: 'clamp(8px, 0.9vw, 16px)',
-        display: 'grid',
-        gridTemplateColumns: 'auto minmax(0, auto)',
-        justifyContent: 'center',
-        rowGap: 0.25,
-      }}
-    >
-      {rows.map(r => (
-        <Box key={r.key} sx={{ display: 'contents' }}>
-          <Typography
+// side by side for the two watch-time days. Rows with an onClick can be
+// tapped to change who's assigned.
+const CELL_GAP = 'clamp(4px, 0.45vw, 8px)'
+
+const PanelBody = ({ icon, rows, title, titleColor = MUTED, wrap = false }) => {
+  const editable = rows.some(r => r.onClick)
+  return (
+    <Box sx={{ minWidth: 0 }}>
+      <Typography
+        startDecorator={icon}
+        endDecorator={
+          editable ? (
+            <EditRounded sx={{ fontSize: '1em', opacity: 0.45 }} />
+          ) : undefined
+        }
+        sx={{
+          color: titleColor,
+          justifyContent: 'center',
+          fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
+          fontWeight: 700,
+          letterSpacing: '0.1em',
+          mb: 0.5,
+          textTransform: 'uppercase',
+        }}
+      >
+        {title}
+      </Typography>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'auto minmax(0, auto)',
+          justifyContent: 'center',
+          rowGap: 0.25,
+        }}
+      >
+        {rows.map(r => (
+          // `display: contents` keeps both cells on the shared grid; the
+          // hover rule still applies because :hover reaches ancestors.
+          <Box
+            key={r.key}
+            data-testid={r.onClick ? `display-slot-${r.key}` : undefined}
+            onClick={r.onClick}
             sx={{
-              color: MUTED,
-              fontSize: 'clamp(0.8rem, 1vw, 1.15rem)',
-              fontVariantNumeric: 'tabular-nums',
-              fontWeight: 600,
-              whiteSpace: 'nowrap',
+              display: 'contents',
+              ...(r.onClick && {
+                cursor: 'pointer',
+                '&:hover > *': { bgcolor: 'rgba(255,255,255,0.08)' },
+                '&:active > *': { bgcolor: 'rgba(255,255,255,0.14)' },
+              }),
             }}
           >
-            {r.label}
-          </Typography>
-          <Typography
-            sx={{
-              color: r.name ? '#fff' : 'rgba(255,255,255,0.3)',
-              fontSize: 'clamp(0.85rem, 1.1vw, 1.3rem)',
-              fontWeight: 700,
-              lineHeight: 1.25,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: wrap ? 'normal' : 'nowrap',
-            }}
-          >
-            {r.name || '—'}
-          </Typography>
-        </Box>
-      ))}
+            <Typography
+              sx={{
+                borderRadius: '6px 0 0 6px',
+                color: MUTED,
+                fontSize: 'clamp(0.8rem, 1vw, 1.15rem)',
+                fontVariantNumeric: 'tabular-nums',
+                fontWeight: 600,
+                pl: CELL_GAP,
+                pr: CELL_GAP,
+                transition: 'background-color 120ms',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {r.label}
+            </Typography>
+            <Typography
+              role={r.onClick ? 'button' : undefined}
+              tabIndex={r.onClick ? 0 : undefined}
+              aria-label={r.onClick ? `Change ${r.label}` : undefined}
+              onKeyDown={
+                r.onClick
+                  ? e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        r.onClick()
+                      }
+                    }
+                  : undefined
+              }
+              sx={{
+                borderRadius: '0 6px 6px 0',
+                color: r.name ? '#fff' : 'rgba(255,255,255,0.3)',
+                fontSize: 'clamp(0.85rem, 1.1vw, 1.3rem)',
+                fontWeight: 700,
+                lineHeight: 1.25,
+                overflow: 'hidden',
+                pl: CELL_GAP,
+                pr: CELL_GAP,
+                textOverflow: 'ellipsis',
+                transition: 'background-color 120ms',
+                whiteSpace: wrap ? 'normal' : 'nowrap',
+                '&:focus-visible': {
+                  outline: `2px solid ${ACCENT}`,
+                  outlineOffset: -2,
+                },
+              }}
+            >
+              {r.name || '—'}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
     </Box>
-  </Box>
-)
+  )
+}
 
 const panelRows = PropTypes.arrayOf(
   PropTypes.shape({
     key: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     name: PropTypes.string,
+    onClick: PropTypes.func,
   }),
 )
 
@@ -328,7 +381,7 @@ const panelSx = {
   py: 'clamp(6px, 0.7vw, 12px)',
 }
 
-// One assignment panel (phones, rigs). Read-only; picks are made on /shift.
+// One assignment panel (phones, rigs).
 const AssignmentPanel = props => (
   <Box sx={{ ...panelSx, flexDirection: 'column', justifyContent: 'center' }}>
     <PanelBody {...props} />
@@ -419,10 +472,15 @@ const WeatherDay = ({ day }) => {
             color: MUTED,
             fontSize: 'clamp(0.65rem, 0.8vw, 0.9rem)',
             fontWeight: 600,
-            maxWidth: 'clamp(100px, 8vw, 160px)',
+            // Wide enough for "Chance Showers And Thunderstorms"; anything
+            // longer wraps onto a second line instead of being cut off.
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: 2,
+            display: '-webkit-box',
+            lineHeight: 1.25,
+            maxWidth: 'clamp(180px, 17vw, 340px)',
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            whiteSpace: 'normal',
           }}
         >
           {day.short}
@@ -592,14 +650,20 @@ const WallDisplay = () => {
     return map
   }, [membersData])
 
-  // Phone holders and tonight's sleep blocks (from Shift Info).
-  const { data: slots = {} } = useShiftSlots(tourAt(now))
-  const slotName = slot =>
-    slots[slot] == null ? null : membersById.get(slots[slot]) || 'Former member'
+  // Phone holders, watch times and rigs (shared with Shift Info). Tapping a
+  // row opens the same picker Shift Info uses and saves to the same place.
+  const {
+    error: pickError,
+    nameFor: slotName,
+    openPicker,
+    picker,
+    slots,
+  } = useShiftPicker(tourAt(now), { dark: true })
   const phoneRows = PHONES.map(p => ({
     key: p.slot,
     label: p.short,
     name: slotName(p.slot),
+    onClick: () => openPicker({ slot: p.slot, title: `${p.label} phone` }),
   }))
   const rigRows = COMPANIES.map(co => ({
     key: co.slot,
@@ -608,6 +672,12 @@ const WallDisplay = () => {
       rigMembers(slots, co)
         .map(id => membersById.get(id) || 'Former member')
         .join(', ') || null,
+    onClick: () =>
+      openPicker({
+        hint: 'Tap everyone on this rig. People can be on more than one rig.',
+        prefix: co.slot,
+        title: co.label,
+      }),
   }))
   const watchColumns = SHIFT_DAYS.map(day => ({
     icon: <Visibility sx={{ fontSize: '1.1em' }} />,
@@ -615,6 +685,11 @@ const WallDisplay = () => {
       key: `sleep-${day}-${b.index}`,
       label: b.label,
       name: slotName(sleepSlot(day, b.index)),
+      onClick: () =>
+        openPicker({
+          slot: sleepSlot(day, b.index),
+          title: `Day ${day} watch ${b.label}`,
+        }),
     })),
     title: `Watch · Day ${day}`,
     // The current shift day's title stands out.
@@ -933,6 +1008,28 @@ const WallDisplay = () => {
           )}
         </Column>
       </Box>
+
+      {picker}
+      {pickError && (
+        <Typography
+          role='alert'
+          sx={{
+            bgcolor: '#2a0f12',
+            border: '1px solid #ff4d4f',
+            borderRadius: '10px',
+            bottom: 'clamp(12px, 1.6vw, 32px)',
+            color: '#ff7875',
+            fontWeight: 700,
+            left: '50%',
+            position: 'fixed',
+            px: 2,
+            py: 1,
+            transform: 'translateX(-50%)',
+          }}
+        >
+          {pickError}
+        </Typography>
+      )}
     </Box>
   )
 }

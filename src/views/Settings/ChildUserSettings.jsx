@@ -14,6 +14,8 @@ import {
   CircularProgress,
   Divider,
   IconButton,
+  Option,
+  Select,
   Sheet,
   Typography,
 } from '@mui/joy'
@@ -21,6 +23,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { CREW_SHIFTS, CrewShiftTag } from '../../crewtak/crewShift'
 import { useCrewAdmin } from '../../crewtak/useCrewAdmin'
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { PAYWALL_REASON, usePaywall } from '../../contexts/PaywallContext'
@@ -31,6 +34,7 @@ import {
   CreateChildUser,
   DeleteChildUser,
   UpdateChildPassword,
+  UpdateCrewShift,
 } from '../../utils/Fetcher'
 import { isPlusAccount } from '../../utils/Helpers'
 import ConfirmationModal from '../Modals/Inputs/ConfirmationModal'
@@ -73,7 +77,31 @@ const ChildUserSettings = () => {
 
   const refreshChildren = async () => {
     await queryClient.invalidateQueries({ queryKey: ['childUsers'] })
+    await queryClient.invalidateQueries({ queryKey: ['circleMembers'] })
     await refetch()
+  }
+
+  // CrewTAK: A / B / C shift, Ops or Chief, shown under the person's name.
+  const [savingShiftId, setSavingShiftId] = useState(null)
+  const handleShiftChange = async (child, value) => {
+    const next = value || ''
+    if (next === (child.crewShift || '')) return
+    setSavingShiftId(child.id)
+    try {
+      const response = await UpdateCrewShift(child.id, next)
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}))
+        throw new Error(error.error || 'Could not save shift')
+      }
+      queryClient.setQueryData(['childUsers'], old =>
+        (old || []).map(c => (c.id === child.id ? { ...c, crewShift: next } : c)),
+      )
+      await refreshChildren()
+    } catch (error) {
+      showNotification({ type: 'error', message: error.message })
+    } finally {
+      setSavingShiftId(null)
+    }
   }
 
   const handleCreateChild = async childData => {
@@ -82,6 +110,7 @@ const ChildUserSettings = () => {
         childData.childName,
         childData.displayName,
         childData.password,
+        childData.crewShift,
       )
       if (!response.ok) {
         const error = await response.json()
@@ -321,6 +350,7 @@ const ChildUserSettings = () => {
                         <Typography level='title-sm' noWrap>
                           {name}
                         </Typography>
+                        <CrewShiftTag shift={child.crewShift} />
                         <Typography
                           level='body-sm'
                           textColor='text.secondary'
@@ -336,7 +366,23 @@ const ChildUserSettings = () => {
                           })}
                         </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', gap: 0.5 }}>
+                      <Box sx={{ alignItems: 'center', display: 'flex', gap: 0.5 }}>
+                        <Select
+                          size='sm'
+                          aria-label={`Shift: ${name}`}
+                          placeholder='Shift'
+                          value={child.crewShift || null}
+                          disabled={savingShiftId === child.id}
+                          onChange={(_e, value) => handleShiftChange(child, value)}
+                          sx={{ minWidth: { xs: 92, sm: 110 } }}
+                        >
+                          <Option value=''>Not set</Option>
+                          {CREW_SHIFTS.map(s => (
+                            <Option key={s.value} value={s.value}>
+                              {s.label}
+                            </Option>
+                          ))}
+                        </Select>
                         <IconButton
                           size='sm'
                           variant='plain'

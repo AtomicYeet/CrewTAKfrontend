@@ -1,55 +1,40 @@
 import {
-  CheckRounded,
   LocalFireDepartment,
   PhoneInTalk,
   RestaurantMenu,
   Visibility,
 } from '@mui/icons-material'
 import {
-  Avatar,
   Box,
   Chip,
   Container,
-  DialogTitle,
   FormHelperText,
   Input,
   List,
   ListItem,
   ListItemButton,
   ListItemContent,
-  ListItemDecorator,
-  Modal,
-  ModalClose,
-  ModalDialog,
   Sheet,
   Typography,
 } from '@mui/joy'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import moment from 'moment'
 import PropTypes from 'prop-types'
-import { useEffect, useMemo, useState } from 'react'
-
-import { useCircleMembers } from '@/queries/UserQueries'
+import { useEffect, useState } from 'react'
 
 import { ACCENT } from './brand'
+import { useShiftPicker } from './ShiftPicker'
 import {
-  applyPick,
   COMPANIES,
   DINNER_NOTE_MAX,
   dinnerNoteSlot,
   dinnerPrefix,
-  exclusiveGroup,
   pairMembers,
-  pairSlot,
   PHONES,
   rigMembers,
-  saveSlot,
   SHIFT_DAYS,
-  shiftInfoQueryKey,
   SLEEP_BLOCKS,
   sleepSlot,
   tourAt,
-  useShiftSlots,
 } from './shiftSlots'
 import { SHIFT_COLORS, shiftAt, shiftDayAt } from './shifts'
 
@@ -67,14 +52,6 @@ const useMinuteClock = () => {
   }, [])
   return now
 }
-
-const initials = name =>
-  (name || '?')
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(p => p[0].toUpperCase())
-    .join('')
 
 const PhoneBox = ({ label, name, onClick }) => (
   <Sheet
@@ -222,74 +199,21 @@ DinnerNote.propTypes = {
 
 const ShiftInfo = () => {
   const now = useMinuteClock()
-  const queryClient = useQueryClient()
-  const { data: membersData } = useCircleMembers()
 
   const shift = shiftAt(now)
   const shiftDay = shiftDayAt(now)
   const tour = tourAt(now)
 
-  const members = useMemo(
-    () =>
-      [...(membersData?.res || [])].sort((a, b) =>
-        (a.displayName || a.username || '').localeCompare(
-          b.displayName || b.username || '',
-        ),
-      ),
-    [membersData],
-  )
-  const nameById = useMemo(() => {
-    const map = new Map()
-    members.forEach(m => map.set(m.userId, m.displayName || m.username))
-    return map
-  }, [members])
-
-  const queryKey = shiftInfoQueryKey(tour)
-  const { data: slots = {}, isError } = useShiftSlots(tour)
-
-  const [error, setError] = useState(null)
-  const mutation = useMutation({
-    mutationFn: saveSlot,
-    onMutate: async ({ slot, userId, note }) => {
-      setError(null)
-      await queryClient.cancelQueries({ queryKey })
-      const previous = queryClient.getQueryData(queryKey)
-      // One phone per person: their old phone empties straight away.
-      queryClient.setQueryData(queryKey, old =>
-        applyPick(old || {}, slot, userId, note),
-      )
-      return { previous }
-    },
-    onError: (err, _vars, ctx) => {
-      queryClient.setQueryData(queryKey, ctx?.previous)
-      setError(err.message)
-    },
-    onSettled: () => queryClient.invalidateQueries({ queryKey }),
-  })
-
-  // The slot whose picker is open: { slot, title }, or for a multi-pick
-  // (rig crew, dinner cooks) { prefix, hint, title }.
-  const [picking, setPicking] = useState(null)
-
-  const assign = userId => {
-    if (!picking || !tour) return
-    mutation.mutate({ tour, slot: picking.slot, userId })
-    setPicking(null)
-  }
-
-  const nameFor = slot => {
-    const id = slots[slot]
-    if (id == null) return null
-    return nameById.get(id) || 'Former member'
-  }
-
-  const slotLabel = slot => {
-    const phone = PHONES.find(p => p.slot === slot)
-    if (phone) return `the ${phone.label} phone`
-    const block = SLEEP_BLOCKS.find(b => slot.endsWith(`.${b.index}`))
-    const day = slot.split('.')[1]
-    return block ? `the Day ${day} ${block.label} watch` : 'another spot'
-  }
+  const {
+    error,
+    isError,
+    nameById,
+    nameFor,
+    openPicker: setPicking,
+    picker,
+    save,
+    slots,
+  } = useShiftPicker(tour)
 
   return (
     <Container maxWidth='md' sx={{ py: 3 }}>
@@ -493,120 +417,14 @@ const ShiftInfo = () => {
               <DinnerNote
                 day={day}
                 value={slots[dinnerNoteSlot(day)] || ''}
-                onSave={note =>
-                  tour &&
-                  mutation.mutate({ tour, slot: dinnerNoteSlot(day), note })
-                }
+                onSave={note => save({ note, slot: dinnerNoteSlot(day) })}
               />
             </Sheet>
           )
         })}
       </Box>
 
-      <Modal open={Boolean(picking)} onClose={() => setPicking(null)}>
-        <ModalDialog sx={{ maxWidth: 420, width: '100%' }}>
-          <ModalClose />
-          <DialogTitle>{picking?.title}</DialogTitle>
-          {picking?.hint && (
-            <Typography level='body-sm' sx={{ color: 'text.tertiary' }}>
-              {picking.hint}
-            </Typography>
-          )}
-          <List sx={{ maxHeight: '60vh', overflow: 'auto' }}>
-            {picking?.prefix &&
-              members.map(m => {
-                const slot = pairSlot(picking.prefix, m.userId)
-                const on = slots[slot] === m.userId
-                return (
-                  <ListItem key={m.userId}>
-                    <ListItemButton
-                      selected={on}
-                      onClick={() =>
-                        tour &&
-                        mutation.mutate({
-                          tour,
-                          slot,
-                          userId: on ? null : m.userId,
-                        })
-                      }
-                      sx={{ borderRadius: 'md' }}
-                    >
-                      <ListItemDecorator>
-                        <Avatar size='sm' src={m.image || undefined}>
-                          {initials(m.displayName || m.username)}
-                        </Avatar>
-                      </ListItemDecorator>
-                      <ListItemContent>
-                        {m.displayName || m.username}
-                      </ListItemContent>
-                      {on && <CheckRounded color='primary' />}
-                    </ListItemButton>
-                  </ListItem>
-                )
-              })}
-            {picking?.prefix && (
-              <ListItem>
-                <ListItemButton
-                  color='primary'
-                  variant='soft'
-                  onClick={() => setPicking(null)}
-                  sx={{ borderRadius: 'md', justifyContent: 'center' }}
-                >
-                  Done
-                </ListItemButton>
-              </ListItem>
-            )}
-            {picking && !picking.prefix && members.map(m => {
-              const selected = picking && slots[picking.slot] === m.userId
-              // Picking someone moves them off their current slot in the
-              // same group (phone, watch time, company).
-              const group = picking && exclusiveGroup(picking.slot)
-              const currentSlot =
-                group &&
-                !selected &&
-                Object.keys(slots).find(
-                  k => k.startsWith(group) && slots[k] === m.userId,
-                )
-              const currentLabel = currentSlot && slotLabel(currentSlot)
-              return (
-                <ListItem key={m.userId}>
-                  <ListItemButton
-                    selected={selected}
-                    onClick={() => assign(m.userId)}
-                    sx={{ borderRadius: 'md' }}
-                  >
-                    <ListItemDecorator>
-                      <Avatar size='sm' src={m.image || undefined}>
-                        {initials(m.displayName || m.username)}
-                      </Avatar>
-                    </ListItemDecorator>
-                    <ListItemContent>
-                      {m.displayName || m.username}
-                      {currentLabel && (
-                        <Typography level='body-xs' sx={{ color: 'text.tertiary' }}>
-                          Has {currentLabel} (will move)
-                        </Typography>
-                      )}
-                    </ListItemContent>
-                    {selected && <CheckRounded color='primary' />}
-                  </ListItemButton>
-                </ListItem>
-              )
-            })}
-            {picking && !picking.prefix && slots[picking.slot] != null && (
-              <ListItem>
-                <ListItemButton
-                  color='danger'
-                  onClick={() => assign(null)}
-                  sx={{ borderRadius: 'md' }}
-                >
-                  Clear
-                </ListItemButton>
-              </ListItem>
-            )}
-          </List>
-        </ModalDialog>
-      </Modal>
+      {picker}
     </Container>
   )
 }

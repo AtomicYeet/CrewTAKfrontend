@@ -27,6 +27,7 @@ import ModalActions from '../../components/common/ModalActions'
 import { useUserProfile } from '../../queries/UserQueries'
 import { useNotification } from '../../service/NotificationProvider'
 import { apiClient } from '../../utils/ApiClient'
+import { CrewShiftTag } from '../../crewtak/crewShift'
 import { UpdateUserDetails } from '../../utils/Fetcher'
 import { resolvePhotoURL } from '../../utils/Helpers'
 import { getCroppedImg } from '../../utils/imageCropUtils'
@@ -212,6 +213,7 @@ const ProfileContent = ({ refetchUserProfile, userProfile }) => {
             <Typography level='title-lg' noWrap>
               {displayName || userProfile.displayName}
             </Typography>
+            <CrewShiftTag shift={userProfile.crewShift} level='body-sm' />
             <Typography
               level='body-sm'
               textColor='text.secondary'

@@ -33,6 +33,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { useImpersonateUser } from '../contexts/ImpersonateUserContext'
 import useStickyState from '../hooks/useStickyState'
+import { CrewShiftTag } from '../crewtak/crewShift'
 import { useCircleMembers, useUserProfile } from '../queries/UserQueries'
 import { apiClient } from '../utils/ApiClient'
 import { isPlusAccount, resolvePhotoURL } from '../utils/Helpers'
@@ -205,6 +206,7 @@ const UserProfileAvatar = ({ showDetails = false }) => {
                 >
                   {currentUser?.displayName || currentUser?.name}
                 </Typography>
+                <CrewShiftTag shift={currentUser?.crewShift} />
                 <Typography
                   level='body-xs'
                   sx={{
@@ -257,6 +259,7 @@ const UserProfileAvatar = ({ showDetails = false }) => {
                 >
                   {currentUser?.displayName || currentUser?.name}
                 </Typography>
+                <CrewShiftTag shift={currentUser?.crewShift} />
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <Typography
                     level='body-sm'

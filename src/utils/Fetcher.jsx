@@ -976,7 +976,7 @@ const GetDeviceTokens = (active = true) => {
 }
 
 // Child User Management Functions
-const CreateChildUser = (childName, displayName, password) => {
+const CreateChildUser = (childName, displayName, password, crewShift = '') => {
   return Fetch(`/users/subaccounts`, {
     method: 'POST',
     headers: HEADERS(),
@@ -984,7 +984,18 @@ const CreateChildUser = (childName, displayName, password) => {
       childName,
       displayName,
       password,
+      crewShift,
     }),
+  })
+}
+
+// CrewTAK: set which crew group (A, B, C, OPS, CHIEF, or '' for none) a
+// crew login is in.
+const UpdateCrewShift = (userId, crewShift) => {
+  return Fetch(`/users/subaccounts/shift`, {
+    method: 'PUT',
+    headers: HEADERS(),
+    body: JSON.stringify({ userId, crewShift }),
   })
 }
 
@@ -1238,6 +1249,7 @@ export {
   UnregisterDeviceToken,
   UpdateChildPassword,
   UpdateChoreAssignee,
+  UpdateCrewShift,
   UpdateChoreHistory,
   UpdateChorePriority,
   UpdateDueDate,
