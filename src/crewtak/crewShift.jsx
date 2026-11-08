@@ -21,6 +21,12 @@ export const crewShiftInfo = value =>
 
 export const crewShiftLabel = value => crewShiftInfo(value)?.label || ''
 
+// Sort position for a shift: A, B, C, Ops, Chief, then anyone with no shift.
+export const crewShiftRank = value => {
+  const i = CREW_SHIFTS.findIndex(s => s.value === (value || '').toUpperCase())
+  return i === -1 ? CREW_SHIFTS.length : i
+}
+
 // The small coloured "C Shift" line under a name. Renders nothing when unset.
 export const CrewShiftTag = ({ shift, level = 'body-xs', sx }) => {
   const info = crewShiftInfo(shift)

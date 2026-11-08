@@ -18,7 +18,7 @@ import { useMemo, useState } from 'react'
 
 import { useCircleMembers } from '@/queries/UserQueries'
 
-import { CrewShiftTag } from './crewShift'
+import { crewShiftRank, CrewShiftTag } from './crewShift'
 import {
   applyPick,
   exclusiveGroup,
@@ -57,10 +57,13 @@ export const useCrewMembers = () => {
     () =>
       [...(membersData?.res || [])]
         .filter(m => m.isActive !== false)
-        .sort((a, b) =>
-          (a.displayName || a.username || '').localeCompare(
-            b.displayName || b.username || '',
-          ),
+        // By shift (A, B, C, Ops, Chief, then no shift), then by name.
+        .sort(
+          (a, b) =>
+            crewShiftRank(a.crewShift) - crewShiftRank(b.crewShift) ||
+            (a.displayName || a.username || '').localeCompare(
+              b.displayName || b.username || '',
+            ),
         ),
     [membersData],
   )
@@ -217,7 +220,7 @@ export const useShiftPicker = (tour, { dark = false } = {}) => {
                   selected={selected}
                   hint={
                     currentSlot
-                      ? `Has ${slotLabel(currentSlot)} (will move)`
+                      ? `Has ${slotLabel(currentSlot)}`
                       : undefined
                   }
                   onClick={() => assign(m.userId)}
