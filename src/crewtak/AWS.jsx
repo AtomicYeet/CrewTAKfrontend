@@ -225,32 +225,62 @@ const EventLine = ({ event, now, onDelete, showDate }) => {
         borderBottom: '1px solid',
         borderColor: 'divider',
         display: 'grid',
-        gap: 1.5,
-        gridTemplateColumns: 'minmax(90px, 1fr) auto 64px 56px 40px',
+        gap: { xs: 1, sm: 2 },
+        // Door (+ Now/Done) | time | duration | delete
+        gridTemplateColumns: {
+          xs: 'minmax(0, 1fr) auto 36px 64px',
+          sm: 'minmax(0, 1fr) auto 56px 72px',
+        },
         px: 1.5,
         py: 1,
         '&:last-of-type': { borderBottom: 'none' },
       }}
     >
-      <Typography
-        level='title-md'
+      <Box
         sx={{
-          color: done ? 'text.tertiary' : undefined,
-          textDecoration: done ? 'line-through' : 'none',
+          alignItems: 'center',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1,
+          minWidth: 0,
         }}
       >
-        {doorLabel(event.door)}
-      </Typography>
+        <Typography
+          level='title-md'
+          sx={{
+            color: done ? 'text.tertiary' : undefined,
+            textDecoration: done ? 'line-through' : 'none',
+          }}
+        >
+          {doorLabel(event.door)}
+        </Typography>
+        {chip && (
+          <Chip color={chip.color} size='sm' variant='soft'>
+            {chip.label}
+          </Chip>
+        )}
+      </Box>
       <Typography
         level='body-md'
         sx={{
           color: done ? 'text.tertiary' : undefined,
           fontVariantNumeric: 'tabular-nums',
+          textAlign: 'right',
           textDecoration: done ? 'line-through' : 'none',
           whiteSpace: 'nowrap',
         }}
       >
-        {showDate ? `${moment(event.start).format('ddd D MMM')} · ` : ''}
+        {showDate && (
+          <Box component='span' sx={{ display: { xs: 'block', sm: 'inline' } }}>
+            {moment(event.start).format('ddd D MMM')}
+            <Box
+              component='span'
+              sx={{ display: { xs: 'none', sm: 'inline' } }}
+            >
+              {' · '}
+            </Box>
+          </Box>
+        )}
         {fmtAwsTime(event.start)}–{fmtAwsTime(event.end)}
       </Typography>
       <Typography
@@ -259,16 +289,10 @@ const EventLine = ({ event, now, onDelete, showDate }) => {
       >
         {fmtDuration(event.end - event.start)}
       </Typography>
-      <Box>
-        {chip && (
-          <Chip color={chip.color} size='sm' variant='soft'>
-            {chip.label}
-          </Chip>
-        )}
-      </Box>
       {confirming ? (
         <Button
           color='danger'
+          data-testid='aws-confirm-delete'
           size='sm'
           onClick={() => onDelete(event.id)}
           sx={{ justifySelf: 'end', minWidth: 0, px: 1 }}
