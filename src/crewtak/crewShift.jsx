@@ -6,14 +6,15 @@ import { SHIFT_COLORS } from './shifts'
 // CrewTAK crew groups: which shift (A/B/C) a person works, or Ops / Chief.
 // Stored on the user as crewShift; set from Settings → Crew Users. Shown in
 // small coloured text under the person's name, using the same colour as that
-// shift's badge everywhere else (A blue, B orange, C green).
+// shift's badge everywhere else (A red, B green, C blue; Ops gold, Chief
+// grey).
 
 export const CREW_SHIFTS = [
   { value: 'A', label: 'A Shift', color: SHIFT_COLORS.A },
   { value: 'B', label: 'B Shift', color: SHIFT_COLORS.B },
   { value: 'C', label: 'C Shift', color: SHIFT_COLORS.C },
-  { value: 'OPS', label: 'Ops', color: 'neutral' },
-  { value: 'CHIEF', label: 'Chief', color: 'danger' },
+  { value: 'OPS', label: 'Ops', color: 'warning' },
+  { value: 'CHIEF', label: 'Chief', color: 'neutral' },
 ]
 
 export const crewShiftInfo = value =>

@@ -10,6 +10,7 @@ import {
   History,
   ListAlt,
   Logout,
+  MeetingRoomOutlined,
   MenuOpenRounded,
   MenuRounded,
   ReportProblem,
@@ -61,6 +62,7 @@ const PUBLIC_PAGES = ['/landing', '/privacy', '/terms']
 const NAVBAR_TITLE_KEYS = {
   '/log': 'Completion log',
   '/shift': 'Shift Info',
+  '/aws': 'AWS',
   '/training': 'Training',
   '/activities': 'navigation.activities',
   '/archived': 'navigation.archived',
@@ -202,6 +204,11 @@ const NavBar = () => {
       to: '/shift',
       label: 'Shift Info',
       icon: <BadgeOutlined />,
+    },
+    {
+      to: '/aws',
+      label: 'AWS',
+      icon: <MeetingRoomOutlined />,
     },
     {
       to: '/training',

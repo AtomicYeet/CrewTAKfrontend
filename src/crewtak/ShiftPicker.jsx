@@ -1,7 +1,11 @@
 import { CheckRounded } from '@mui/icons-material'
 import {
   Avatar,
+  Box,
+  Button,
   DialogTitle,
+  FormHelperText,
+  Input,
   List,
   ListItem,
   ListItemButton,
@@ -21,6 +25,7 @@ import { useCircleMembers } from '@/queries/UserQueries'
 import { crewShiftRank, CrewShiftTag } from './crewShift'
 import {
   applyPick,
+  DINNER_NOTE_MAX,
   exclusiveGroup,
   pairSlot,
   PHONES,
@@ -151,6 +156,19 @@ export const useShiftPicker = (tour, { dark = false } = {}) => {
     close()
   }
 
+  // The free-text slot being edited (dinner description): { slot, title }.
+  const [noteEdit, setNoteEdit] = useState(null)
+  const [noteDraft, setNoteDraft] = useState('')
+  const openNote = ({ slot, title }) => {
+    setNoteDraft(slots[slot] || '')
+    setNoteEdit({ slot, title })
+  }
+  const closeNote = () => setNoteEdit(null)
+  const saveNote = text => {
+    if (noteEdit) save({ note: text.trim(), slot: noteEdit.slot })
+    closeNote()
+  }
+
   const nameFor = slot => {
     const id = slots[slot]
     if (id == null) return null
@@ -243,11 +261,62 @@ export const useShiftPicker = (tour, { dark = false } = {}) => {
     </Modal>
   )
 
+  const noteEditor = (
+    <Modal
+      open={Boolean(noteEdit)}
+      onClose={closeNote}
+      data-joy-color-scheme={dark ? 'dark' : undefined}
+      sx={{ zIndex: 1400 }}
+    >
+      <ModalDialog sx={{ maxWidth: 520, width: '100%' }}>
+        <ModalClose />
+        <DialogTitle>{noteEdit?.title}</DialogTitle>
+        <Box
+          component='form'
+          onSubmit={e => {
+            e.preventDefault()
+            saveNote(noteDraft)
+          }}
+        >
+          <Input
+            autoFocus
+            aria-label={noteEdit?.title}
+            placeholder="What's for dinner?"
+            value={noteDraft}
+            onChange={e => setNoteDraft(e.target.value.slice(0, DINNER_NOTE_MAX))}
+            slotProps={{ input: { maxLength: DINNER_NOTE_MAX } }}
+          />
+          <FormHelperText sx={{ justifyContent: 'flex-end' }}>
+            {noteDraft.length}/{DINNER_NOTE_MAX}
+          </FormHelperText>
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', mt: 1.5 }}>
+            {noteEdit && slots[noteEdit.slot] ? (
+              <Button
+                color='danger'
+                variant='plain'
+                onClick={() => saveNote('')}
+                sx={{ mr: 'auto' }}
+              >
+                Clear
+              </Button>
+            ) : null}
+            <Button color='neutral' variant='plain' onClick={closeNote}>
+              Cancel
+            </Button>
+            <Button type='submit'>Save</Button>
+          </Box>
+        </Box>
+      </ModalDialog>
+    </Modal>
+  )
+
   return {
     error,
     isError,
     nameById,
     nameFor,
+    noteEditor,
+    openNote,
     openPicker: setPicking,
     picker,
     save,

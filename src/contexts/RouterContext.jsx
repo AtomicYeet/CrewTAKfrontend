@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 
 import App from '@/App'
+import AWS from '@/crewtak/AWS'
 import CompletionLog from '@/crewtak/CompletionLog'
 import ShiftInfo from '@/crewtak/ShiftInfo'
 import Training from '@/crewtak/Training'
@@ -333,6 +334,10 @@ const Router = createBrowserRouter([
       {
         path: '/shift',
         element: <ShiftInfo />,
+      },
+      {
+        path: '/aws',
+        element: <AWS />,
       },
       {
         path: '/training',

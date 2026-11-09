@@ -79,4 +79,5 @@ export const shiftBoundsAt = (date = new Date()) => {
 }
 
 // Colour per crew, used for the small shift badges.
-export const SHIFT_COLORS = { A: 'primary', B: 'warning', C: 'success' }
+// Joy colours for each shift's badges: A red, B green, C blue.
+export const SHIFT_COLORS = { A: 'danger', B: 'success', C: 'primary' }

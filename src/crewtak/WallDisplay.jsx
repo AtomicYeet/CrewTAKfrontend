@@ -7,8 +7,10 @@ import {
   FlashOn,
   HomeRounded,
   LocalFireDepartment,
+  MeetingRoom,
   NightsStay,
   PhoneInTalk,
+  RestaurantMenu,
   Visibility,
   WaterDrop,
   WbSunny,
@@ -23,10 +25,21 @@ import { useNavigate } from 'react-router-dom'
 import { useChores, useChoresHistory } from '@/queries/ChoreQueries'
 import { useCircleMembers } from '@/queries/UserQueries'
 
+import {
+  awsStatus,
+  doorLabel,
+  eventsInTour,
+  fmtAwsTime,
+  fmtDuration,
+  useAwsEvents,
+} from './aws'
 import { ACCENT, BRAND_BLUE } from './brand'
 import { useShiftPicker } from './ShiftPicker'
 import {
   COMPANIES,
+  dinnerNoteSlot,
+  dinnerPrefix,
+  pairMembers,
   PHONES,
   rigMembers,
   SHIFT_DAYS,
@@ -45,13 +58,15 @@ import {
 
 // Full-screen station board for a wall TV or tablet. Tasks are read-only:
 // crews check them off on their own phones so the log shows who did what.
-// Phones, watch times and rigs can be changed right here by tapping a row;
-// the picks are the same ones Shift Info (/shift) shows and saves.
+// Phones, watch times, rigs and dinner can be changed right here by tapping a
+// row; the picks are the same ones Shift Info (/shift) shows and saves. AWS
+// events are read-only here; they're added and deleted on the AWS page (/aws).
 
 const REFRESH_MS = 60 * 1000
 const CLOCK_MS = 15 * 1000
 
-const SHIFT_HEX = { A: BRAND_BLUE[400], B: ACCENT, C: '#3ccf8e' }
+// A red, B green, C blue (same as the badges elsewhere).
+const SHIFT_HEX = { A: '#ff4d4f', B: '#3ccf8e', C: BRAND_BLUE[400] }
 
 const BG = '#05080f'
 const PANEL = '#0d1320'
@@ -779,6 +794,294 @@ TaskColumns.propTypes = {
   shiftColor: PropTypes.string.isRequired,
 }
 
+// Small uppercase panel heading, matching the phones / watch / rig panels.
+const PanelTitle = ({ children, icon }) => (
+  <Typography
+    startDecorator={icon}
+    sx={{
+      color: MUTED,
+      fontSize: 'clamp(0.7rem, 0.85vw, 0.95rem)',
+      fontWeight: 700,
+      justifyContent: 'center',
+      letterSpacing: '0.1em',
+      mb: 0.75,
+      textTransform: 'uppercase',
+    }}
+  >
+    {children}
+  </Typography>
+)
+
+PanelTitle.propTypes = { children: PropTypes.node, icon: PropTypes.node }
+
+const LABEL_FONT = 'clamp(0.8rem, 1vw, 1.15rem)'
+const VALUE_FONT = 'clamp(0.85rem, 1.1vw, 1.3rem)'
+
+// A tappable cell on the board (dinner cooks / description).
+const TapCell = ({ children, empty, label, onClick, testId, wrap }) => (
+  <Typography
+    data-testid={testId}
+    role='button'
+    tabIndex={0}
+    aria-label={label}
+    onClick={onClick}
+    onKeyDown={e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        onClick()
+      }
+    }}
+    sx={{
+      borderRadius: '6px',
+      color: empty ? 'rgba(255,255,255,0.3)' : '#fff',
+      cursor: 'pointer',
+      fontSize: VALUE_FONT,
+      fontWeight: wrap ? 600 : 700,
+      lineHeight: 1.25,
+      minWidth: 0,
+      overflow: 'hidden',
+      px: CELL_GAP,
+      py: '2px',
+      transition: 'background-color 120ms',
+      ...(wrap
+        ? {
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: 2,
+            display: '-webkit-box',
+            whiteSpace: 'normal',
+          }
+        : { textOverflow: 'ellipsis', whiteSpace: 'nowrap' }),
+      '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
+      '&:active': { bgcolor: 'rgba(255,255,255,0.14)' },
+      '&:focus-visible': { outline: `2px solid ${ACCENT}`, outlineOffset: -2 },
+    }}
+  >
+    {children}
+  </Typography>
+)
+
+TapCell.propTypes = {
+  children: PropTypes.node,
+  empty: PropTypes.bool,
+  label: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  testId: PropTypes.string,
+  wrap: PropTypes.bool,
+}
+
+// Dinner: Day 1 → who's cooking → what's for dinner, then the same for Day
+// 2. Both can be changed by tapping (same data as Shift Info).
+const DinnerPanel = ({ membersById, onCooks, onNote, shiftDay, slots }) => (
+  <Box data-testid='display-dinner' sx={{ ...panelSx, flexDirection: 'column' }}>
+    <PanelTitle icon={<RestaurantMenu sx={{ fontSize: '1.1em' }} />}>
+      Dinner
+    </PanelTitle>
+    <Box
+      sx={{
+        alignItems: 'center',
+        columnGap: 'clamp(8px, 1vw, 18px)',
+        display: 'grid',
+        gridTemplateColumns: 'auto minmax(0, 0.8fr) minmax(0, 1.4fr)',
+        rowGap: 'clamp(4px, 0.6vw, 10px)',
+      }}
+    >
+      {SHIFT_DAYS.map(day => {
+        const cooks = pairMembers(slots, dinnerPrefix(day))
+          .map(id => membersById.get(id) || 'Former member')
+          .join(', ')
+        const note = slots[dinnerNoteSlot(day)] || ''
+        return (
+          <Box key={day} sx={{ display: 'contents' }}>
+            <Typography
+              sx={{
+                color: day === shiftDay ? '#fff' : MUTED,
+                fontSize: LABEL_FONT,
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Day {day}
+            </Typography>
+            <TapCell
+              empty={!cooks}
+              label={`Change Day ${day} dinner cooks`}
+              onClick={() => onCooks(day)}
+              testId={`display-dinner-${day}-cooks`}
+            >
+              {cooks || '—'}
+            </TapCell>
+            <TapCell
+              empty={!note}
+              label={`Change Day ${day} dinner description`}
+              onClick={() => onNote(day)}
+              testId={`display-dinner-${day}-note`}
+              wrap
+            >
+              {note || 'Tap to add what\'s for dinner'}
+            </TapCell>
+          </Box>
+        )
+      })}
+    </Box>
+  </Box>
+)
+
+DinnerPanel.propTypes = {
+  membersById: PropTypes.instanceOf(Map).isRequired,
+  onCooks: PropTypes.func.isRequired,
+  onNote: PropTypes.func.isRequired,
+  shiftDay: PropTypes.number,
+  slots: PropTypes.object.isRequired,
+}
+
+// AWS events in this 48-hour tour, read-only (added and deleted on the AWS
+// page). Finished ones are struck through; the running one is highlighted.
+// Events for other crews' tours don't show until that tour starts.
+const AwsLine = ({ event, now }) => {
+  const status = awsStatus(event, now)
+  const done = status === 'done'
+  const active = status === 'active'
+  const cell = {
+    color: done ? 'rgba(255,255,255,0.35)' : active ? ACCENT : '#fff',
+    fontVariantNumeric: 'tabular-nums',
+    lineHeight: 1.3,
+    textDecoration: done ? 'line-through' : 'none',
+    textDecorationColor: 'rgba(255,255,255,0.45)',
+    whiteSpace: 'nowrap',
+  }
+  return (
+    <Box
+      data-testid={`display-aws-${event.id}`}
+      data-status={status}
+      sx={{ display: 'contents' }}
+    >
+      <Typography
+        sx={{
+          ...cell,
+          fontSize: VALUE_FONT,
+          fontWeight: 700,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {doorLabel(event.door)}
+      </Typography>
+      <Typography sx={{ ...cell, fontSize: VALUE_FONT, fontWeight: 700 }}>
+        {fmtAwsTime(event.start)}–{fmtAwsTime(event.end)}
+      </Typography>
+      <Typography
+        sx={{
+          ...cell,
+          color: done ? 'rgba(255,255,255,0.35)' : MUTED,
+          fontSize: LABEL_FONT,
+          fontWeight: 600,
+          textAlign: 'right',
+        }}
+      >
+        {active ? 'NOW' : fmtDuration(event.end - event.start)}
+      </Typography>
+    </Box>
+  )
+}
+
+AwsLine.propTypes = {
+  event: PropTypes.object.isRequired,
+  now: PropTypes.instanceOf(Date).isRequired,
+}
+
+const AwsPanel = ({ bounds, now, shiftDay }) => {
+  const { data: events, isError } = useAwsEvents()
+  const inTour = useMemo(
+    () => eventsInTour(events, bounds),
+    [events, bounds],
+  )
+  const remaining = inTour.filter(e => awsStatus(e, now) !== 'done').length
+
+  const noneLine = (
+    <Typography
+      data-testid='display-aws-none'
+      sx={{
+        color: MUTED,
+        fontSize: VALUE_FONT,
+        fontWeight: 700,
+        mt: inTour.length ? 1 : 0,
+        textAlign: 'center',
+      }}
+    >
+      {isError && !events ? 'AWS unavailable' : 'No Events this shift'}
+    </Typography>
+  )
+
+  return (
+    <Box data-testid='display-aws' sx={{ ...panelSx, flexDirection: 'column' }}>
+      <PanelTitle icon={<MeetingRoom sx={{ fontSize: '1.1em' }} />}>AWS</PanelTitle>
+      {inTour.length > 0 && (
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 'clamp(12px, 2vw, 40px)',
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          }}
+        >
+          {SHIFT_DAYS.map(day => {
+            const list = inTour.filter(e => e.shiftDay === day)
+            return (
+              <Box key={day} sx={{ minWidth: 0 }}>
+                <Typography
+                  sx={{
+                    color: day === shiftDay ? '#fff' : MUTED,
+                    fontSize: 'clamp(0.65rem, 0.8vw, 0.9rem)',
+                    fontWeight: 700,
+                    letterSpacing: '0.1em',
+                    mb: 0.25,
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Day {day}
+                </Typography>
+                {list.length ? (
+                  <Box
+                    sx={{
+                      columnGap: 'clamp(8px, 1vw, 16px)',
+                      display: 'grid',
+                      gridTemplateColumns: 'minmax(0, auto) auto auto',
+                      justifyContent: 'center',
+                      rowGap: 0.25,
+                    }}
+                  >
+                    {list.map(e => (
+                      <AwsLine key={e.id} event={e} now={now} />
+                    ))}
+                  </Box>
+                ) : (
+                  <Typography
+                    sx={{ color: 'rgba(255,255,255,0.3)', fontWeight: 700, textAlign: 'center' }}
+                  >
+                    —
+                  </Typography>
+                )}
+              </Box>
+            )
+          })}
+        </Box>
+      )}
+      {remaining === 0 && noneLine}
+    </Box>
+  )
+}
+
+AwsPanel.propTypes = {
+  bounds: PropTypes.shape({
+    end: PropTypes.instanceOf(Date),
+    start: PropTypes.instanceOf(Date),
+  }),
+  now: PropTypes.instanceOf(Date).isRequired,
+  shiftDay: PropTypes.number,
+}
+
 const WallDisplay = () => {
   useWakeLock()
   const navigate = useNavigate()
@@ -800,6 +1103,8 @@ const WallDisplay = () => {
   const {
     error: pickError,
     nameFor: slotName,
+    noteEditor,
+    openNote,
     openPicker,
     picker,
     slots,
@@ -1017,8 +1322,8 @@ const WallDisplay = () => {
         </Box>
       </Box>
 
-      {/* Task columns are switched off for now (SHOW_TASK_COLUMNS); the
-          row stays as empty space so the panels above keep their size. */}
+      {/* Task columns are switched off for now (SHOW_TASK_COLUMNS); their
+          row holds the Dinner and AWS panels instead. */}
       {SHOW_TASK_COLUMNS ? (
         <TaskColumns
           bounds={bounds}
@@ -1027,10 +1332,42 @@ const WallDisplay = () => {
           shiftColor={shiftColor}
         />
       ) : (
-        <Box aria-hidden data-testid='display-blank' sx={{ minHeight: 0 }} />
+        // Dinner | AWS, sized to their contents; any room left below stays
+        // blank.
+        <Box
+          sx={{
+            alignContent: 'start',
+            display: 'grid',
+            gap: 'clamp(10px, 1.2vw, 20px)',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+            minHeight: 0,
+            overflow: 'hidden',
+          }}
+        >
+          <DinnerPanel
+            membersById={membersById}
+            shiftDay={shiftDay}
+            slots={slots}
+            onCooks={day =>
+              openPicker({
+                hint: 'Tap everyone cooking. Pick as many as you need.',
+                prefix: dinnerPrefix(day),
+                title: `Day ${day} dinner`,
+              })
+            }
+            onNote={day =>
+              openNote({
+                slot: dinnerNoteSlot(day),
+                title: `Day ${day} dinner`,
+              })
+            }
+          />
+          <AwsPanel bounds={bounds} now={now} shiftDay={shiftDay} />
+        </Box>
       )}
 
       {picker}
+      {noteEditor}
       {pickError && (
         <Typography
           role='alert'
