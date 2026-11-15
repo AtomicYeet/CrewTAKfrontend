@@ -1,5 +1,6 @@
 import {
   LocalFireDepartment,
+  MilitaryTech,
   PhoneInTalk,
   RestaurantMenu,
   Visibility,
@@ -28,6 +29,8 @@ import {
   DINNER_NOTE_MAX,
   dinnerNoteSlot,
   dinnerPrefix,
+  OFFICER_HINT,
+  OFFICER_SLOT,
   pairMembers,
   PHONES,
   rigMembers,
@@ -38,7 +41,7 @@ import {
 } from './shiftSlots'
 import { SHIFT_COLORS, shiftAt, shiftDayAt } from './shifts'
 
-// Shift Info: who carries each station phone this tour, who has each overnight
+// Shift Info: who is crew officer this tour, who carries each station phone, who has each overnight
 // watch time on Day 1 and Day 2, which company each person rides, and the
 // dinner plan for each day. See shiftSlots.js for how picks are stored and
 // reset.
@@ -261,6 +264,36 @@ const ShiftInfo = () => {
           {error || 'Could not load shift info. Retrying…'}
         </Typography>
       )}
+
+      <Typography
+        level='title-sm'
+        startDecorator={<MilitaryTech sx={{ fontSize: 18 }} />}
+        sx={{ letterSpacing: '0.08em', mb: 1, textTransform: 'uppercase' }}
+      >
+        Crew Officer
+      </Typography>
+      <Sheet
+        data-testid='crew-officer'
+        variant='outlined'
+        sx={{ borderRadius: 'lg', mb: 4, p: 1.5 }}
+      >
+        <List size='lg' sx={{ '--ListItem-paddingX': '0px' }}>
+          <SleepRow
+            label='Crew Officer'
+            name={nameFor(OFFICER_SLOT)}
+            onClick={() =>
+              setPicking({
+                hint: OFFICER_HINT,
+                slot: OFFICER_SLOT,
+                title: 'Crew Officer',
+              })
+            }
+          />
+        </List>
+        <Typography level='body-xs' sx={{ color: 'text.tertiary', px: 1.5 }}>
+          {OFFICER_HINT}
+        </Typography>
+      </Sheet>
 
       <Typography
         level='title-sm'

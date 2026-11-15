@@ -16,6 +16,10 @@ import { shiftBoundsAt } from './shifts'
 // Rig (company) assignments are many-to-many and reset at shift change: each
 // person-on-rig pairing is its own slot, company.<rig>.u<userId>.
 //
+// The crew officer is one person for the whole tour (slot "officer"). At 07:00
+// on Day 2 the server gives them the Captain's phone back, swapping with
+// whoever had it (like the watch hand-offs).
+//
 // Dinner plans are per shift day: who's cooking (many-to-many, like rigs,
 // dinner.<day>.u<userId>) and a short description (dinner.<day>.note).
 
@@ -25,6 +29,10 @@ export const PHONES = [
   { slot: 'phone.ff2', label: 'Firefighter 2', short: 'FF2' },
   { slot: 'phone.ops', label: 'Ops', short: 'Ops' },
 ]
+
+export const OFFICER_SLOT = 'officer'
+export const OFFICER_HINT =
+  "Takes the Captain's phone back at 07:00 on Day 2, swapping with whoever has it."
 
 export const COMPANIES = [
   { slot: 'company.5181', label: '5181 Crash Truck', short: '5181 Crash' },

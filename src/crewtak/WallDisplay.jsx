@@ -8,6 +8,7 @@ import {
   HomeRounded,
   LocalFireDepartment,
   MeetingRoom,
+  MilitaryTech,
   NightsStay,
   PhoneInTalk,
   RestaurantMenu,
@@ -39,6 +40,8 @@ import {
   COMPANIES,
   dinnerNoteSlot,
   dinnerPrefix,
+  OFFICER_HINT,
+  OFFICER_SLOT,
   pairMembers,
   PHONES,
   rigMembers,
@@ -869,6 +872,67 @@ TapCell.propTypes = {
   wrap: PropTypes.bool,
 }
 
+// Crew Officer (one person, left) beside the phone list (right). Tapping the
+// officer opens a one-person picker; they take the Captain's phone back at
+// 07:00 on Day 2.
+const OfficerPhonesPanel = ({ officer, onOfficer, phoneRows }) => (
+  <Box
+    data-testid='display-phones'
+    sx={{
+      ...panelSx,
+      alignItems: 'center',
+      gap: 'clamp(10px, 1.6vw, 32px)',
+      justifyContent: 'space-evenly',
+    }}
+  >
+    <Box sx={{ minWidth: 0, textAlign: 'center' }}>
+      <PanelTitle icon={<MilitaryTech sx={{ fontSize: '1.1em' }} />}>
+        Crew Officer
+      </PanelTitle>
+      <TapCell
+        empty={!officer}
+        label='Change crew officer'
+        onClick={onOfficer}
+        testId='display-slot-officer'
+      >
+        {officer || '—'}
+      </TapCell>
+    </Box>
+    <PanelBody
+      icon={<PhoneInTalk sx={{ fontSize: '1.1em' }} />}
+      rows={phoneRows}
+      title='Phones'
+      wrap
+    />
+  </Box>
+)
+
+OfficerPhonesPanel.propTypes = {
+  officer: PropTypes.string,
+  onOfficer: PropTypes.func.isRequired,
+  phoneRows: panelRows.isRequired,
+}
+
+// Small muted heading over a column of the Dinner grid.
+const ColumnHeading = ({ children }) => (
+  <Typography
+    sx={{
+      color: MUTED,
+      fontSize: 'clamp(0.65rem, 0.75vw, 0.85rem)',
+      fontWeight: 700,
+      letterSpacing: '0.1em',
+      mb: '-2px',
+      px: CELL_GAP,
+      textTransform: 'uppercase',
+      whiteSpace: 'nowrap',
+    }}
+  >
+    {children}
+  </Typography>
+)
+
+ColumnHeading.propTypes = { children: PropTypes.node }
+
 // Dinner: Day 1 → who's cooking → what's for dinner, then the same for Day
 // 2. Both can be changed by tapping (same data as Shift Info).
 const DinnerPanel = ({ membersById, onCooks, onNote, shiftDay, slots }) => (
@@ -885,6 +949,10 @@ const DinnerPanel = ({ membersById, onCooks, onNote, shiftDay, slots }) => (
         rowGap: 'clamp(4px, 0.6vw, 10px)',
       }}
     >
+      {/* Column headings over the cooks and the description. */}
+      <Box />
+      <ColumnHeading>Chef</ColumnHeading>
+      <ColumnHeading>What&apos;s the Dish?</ColumnHeading>
       {SHIFT_DAYS.map(day => {
         const cooks = pairMembers(slots, dinnerPrefix(day))
           .map(id => membersById.get(id) || 'Former member')
@@ -1299,11 +1367,16 @@ const WallDisplay = () => {
           }}
         >
           <Box sx={{ minWidth: 0 }}>
-            <AssignmentPanel
-              icon={<PhoneInTalk sx={{ fontSize: '1.1em' }} />}
-              rows={phoneRows}
-              title='Phones'
-              wrap
+            <OfficerPhonesPanel
+              officer={slotName(OFFICER_SLOT)}
+              phoneRows={phoneRows}
+              onOfficer={() =>
+                openPicker({
+                  hint: OFFICER_HINT,
+                  slot: OFFICER_SLOT,
+                  title: 'Crew Officer',
+                })
+              }
             />
           </Box>
 
