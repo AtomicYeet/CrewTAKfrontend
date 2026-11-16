@@ -44,7 +44,7 @@
       },
       "subaccounts": {
         "title": "Crew Users",
-        "description": "Add crew logins, reset passwords, and remove users."
+        "description": "Add crew logins, set shifts and roles, reset passwords, and remove users."
       },
       "notifications": {
         "title": "Notifications",
