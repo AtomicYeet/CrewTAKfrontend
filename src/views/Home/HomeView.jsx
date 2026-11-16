@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 
 import EmptyState from '../../components/common/EmptyState'
 import { useImpersonateUser } from '../../contexts/ImpersonateUserContext'
+import { useCrewAdmin } from '../../crewtak/useCrewAdmin'
 import { useChores } from '../../queries/ChoreQueries'
 import { useNotification } from '../../service/NotificationProvider'
 import { apiClient } from '../../utils/ApiClient'
@@ -92,6 +93,8 @@ const HomeView = () => {
   const queryClient = useQueryClient()
   const { showError, showSuccess, showUndo, showWarning } = useNotification()
   const { impersonatedUser } = useImpersonateUser()
+  // CrewTAK: only crew admins can open Crew Users, so only they get the link.
+  const crewAdmin = useCrewAdmin()
 
   const [captureOpen, setCaptureOpen] = useState(false)
   const [captureMode, setCaptureMode] = useState(null)
@@ -283,8 +286,8 @@ const HomeView = () => {
       <>
         <SectionHeader
           title={t('home.circle.title')}
-          action={t('home.circle.action')}
-          actionTo='/settings/circle'
+          action={crewAdmin ? t('home.circle.action') : undefined}
+          actionTo='/settings/subaccounts'
         />
         <CircleStrip members={circle} />
       </>
@@ -486,7 +489,7 @@ const HomeView = () => {
             }}
           />
 
-          {circle.length === 0 && (
+          {circle.length === 0 && crewAdmin && (
             <>
               <SectionHeader title={t('home.circle.title')} />
               <Sheet
@@ -507,7 +510,7 @@ const HomeView = () => {
                 </Typography>
                 <Button
                   component={Link}
-                  to='/settings/circle'
+                  to='/settings/subaccounts'
                   variant='soft'
                   size='sm'
                   startDecorator={<GroupAdd />}

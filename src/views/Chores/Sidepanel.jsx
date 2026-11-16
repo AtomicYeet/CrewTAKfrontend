@@ -11,7 +11,6 @@ import CalendarCard from '../components/CalendarCard'
 import ActivitiesCard from './ActivitesCard'
 import SmartInsightsCard from './SmartInsightsCard'
 import TasksByAssigneeCard from './TasksByAssigneeCard'
-import UserSwitcher from './UserSwitcher'
 
 const Sidepanel = ({
   allChores,
@@ -63,8 +62,6 @@ const Sidepanel = ({
     if (!cardConfig.enabled) return null
 
     switch (cardConfig.id) {
-      case 'welcome':
-        return <UserSwitcher key='welcome' chores={chores} />
       case 'smartInsights':
         return (
           <SmartInsightsCard

@@ -338,41 +338,6 @@ const GetUserCircle = () => {
   })
 }
 
-const JoinCircle = inviteCode => {
-  return Fetch(`/circles/join?invite_code=${inviteCode}`, {
-    method: 'POST',
-    headers: HEADERS(),
-  })
-}
-
-const GetCircleMemberRequests = () => {
-  return Fetch(`/circles/members/requests`, {
-    method: 'GET',
-    headers: HEADERS(),
-  })
-}
-
-const AcceptCircleMemberRequest = id => {
-  return Fetch(`/circles/members/requests/accept?requestId=${id}`, {
-    method: 'PUT',
-    headers: HEADERS(),
-  })
-}
-
-const DeclineCircleMemberRequest = id => {
-  return Fetch(`/circles/members/requests/decline?requestId=${id}`, {
-    method: 'DELETE',
-    headers: HEADERS(),
-  })
-}
-
-const LeaveCircle = id => {
-  return Fetch(`/circles/leave?circle_id=${id}`, {
-    method: 'DELETE',
-    headers: HEADERS(),
-  })
-}
-
 const DeleteCircleMember = (circleID, memberID) => {
   return Fetch(`/circles/${circleID}/members/delete?member_id=${memberID}`, {
     method: 'DELETE',
@@ -976,7 +941,13 @@ const GetDeviceTokens = (active = true) => {
 }
 
 // Child User Management Functions
-const CreateChildUser = (childName, displayName, password, crewShift = '') => {
+const CreateChildUser = (
+  childName,
+  displayName,
+  password,
+  crewShift = '',
+  role = 'member',
+) => {
   return Fetch(`/users/subaccounts`, {
     method: 'POST',
     headers: HEADERS(),
@@ -985,6 +956,7 @@ const CreateChildUser = (childName, displayName, password, crewShift = '') => {
       displayName,
       password,
       crewShift,
+      role,
     }),
   })
 }
@@ -996,6 +968,15 @@ const UpdateCrewShift = (userId, crewShift) => {
     method: 'PUT',
     headers: HEADERS(),
     body: JSON.stringify({ userId, crewShift }),
+  })
+}
+
+// CrewTAK: crew role (member = "Crew", manager, admin) for a crew login.
+const UpdateCrewRole = (userId, role) => {
+  return Fetch(`/users/subaccounts/role`, {
+    method: 'PUT',
+    headers: HEADERS(),
+    body: JSON.stringify({ userId, role }),
   })
 }
 
@@ -1139,7 +1120,6 @@ const TrackFilterUsage = id => {
 }
 
 export {
-  AcceptCircleMemberRequest,
   ApproveChore,
   ApproveRedemption,
   ArchiveChore,
@@ -1161,7 +1141,6 @@ export {
   CreateProject,
   CreateReward,
   CreateThing,
-  DeclineCircleMemberRequest,
   DeleteChildUser,
   DeleteChore,
   DeleteChoreAttachment,
@@ -1192,7 +1171,6 @@ export {
   GetChoresHistory,
   GetChoresNew,
   GetChoreTimer,
-  GetCircleMemberRequests,
   GetDeviceTokens,
   GetFilterById,
   GetFilters,
@@ -1212,8 +1190,6 @@ export {
   GetThings,
   GetUserCircle,
   GetUserProfile,
-  JoinCircle,
-  LeaveCircle,
   login,
   logout,
   MarkChoreComplete,
@@ -1249,6 +1225,7 @@ export {
   UnregisterDeviceToken,
   UpdateChildPassword,
   UpdateChoreAssignee,
+  UpdateCrewRole,
   UpdateCrewShift,
   UpdateChoreHistory,
   UpdateChorePriority,

@@ -2,7 +2,6 @@ import {
   AccountCircle,
   Api,
   CalendarMonth,
-  Circle,
   CloudQueue,
   Code,
   FamilyRestroom,
@@ -26,7 +25,6 @@ import { HIDE } from '@/crewtak/features'
 export const SETTINGS_SECTIONS = [
   { id: 'bridge', icon: CloudQueue, parentOnly: true, isBeta: true },
   { id: 'profile', icon: Person },
-  { id: 'circle', icon: Circle, parentOnly: true, crewAdmin: true },
   { id: 'account', icon: AccountCircle, parentOnly: true },
   // CrewTAK: crew admins (not just the owner) manage crew logins.
   { id: 'subaccounts', icon: FamilyRestroom, parentOnly: true, crewAdmin: true },

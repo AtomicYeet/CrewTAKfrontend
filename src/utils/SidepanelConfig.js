@@ -1,6 +1,8 @@
 import { HIDE } from '@/crewtak/features'
 // CrewTAK: cards for hidden features never appear or show up as options.
-const isShownCard = item => !(HIDE.activities && item.id === 'activities')
+// 'welcome' was the User Switcher (impersonation), removed 15 Nov 2026.
+const isShownCard = item =>
+  item.id !== 'welcome' && !(HIDE.activities && item.id === 'activities')
 
 export const DEFAULT_SIDEPANEL_CONFIG = [
   {

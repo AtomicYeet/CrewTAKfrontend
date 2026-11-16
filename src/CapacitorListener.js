@@ -84,9 +84,9 @@ const handleUrlOpen = (url, isColdStart = false) => {
     setPendingInvite(parsedUrl.searchParams.get('code'))
     const needsOnboarding =
       !hasSeenOnboarding() && !localStorage.getItem('token')
-    routerNavigate(
-      needsOnboarding ? '/onboarding' : `/circle/join${parsedUrl.search}`,
-    )
+    // CrewTAK: joining a crew by code was removed; old invite links just
+    // open the app.
+    routerNavigate(needsOnboarding ? '/onboarding' : '/')
   } else if (url.startsWith('donetick://chores/add')) {
     // Widget "+" / quick-capture buttons: land on the chore list with the
     // quick-add modal open (MyChores watches for the add_task param and

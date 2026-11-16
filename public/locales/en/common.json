@@ -225,6 +225,8 @@
     "accountPrefs": "Account & preferences",
     "invitePeople": "Invite People",
     "addMembers": "Add members to your crew",
+    "crewUsers": "Crew Users",
+    "crewUsersDescription": "Add users, set shifts and roles",
     "sidePanelSettings": "Side Panel Settings",
     "sidePanelSettingsDescription": "Customize layout & cards",
     "planFree": "Free",
@@ -676,8 +678,8 @@
       "done_other": "{{count}} done",
       "caughtUp": "All clear",
       "emptyTitle": "Nobody else is here yet",
-      "emptyBody": "Invite the people you share chores with, and this screen will show who’s carrying what.",
-      "emptyAction": "Invite to your crew"
+      "emptyBody": "Add crew logins from Settings → Crew Users, and this screen will show who’s carrying what.",
+      "emptyAction": "Add crew users"
     },
     "projects": {
       "title": "Projects",

@@ -1,36 +1,16 @@
 import Cookies from 'js-cookie'
 
-// A circle invite link is often the very first thing a new user opens, so the
-// code has to survive the trip through login/signup (including OAuth, which
-// leaves and re-enters the app) and be replayed once a session exists.
+// CrewTAK: crew codes and "join a crew" were removed (15 Nov 2026). Crew
+// admins add every login from Settings → Crew Users, so there is no invite to
+// carry through sign-in any more. These helpers stay so the login, signup and
+// app-link code that calls them keeps working, but they never hold an invite.
+
 const INVITE_KEY = 'pending_circle_invite'
 const REDIRECT_COOKIE = 'ca_redirect'
 
-// `auto=1` tells the join view this visit is the return leg of an auth
-// round-trip, so it can submit the request instead of asking a second time.
-export const joinCirclePath = code =>
-  `/circle/join?code=${encodeURIComponent(code)}&auto=1`
+export const joinCirclePath = () => '/'
 
-export const setPendingInvite = code => {
-  if (!code) return
-
-  try {
-    localStorage.setItem(INVITE_KEY, code)
-  } catch {
-    // The redirect cookie still preserves the invite through authentication.
-  }
-  // Every post-auth landing point (password login, OAuth callback, MFA) already
-  // consumes `ca_redirect`, so reusing it is all the routing this needs.
-  Cookies.set(REDIRECT_COOKIE, joinCirclePath(code), { expires: 1 })
-}
-
-export const getPendingInvite = () => {
-  try {
-    return localStorage.getItem(INVITE_KEY)
-  } catch {
-    return null
-  }
-}
+export const setPendingInvite = () => {}
 
 export const clearPendingInvite = () => {
   try {
@@ -43,4 +23,10 @@ export const clearPendingInvite = () => {
   if (redirect?.startsWith('/circle/join')) {
     Cookies.remove(REDIRECT_COOKIE)
   }
+}
+
+export const getPendingInvite = () => {
+  // Drop anything saved before invites were removed.
+  clearPendingInvite()
+  return null
 }

@@ -23,6 +23,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { CREW_ROLES, crewRoleLabel } from '../../crewtak/crewRoles'
 import { CREW_SHIFTS, CrewShiftTag } from '../../crewtak/crewShift'
 import { useCrewAdmin } from '../../crewtak/useCrewAdmin'
 import { useLocalization } from '../../contexts/LocalizationContext'
@@ -34,6 +35,7 @@ import {
   CreateChildUser,
   DeleteChildUser,
   UpdateChildPassword,
+  UpdateCrewRole,
   UpdateCrewShift,
 } from '../../utils/Fetcher'
 import { isPlusAccount } from '../../utils/Helpers'
@@ -104,6 +106,29 @@ const ChildUserSettings = () => {
     }
   }
 
+  // CrewTAK: Crew / Manager / Admin. Crew Settings used to hold this; it now
+  // lives here with everything else about a crew login.
+  const [savingRoleId, setSavingRoleId] = useState(null)
+  const handleRoleChange = async (child, value) => {
+    if (!value || value === (child.role || 'member')) return
+    setSavingRoleId(child.id)
+    try {
+      const response = await UpdateCrewRole(child.id, value)
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}))
+        throw new Error(error.error || 'Could not save role')
+      }
+      queryClient.setQueryData(['childUsers'], old =>
+        (old || []).map(c => (c.id === child.id ? { ...c, role: value } : c)),
+      )
+      await refreshChildren()
+    } catch (error) {
+      showNotification({ type: 'error', message: error.message })
+    } finally {
+      setSavingRoleId(null)
+    }
+  }
+
   const handleCreateChild = async childData => {
     try {
       const response = await CreateChildUser(
@@ -111,6 +136,7 @@ const ChildUserSettings = () => {
         childData.displayName,
         childData.password,
         childData.crewShift,
+        childData.role,
       )
       if (!response.ok) {
         const error = await response.json()
@@ -324,12 +350,13 @@ const ChildUserSettings = () => {
             <Sheet sx={{ ...surfaceSx, overflow: 'hidden' }}>
               {children.map((child, index) => {
                 const name = child.displayName || child.username
+                const isMe = child.id === userProfile?.id
                 return (
                   <Box key={child.id}>
                     {index > 0 && <Divider />}
                     <Box
                       sx={{
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
                         display: 'flex',
                         gap: 1.5,
                         p: { xs: 1.5, sm: 2 },
@@ -347,9 +374,24 @@ const ChildUserSettings = () => {
                         {name?.[0]?.toUpperCase()}
                       </Avatar>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography level='title-sm' noWrap>
-                          {name}
-                        </Typography>
+                        <Box
+                          sx={{
+                            alignItems: 'center',
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 0.75,
+                          }}
+                        >
+                          <Typography level='title-sm' noWrap>
+                            {name}
+                            {isMe ? ' (you)' : ''}
+                          </Typography>
+                          {child.role && child.role !== 'member' && (
+                            <Chip size='sm' variant='soft' color='primary'>
+                              {crewRoleLabel(child.role)}
+                            </Chip>
+                          )}
+                        </Box>
                         <CrewShiftTag shift={child.crewShift} />
                         <Typography
                           level='body-sm'
@@ -365,24 +407,72 @@ const ChildUserSettings = () => {
                             date: fmt.date(child.createdAt),
                           })}
                         </Typography>
-                      </Box>
-                      <Box sx={{ alignItems: 'center', display: 'flex', gap: 0.5 }}>
-                        <Select
-                          size='sm'
-                          aria-label={`Shift: ${name}`}
-                          placeholder='Shift'
-                          value={child.crewShift || null}
-                          disabled={savingShiftId === child.id}
-                          onChange={(_e, value) => handleShiftChange(child, value)}
-                          sx={{ minWidth: { xs: 92, sm: 110 } }}
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 1,
+                            mt: 1,
+                          }}
                         >
-                          <Option value=''>Not set</Option>
-                          {CREW_SHIFTS.map(s => (
-                            <Option key={s.value} value={s.value}>
-                              {s.label}
-                            </Option>
-                          ))}
-                        </Select>
+                          <Select
+                            size='sm'
+                            aria-label={`Shift: ${name}`}
+                            placeholder='Shift'
+                            value={child.crewShift || null}
+                            disabled={savingShiftId === child.id}
+                            onChange={(_e, value) =>
+                              handleShiftChange(child, value)
+                            }
+                            sx={{ minWidth: 120 }}
+                          >
+                            <Option value=''>Not set</Option>
+                            {CREW_SHIFTS.map(s => (
+                              <Option key={s.value} value={s.value}>
+                                {s.label}
+                              </Option>
+                            ))}
+                          </Select>
+                          <Select
+                            size='sm'
+                            aria-label={`Role: ${name}`}
+                            value={child.role || 'member'}
+                            disabled={isMe || savingRoleId === child.id}
+                            onChange={(_e, value) =>
+                              handleRoleChange(child, value)
+                            }
+                            sx={{ minWidth: 120 }}
+                          >
+                            {CREW_ROLES.map(r => (
+                              <Option
+                                key={r.value}
+                                value={r.value}
+                                label={r.label}
+                              >
+                                <Box>
+                                  <Typography level='title-sm'>
+                                    {r.label}
+                                  </Typography>
+                                  <Typography
+                                    level='body-xs'
+                                    textColor='text.secondary'
+                                  >
+                                    {r.description}
+                                  </Typography>
+                                </Box>
+                              </Option>
+                            ))}
+                          </Select>
+                        </Box>
+                      </Box>
+                      <Box
+                        sx={{
+                          alignItems: 'center',
+                          alignSelf: 'flex-start',
+                          display: 'flex',
+                          gap: 0.5,
+                        }}
+                      >
                         <IconButton
                           size='sm'
                           variant='plain'
@@ -399,6 +489,7 @@ const ChildUserSettings = () => {
                           size='sm'
                           variant='plain'
                           color='danger'
+                          disabled={isMe}
                           onClick={() => handleDeleteChild(child.id, name)}
                           loading={deletingChildId === child.id}
                           aria-label={`${t('subaccounts.deleteAccount')}: ${name}`}

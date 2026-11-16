@@ -230,7 +230,7 @@
   },
   "subaccounts": {
     "title": "Crew Users",
-    "description": "Add, reset and remove crew logins. Everyone signs in on the main login page with just their username and password.",
+    "description": "Add, reset and remove crew logins, and set each person's shift and role. Everyone signs in on the main login page with just their username and password.",
     "notParentTitle": "Crew Users",
     "notParentMessage": "Only crew admins can manage user accounts.",
     "freePlanNotice": "Sub account limited to 1 on Free plan. Upgrade to Plus to have up to 5 sub accounts.",
@@ -258,8 +258,8 @@
     "howItWorksTitle": "How Crew Users Work",
     "howItWorks1": "Crew admins add users here and can reset their passwords or remove them.",
     "howItWorks2": "Users sign in with just their username and password.",
-    "howItWorks3": "New users start as crew members. Make someone an admin from Settings → Crew.",
-    "howItWorks4": "Admins can manage crew users and crew settings too."
+    "howItWorks3": "Pick a shift and a role (Crew, Manager or Admin) when you add someone. Change either later from their row.",
+    "howItWorks4": "Admins can manage Crew Users. Managers can approve, edit and delete anyone's tasks."
   },
   "notifications": {
     "title": "Notification Settings",

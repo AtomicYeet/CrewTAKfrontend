@@ -1,12 +1,9 @@
 import {
-  AdminPanelSettings,
   DarkModeOutlined,
   GroupAdd,
   LightModeOutlined,
   Logout,
-  Person,
   Settings,
-  SwapHoriz,
   Tune,
   WorkspacePremium,
 } from '@mui/icons-material'
@@ -31,13 +28,12 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-import { useImpersonateUser } from '../contexts/ImpersonateUserContext'
 import useStickyState from '../hooks/useStickyState'
 import { CrewShiftTag } from '../crewtak/crewShift'
-import { useCircleMembers, useUserProfile } from '../queries/UserQueries'
+import { useCrewAdmin } from '../crewtak/useCrewAdmin'
+import { useUserProfile } from '../queries/UserQueries'
 import { apiClient } from '../utils/ApiClient'
 import { isPlusAccount, resolvePhotoURL } from '../utils/Helpers'
-import UserModal from '../views/Modals/Inputs/UserModal'
 import SubscriptionModal from './SubscriptionModal'
 
 const UserProfileAvatar = ({ showDetails = false }) => {
@@ -45,23 +41,15 @@ const UserProfileAvatar = ({ showDetails = false }) => {
   const navigate = useNavigate()
   const { mode, setMode } = useColorScheme()
   const { data: userProfile } = useUserProfile()
-  const {
-    canImpersonate,
-    getEffectiveUser,
-    isImpersonating,
-    startImpersonation,
-    stopImpersonation,
-  } = useImpersonateUser()
-  const { data: circleMembersData } = useCircleMembers()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  // CrewTAK: crew admins get a shortcut to Settings → Crew Users.
+  const crewAdmin = useCrewAdmin()
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false)
   const [themeMode, setThemeMode] = useStickyState(mode, 'themeMode')
   const isLargeScreen = useMediaQuery(theme => theme.breakpoints.up('lg'))
 
   if (!userProfile) return null
 
-  const currentUser = getEffectiveUser(userProfile)
-  const isAdmin = canImpersonate(userProfile, circleMembersData?.res)
+  const currentUser = userProfile
   const isPlusUser = isPlusAccount(userProfile)
 
   const getSubscriptionStatus = () => {
@@ -128,70 +116,17 @@ const UserProfileAvatar = ({ showDetails = false }) => {
             }}
           >
             <Box sx={{ position: 'relative', flexShrink: 0 }}>
-              {isImpersonating ? (
-                <Box sx={{ position: 'relative' }}>
-                  <Avatar
-                    src={resolvePhotoURL(currentUser?.image)}
-                    alt={currentUser?.displayName || currentUser?.name}
-                    size='md'
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      border: '2px solid var(--joy-palette-background-surface)',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                    }}
-                  />
-                  <Avatar
-                    src={resolvePhotoURL(
-                      userProfile?.image || userProfile?.avatar,
-                    )}
-                    alt={userProfile?.displayName || userProfile?.name}
-                    size='sm'
-                    sx={{
-                      position: 'absolute',
-                      bottom: -2,
-                      left: -2,
-                      width: 18,
-                      height: 18,
-                      border: '2px solid var(--joy-palette-background-surface)',
-                      backgroundColor: 'var(--joy-palette-background-surface)',
-                      boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: -2,
-                      right: -2,
-                      width: 14,
-                      height: 14,
-                      borderRadius: '50%',
-                      backgroundColor: 'var(--joy-palette-primary-500)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: '1px solid var(--joy-palette-background-surface)',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
-                    }}
-                  >
-                    <SwapHoriz sx={{ fontSize: 8, color: 'white' }} />
-                  </Box>
-                </Box>
-              ) : (
-                <Avatar
-                  src={resolvePhotoURL(
-                    currentUser?.image || currentUser?.avatar,
-                  )}
-                  alt={currentUser?.displayName || currentUser?.name}
-                  size='md'
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    border: '2px solid var(--joy-palette-background-surface)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  }}
-                />
-              )}
+              <Avatar
+                src={resolvePhotoURL(currentUser?.image || currentUser?.avatar)}
+                alt={currentUser?.displayName || currentUser?.name}
+                size='md'
+                sx={{
+                  width: 36,
+                  height: 36,
+                  border: '2px solid var(--joy-palette-background-surface)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
+              />
             </Box>
             {showDetails && (
               <Box sx={{ minWidth: 0, textAlign: 'start' }}>
@@ -286,104 +221,9 @@ const UserProfileAvatar = ({ showDetails = false }) => {
                     </Typography>
                   )}
                 </Box>
-                {isImpersonating && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      mt: 0.5,
-                      px: 1,
-                      py: 0.25,
-                      backgroundColor: 'var(--joy-palette-primary-softBg)',
-                      borderRadius: 'var(--joy-radius-sm)',
-                      width: 'fit-content',
-                    }}
-                  >
-                    <SwapHoriz
-                      sx={{
-                        fontSize: 12,
-                        color: 'var(--joy-palette-primary-600)',
-                      }}
-                    />
-                    <Typography
-                      level='body-xs'
-                      sx={{
-                        color: 'var(--joy-palette-primary-600)',
-                        fontWeight: 500,
-                      }}
-                    >
-                      {t('userMenu.impersonating')}
-                    </Typography>
-                  </Box>
-                )}
               </Box>
             </Box>
           </Sheet>
-
-          {isAdmin && (
-            <>
-              <MenuItem
-                onClick={() => setIsModalOpen(true)}
-                sx={{
-                  borderRadius: 'var(--joy-radius-sm)',
-                  '&:hover': {
-                    backgroundColor: 'var(--joy-palette-neutral-softHoverBg)',
-                  },
-                }}
-              >
-                <ListItemDecorator
-                  sx={{ color: 'var(--joy-palette-primary-500)' }}
-                >
-                  <AdminPanelSettings />
-                </ListItemDecorator>
-                <ListItemContent>
-                  <Typography level='body-sm' sx={{ fontWeight: 500 }}>
-                    {isImpersonating
-                      ? t('userMenu.switchUser')
-                      : t('userMenu.impersonateUser')}
-                  </Typography>
-                  <Typography
-                    level='body-xs'
-                    sx={{ color: 'var(--joy-palette-text-tertiary)' }}
-                  >
-                    {t('userMenu.actAsAnother')}
-                  </Typography>
-                </ListItemContent>
-              </MenuItem>
-
-              {isImpersonating && (
-                <MenuItem
-                  onClick={() => stopImpersonation()}
-                  sx={{
-                    borderRadius: 'var(--joy-radius-sm)',
-                    '&:hover': {
-                      backgroundColor: 'var(--joy-palette-neutral-softHoverBg)',
-                    },
-                  }}
-                >
-                  <ListItemDecorator
-                    sx={{ color: 'var(--joy-palette-success-500)' }}
-                  >
-                    <Person />
-                  </ListItemDecorator>
-                  <ListItemContent>
-                    <Typography level='body-sm' sx={{ fontWeight: 500 }}>
-                      {t('userMenu.stopImpersonating')}
-                    </Typography>
-                    <Typography
-                      level='body-xs'
-                      sx={{ color: 'var(--joy-palette-text-tertiary)' }}
-                    >
-                      {t('userMenu.returnToAccount')}
-                    </Typography>
-                  </ListItemContent>
-                </MenuItem>
-              )}
-
-              <Divider sx={{ my: 1 }} />
-            </>
-          )}
 
           <MenuItem
             onClick={() => navigate('/settings')}
@@ -410,30 +250,34 @@ const UserProfileAvatar = ({ showDetails = false }) => {
             </ListItemContent>
           </MenuItem>
 
-          <MenuItem
-            onClick={() => navigate('/settings/circle')}
-            sx={{
-              borderRadius: 'var(--joy-radius-sm)',
-              '&:hover': {
-                backgroundColor: 'var(--joy-palette-neutral-softHoverBg)',
-              },
-            }}
-          >
-            <ListItemDecorator sx={{ color: 'var(--joy-palette-primary-500)' }}>
-              <GroupAdd />
-            </ListItemDecorator>
-            <ListItemContent>
-              <Typography level='body-sm' sx={{ fontWeight: 500 }}>
-                {t('userMenu.invitePeople')}
-              </Typography>
-              <Typography
-                level='body-xs'
-                sx={{ color: 'var(--joy-palette-text-tertiary)' }}
+          {crewAdmin && (
+            <MenuItem
+              onClick={() => navigate('/settings/subaccounts')}
+              sx={{
+                borderRadius: 'var(--joy-radius-sm)',
+                '&:hover': {
+                  backgroundColor: 'var(--joy-palette-neutral-softHoverBg)',
+                },
+              }}
+            >
+              <ListItemDecorator
+                sx={{ color: 'var(--joy-palette-primary-500)' }}
               >
-                {t('userMenu.addMembers')}
-              </Typography>
-            </ListItemContent>
-          </MenuItem>
+                <GroupAdd />
+              </ListItemDecorator>
+              <ListItemContent>
+                <Typography level='body-sm' sx={{ fontWeight: 500 }}>
+                  {t('userMenu.crewUsers')}
+                </Typography>
+                <Typography
+                  level='body-xs'
+                  sx={{ color: 'var(--joy-palette-text-tertiary)' }}
+                >
+                  {t('userMenu.crewUsersDescription')}
+                </Typography>
+              </ListItemContent>
+            </MenuItem>
+          )}
           {isLargeScreen && (
             <MenuItem
               onClick={() => navigate('/settings/layout')}
@@ -571,16 +415,6 @@ const UserProfileAvatar = ({ showDetails = false }) => {
           </MenuItem>
         </Menu>
       </Dropdown>
-
-      <UserModal
-        isOpen={isModalOpen}
-        performers={circleMembersData?.res}
-        onSelect={user => {
-          startImpersonation(user, userProfile)
-          setIsModalOpen(false)
-        }}
-        onClose={() => setIsModalOpen(false)}
-      />
 
       <SubscriptionModal
         open={isSubscriptionModalOpen}

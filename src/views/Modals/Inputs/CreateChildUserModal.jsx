@@ -1,4 +1,5 @@
 import {
+  Box,
   FormControl,
   FormHelperText,
   Input,
@@ -10,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import ModalActions from '../../../components/common/ModalActions'
+import { CREW_ROLES, DEFAULT_CREW_ROLE } from '../../../crewtak/crewRoles'
 import { CREW_SHIFTS } from '../../../crewtak/crewShift'
 import { useResponsiveModal } from '../../../hooks/useResponsiveModal'
 
@@ -22,6 +24,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [crewShift, setCrewShift] = useState('')
+  const [role, setRole] = useState(DEFAULT_CREW_ROLE)
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -83,6 +86,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
         displayName: displayName.trim() || childName.trim(),
         password,
         crewShift,
+        role,
       })
       handleClose()
     } catch (error) {
@@ -98,6 +102,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
     setPassword('')
     setConfirmPassword('')
     setCrewShift('')
+    setRole(DEFAULT_CREW_ROLE)
     setErrors({})
     setTouched({})
     setIsSubmitting(false)
@@ -176,24 +181,56 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
         )}
       </FormControl>
 
-      <FormControl sx={{ mb: 2 }}>
-        <Typography level='body2' mb={1}>
-          Shift
-        </Typography>
-        <Select
-          aria-label='Shift'
-          placeholder='Not set'
-          value={crewShift || null}
-          onChange={(_e, value) => setCrewShift(value || '')}
-        >
-          <Option value=''>Not set</Option>
-          {CREW_SHIFTS.map(s => (
-            <Option key={s.value} value={s.value}>
-              {s.label}
-            </Option>
-          ))}
-        </Select>
-      </FormControl>
+      {/* CrewTAK: shift and role side by side (stacked on phones). */}
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+          mb: 2,
+        }}
+      >
+        <FormControl>
+          <Typography level='body2' mb={1}>
+            Shift
+          </Typography>
+          <Select
+            aria-label='Shift'
+            placeholder='Not set'
+            value={crewShift || null}
+            onChange={(_e, value) => setCrewShift(value || '')}
+          >
+            <Option value=''>Not set</Option>
+            {CREW_SHIFTS.map(s => (
+              <Option key={s.value} value={s.value}>
+                {s.label}
+              </Option>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <Typography level='body2' mb={1}>
+            Role
+          </Typography>
+          <Select
+            aria-label='Role'
+            value={role}
+            onChange={(_e, value) => setRole(value || DEFAULT_CREW_ROLE)}
+          >
+            {CREW_ROLES.map(r => (
+              <Option key={r.value} value={r.value} label={r.label}>
+                <Box>
+                  <Typography level='title-sm'>{r.label}</Typography>
+                  <Typography level='body-xs' textColor='text.secondary'>
+                    {r.description}
+                  </Typography>
+                </Box>
+              </Option>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
 
       <FormControl error={!!errors.password} sx={{ mb: 2 }}>
         <Typography level='body2' mb={1}>

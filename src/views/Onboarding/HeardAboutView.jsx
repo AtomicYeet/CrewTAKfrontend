@@ -317,7 +317,9 @@ const HeardAboutView = () => {
     }
   }, [])
 
-  const onDone = () => navigate('/circle-setup', { replace: true })
+  // CrewTAK: no crew-code / join-a-crew step; crew users are added by
+  // admins from Settings → Crew Users.
+  const onDone = () => navigate('/ready', { replace: true })
 
   // Nothing to render mid-check: the read is a local preferences lookup, so
   // this resolves before the entrance animation would even be noticed.

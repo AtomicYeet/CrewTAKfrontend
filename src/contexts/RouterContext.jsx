@@ -17,9 +17,7 @@ import AccountSettings from '@/views/Settings/AccountSettings'
 import AdvancedSettings from '@/views/Settings/AdvancedSettings'
 import BridgeSettings from '@/views/Settings/BridgeSettings'
 import ChildUserSettings from '@/views/Settings/ChildUserSettings'
-import CircleSettings from '@/views/Settings/CircleSettings'
 import DeveloperSettings from '@/views/Settings/DeveloperSettings'
-import Settings from '@/views/Settings/Settings'
 import SettingsOverview from '@/views/Settings/SettingsOverview'
 import SettingsRoutes from '@/views/Settings/SettingsRoutes'
 import ThemeSettings from '@/views/Settings/ThemeSettings'
@@ -34,7 +32,6 @@ import UpdatePasswordView from '../views/Authorization/UpdatePasswordView'
 import ChoreView from '../views/ChoreEdit/ChoreView'
 import ArchivedTasks from '../views/Chores/ArchivedTasks'
 import MyChores from '../views/Chores/MyChores'
-import JoinCircleView from '../views/Circles/JoinCircle'
 import NotFound from '../views/components/NotFound'
 import FilterView from '../views/Filters/FilterView'
 import ChoreHistory from '../views/History/ChoreHistory'
@@ -43,7 +40,6 @@ import HomeView from '../views/Home/HomeView'
 import LabelDetailView from '../views/Labels/LabelDetailView'
 import LabelView from '../views/Labels/LabelView'
 import Landing from '../views/Landing/Landing'
-import CircleSetupView from '../views/Onboarding/CircleSetupView'
 import GetStartedView from '../views/Onboarding/GetStartedView'
 import HeardAboutView from '../views/Onboarding/HeardAboutView'
 import OnboardingView from '../views/Onboarding/OnboardingView'
@@ -104,16 +100,13 @@ const Router = createBrowserRouter([
             element: <SettingsOverview />,
           },
           {
-            path: 'detailed',
-            element: <Settings />,
-          },
-          {
             path: 'profile',
             element: <ProfileSettings />,
           },
           {
+            // CrewTAK: Crew Settings was merged into Crew Users.
             path: 'circle',
-            element: <CircleSettings />,
+            element: <Navigate to='/settings/subaccounts' replace />,
           },
           {
             path: 'account',
@@ -247,7 +240,7 @@ const Router = createBrowserRouter([
       },
       {
         path: '/circle-setup',
-        element: <CircleSetupView />,
+        element: <Navigate to='/ready' replace />,
       },
       {
         path: '/heard-about',
@@ -281,10 +274,6 @@ const Router = createBrowserRouter([
       {
         path: '/terms',
         element: <TermsView />,
-      },
-      {
-        path: 'circle/join',
-        element: <JoinCircleView />,
       },
       {
         path: 'payments/success',

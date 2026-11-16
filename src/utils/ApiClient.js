@@ -125,11 +125,6 @@ class ApiClient {
       headers.Authorization = `Bearer ${token}`
     }
 
-    const impersonateUserId = localStorage.getItem('impersonatedUserId')
-    if (impersonateUserId) {
-      headers['X-Impersonate-User-ID'] = impersonateUserId
-    }
-
     return headers
   }
 
