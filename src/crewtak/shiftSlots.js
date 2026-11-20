@@ -65,13 +65,38 @@ export const dinnerNoteSlot = day => `dinner.${day}.note`
 export const isNoteSlot = slot => slot.endsWith('.note')
 
 // Watch times. (Kept under the old "sleep" name in storage.)
+// start / end are [days after the shift day's date, hour, minute], station
+// local time. The 3a – 7a watch belongs to the shift day that started the
+// evening before.
 export const SLEEP_BLOCKS = [
-  { index: 0, label: '8p – 1130p' },
-  { index: 1, label: '1130p – 3a' },
-  { index: 2, label: '3a – 7a' },
+  { index: 0, label: '8p – 1130p', start: [0, 20, 0], end: [0, 23, 30] },
+  { index: 1, label: '1130p – 3a', start: [0, 23, 30], end: [1, 3, 0] },
+  { index: 2, label: '3a – 7a', start: [1, 3, 0], end: [1, 7, 0] },
 ]
 
 export const sleepSlot = (shiftDay, index) => `sleep.${shiftDay}.${index}`
+
+// When a watch block runs: { start, end } Dates for shift day 1 or 2 of the
+// tour that started at `tourStart` (07:00 on Day 1). Built from local wall
+// clock times so it stays right across daylight-saving changes.
+export const watchWindow = (tourStart, shiftDay, block) => {
+  const at = ([days, h, m]) => {
+    const d = new Date(tourStart)
+    d.setDate(d.getDate() + shiftDay - 1 + days)
+    d.setHours(h, m, 0, 0)
+    return d
+  }
+  return { start: at(block.start), end: at(block.end) }
+}
+
+// 'done', 'active' or 'upcoming' for a watch block (same rules as AWS).
+export const watchStatus = (tourStart, shiftDay, block, now) => {
+  if (!tourStart) return 'upcoming'
+  const { start, end } = watchWindow(tourStart, shiftDay, block)
+  if (end <= now) return 'done'
+  if (start <= now) return 'active'
+  return 'upcoming'
+}
 
 export const isPhoneSlot = slot => slot.startsWith('phone.')
 

@@ -49,6 +49,7 @@ import {
   SLEEP_BLOCKS,
   sleepSlot,
   tourAt,
+  watchStatus,
 } from './shiftSlots'
 import { shiftAt, shiftBoundsAt, shiftDayAt } from './shifts'
 import {
@@ -290,73 +291,90 @@ const PanelBody = ({ icon, rows, title, titleColor = MUTED, wrap = false }) => {
           rowGap: 0.25,
         }}
       >
-        {rows.map(r => (
-          // `display: contents` keeps both cells on the shared grid; the
-          // hover rule still applies because :hover reaches ancestors.
-          <Box
-            key={r.key}
-            data-testid={r.onClick ? `display-slot-${r.key}` : undefined}
-            onClick={r.onClick}
-            sx={{
-              display: 'contents',
-              ...(r.onClick && {
-                cursor: 'pointer',
-                '&:hover > *': { bgcolor: 'rgba(255,255,255,0.08)' },
-                '&:active > *': { bgcolor: 'rgba(255,255,255,0.14)' },
-              }),
-            }}
-          >
-            <Typography
+        {rows.map(r => {
+          // Watch rows: orange while running, struck through when over (same
+          // look as the AWS panel).
+          const active = r.status === 'active'
+          const done = r.status === 'done'
+          const statusSx = {
+            ...(active && { color: ACCENT }),
+            ...(done && {
+              color: 'rgba(255,255,255,0.35)',
+              textDecoration: 'line-through',
+              textDecorationColor: 'rgba(255,255,255,0.45)',
+            }),
+          }
+          return (
+            // `display: contents` keeps both cells on the shared grid; the
+            // hover rule still applies because :hover reaches ancestors.
+            <Box
+              key={r.key}
+              data-testid={r.onClick ? `display-slot-${r.key}` : undefined}
+              data-status={r.status}
+              onClick={r.onClick}
               sx={{
-                borderRadius: '6px 0 0 6px',
-                color: MUTED,
-                fontSize: 'clamp(0.8rem, 1vw, 1.15rem)',
-                fontVariantNumeric: 'tabular-nums',
-                fontWeight: 600,
-                pl: CELL_GAP,
-                pr: CELL_GAP,
-                transition: 'background-color 120ms',
-                whiteSpace: 'nowrap',
+                display: 'contents',
+                ...(r.onClick && {
+                  cursor: 'pointer',
+                  '&:hover > *': { bgcolor: 'rgba(255,255,255,0.08)' },
+                  '&:active > *': { bgcolor: 'rgba(255,255,255,0.14)' },
+                }),
               }}
             >
-              {r.label}
-            </Typography>
-            <Typography
-              role={r.onClick ? 'button' : undefined}
-              tabIndex={r.onClick ? 0 : undefined}
-              aria-label={r.onClick ? `Change ${r.label}` : undefined}
-              onKeyDown={
-                r.onClick
-                  ? e => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        r.onClick()
+              <Typography
+                sx={{
+                  borderRadius: '6px 0 0 6px',
+                  color: MUTED,
+                  fontSize: 'clamp(0.8rem, 1vw, 1.15rem)',
+                  fontVariantNumeric: 'tabular-nums',
+                  fontWeight: 600,
+                  pl: CELL_GAP,
+                  pr: CELL_GAP,
+                  transition: 'background-color 120ms',
+                  whiteSpace: 'nowrap',
+                  ...statusSx,
+                }}
+              >
+                {r.label}
+              </Typography>
+              <Typography
+                role={r.onClick ? 'button' : undefined}
+                tabIndex={r.onClick ? 0 : undefined}
+                aria-label={r.onClick ? `Change ${r.label}` : undefined}
+                onKeyDown={
+                  r.onClick
+                    ? e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          r.onClick()
+                        }
                       }
-                    }
-                  : undefined
-              }
-              sx={{
-                borderRadius: '0 6px 6px 0',
-                color: r.name ? '#fff' : 'rgba(255,255,255,0.3)',
-                fontSize: 'clamp(0.85rem, 1.1vw, 1.3rem)',
-                fontWeight: 700,
-                lineHeight: 1.25,
-                overflow: 'hidden',
-                pl: CELL_GAP,
-                pr: CELL_GAP,
-                textOverflow: 'ellipsis',
-                transition: 'background-color 120ms',
-                whiteSpace: wrap ? 'normal' : 'nowrap',
-                '&:focus-visible': {
-                  outline: `2px solid ${ACCENT}`,
-                  outlineOffset: -2,
-                },
-              }}
-            >
-              {r.name || '—'}
-            </Typography>
-          </Box>
-        ))}
+                    : undefined
+                }
+                sx={{
+                  borderRadius: '0 6px 6px 0',
+                  color: r.name ? '#fff' : 'rgba(255,255,255,0.3)',
+                  fontSize: 'clamp(0.85rem, 1.1vw, 1.3rem)',
+                  fontWeight: 700,
+                  lineHeight: 1.25,
+                  overflow: 'hidden',
+                  pl: CELL_GAP,
+                  pr: CELL_GAP,
+                  textOverflow: 'ellipsis',
+                  transition: 'background-color 120ms',
+                  whiteSpace: wrap ? 'normal' : 'nowrap',
+                  '&:focus-visible': {
+                    outline: `2px solid ${ACCENT}`,
+                    outlineOffset: -2,
+                  },
+                  ...statusSx,
+                }}
+              >
+                {r.name || '—'}
+              </Typography>
+            </Box>
+          )
+        })}
       </Box>
     </Box>
   )
@@ -368,6 +386,7 @@ const panelRows = PropTypes.arrayOf(
     label: PropTypes.string.isRequired,
     name: PropTypes.string,
     onClick: PropTypes.func,
+    status: PropTypes.oneOf(['active', 'done', 'upcoming']),
   }),
 )
 
@@ -423,7 +442,6 @@ SplitPanel.propTypes = {
   testId: PropTypes.string,
 }
 
-
 const WEATHER_ICONS = {
   clearNight: { Icon: NightsStay, color: '#c9d6ff' },
   cloud: { Icon: Cloud, color: '#cfd8e3' },
@@ -447,7 +465,13 @@ const WeatherDay = ({ day }) => {
       ? `${day.high}° / ${day.low}°`
       : `${day.high ?? day.low ?? '—'}°`
   return (
-    <Box sx={{ alignItems: 'center', display: 'flex', gap: 'clamp(6px, 0.6vw, 12px)' }}>
+    <Box
+      sx={{
+        alignItems: 'center',
+        display: 'flex',
+        gap: 'clamp(6px, 0.6vw, 12px)',
+      }}
+    >
       <Typography
         sx={{
           color: MUTED,
@@ -592,7 +616,8 @@ const MetarStrip = () => {
         sx={{
           color: '#fff',
           flex: 1,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+          fontFamily:
+            'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
           fontSize: 'clamp(0.8rem, 1vw, 1.15rem)',
           fontWeight: 600,
           minWidth: 0,
@@ -791,7 +816,10 @@ const TaskColumns = ({ bounds, membersById, now, shiftColor }) => {
 }
 
 TaskColumns.propTypes = {
-  bounds: PropTypes.shape({ end: PropTypes.instanceOf(Date), start: PropTypes.instanceOf(Date) }),
+  bounds: PropTypes.shape({
+    end: PropTypes.instanceOf(Date),
+    start: PropTypes.instanceOf(Date),
+  }),
   membersById: PropTypes.instanceOf(Map).isRequired,
   now: PropTypes.instanceOf(Date).isRequired,
   shiftColor: PropTypes.string.isRequired,
@@ -936,7 +964,10 @@ ColumnHeading.propTypes = { children: PropTypes.node }
 // Dinner: Day 1 → who's cooking → what's for dinner, then the same for Day
 // 2. Both can be changed by tapping (same data as Shift Info).
 const DinnerPanel = ({ membersById, onCooks, onNote, shiftDay, slots }) => (
-  <Box data-testid='display-dinner' sx={{ ...panelSx, flexDirection: 'column' }}>
+  <Box
+    data-testid='display-dinner'
+    sx={{ ...panelSx, flexDirection: 'column' }}
+  >
     <PanelTitle icon={<RestaurantMenu sx={{ fontSize: '1.1em' }} />}>
       Dinner
     </PanelTitle>
@@ -987,7 +1018,7 @@ const DinnerPanel = ({ membersById, onCooks, onNote, shiftDay, slots }) => (
               testId={`display-dinner-${day}-note`}
               wrap
             >
-              {note || 'Tap to add what\'s for dinner'}
+              {note || "Tap to add what's for dinner"}
             </TapCell>
           </Box>
         )
@@ -1061,10 +1092,7 @@ AwsLine.propTypes = {
 
 const AwsPanel = ({ bounds, now, shiftDay }) => {
   const { data: events, isError } = useAwsEvents()
-  const inTour = useMemo(
-    () => eventsInTour(events, bounds),
-    [events, bounds],
-  )
+  const inTour = useMemo(() => eventsInTour(events, bounds), [events, bounds])
   const remaining = inTour.filter(e => awsStatus(e, now) !== 'done').length
 
   const noneLine = (
@@ -1084,7 +1112,9 @@ const AwsPanel = ({ bounds, now, shiftDay }) => {
 
   return (
     <Box data-testid='display-aws' sx={{ ...panelSx, flexDirection: 'column' }}>
-      <PanelTitle icon={<MeetingRoom sx={{ fontSize: '1.1em' }} />}>AWS</PanelTitle>
+      <PanelTitle icon={<MeetingRoom sx={{ fontSize: '1.1em' }} />}>
+        AWS
+      </PanelTitle>
       {inTour.length > 0 && (
         <Box
           sx={{
@@ -1126,7 +1156,11 @@ const AwsPanel = ({ bounds, now, shiftDay }) => {
                   </Box>
                 ) : (
                   <Typography
-                    sx={{ color: 'rgba(255,255,255,0.3)', fontWeight: 700, textAlign: 'center' }}
+                    sx={{
+                      color: 'rgba(255,255,255,0.3)',
+                      fontWeight: 700,
+                      textAlign: 'center',
+                    }}
                   >
                     —
                   </Typography>
@@ -1203,6 +1237,8 @@ const WallDisplay = () => {
       key: `sleep-${day}-${b.index}`,
       label: b.label,
       name: slotName(sleepSlot(day, b.index)),
+      // Orange while the watch is on, struck through once it's over.
+      status: watchStatus(bounds?.start, day, b, now),
       onClick: () =>
         openPicker({
           slot: sleepSlot(day, b.index),
@@ -1305,14 +1341,23 @@ const WallDisplay = () => {
             {moment(now).format('HH:mm')}
             <Box
               component='span'
-              sx={{ color: 'rgba(255,255,255,0.3)', fontWeight: 300, mx: '0.3em' }}
+              sx={{
+                color: 'rgba(255,255,255,0.3)',
+                fontWeight: 300,
+                mx: '0.3em',
+              }}
             >
               |
             </Box>
             {moment(now).utc().format('HH:mm')}
             <Box
               component='span'
-              sx={{ color: MUTED, fontSize: '0.45em', fontWeight: 700, ml: '0.15em' }}
+              sx={{
+                color: MUTED,
+                fontSize: '0.45em',
+                fontWeight: 700,
+                ml: '0.15em',
+              }}
             >
               Z
             </Box>
