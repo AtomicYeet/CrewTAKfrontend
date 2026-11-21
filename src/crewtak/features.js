@@ -22,6 +22,9 @@ export const HIDE = {
   activities: true, // Activities page (the completion log replaces it)
   nfc: true, // "Write to NFC tag" task action
   nudge: true, // "Send nudge" task action
+  // Plus plan, upgrade prompts, paywalls and subscription management. CrewTAK
+  // is internal, so every account is treated as having everything unlocked.
+  subscription: true,
 }
 
 // Routes that belong to hidden features. Visiting one redirects home.
@@ -34,6 +37,7 @@ export const HIDDEN_ROUTE_PREFIXES = [
     : []),
   ...(HIDE.legal ? ['/privacy', '/terms'] : []),
   ...(HIDE.activities ? ['/activities'] : []),
+  ...(HIDE.subscription ? ['/payments'] : []),
 ]
 
 export const isHiddenRoute = path =>

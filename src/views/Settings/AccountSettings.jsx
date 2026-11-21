@@ -10,6 +10,8 @@ import moment from 'moment'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { HIDE } from '@/crewtak/features'
+
 import SubscriptionModal from '../../components/SubscriptionModal'
 import { useLocalization } from '../../contexts/LocalizationContext'
 import { useUserProfile } from '../../queries/UserQueries'
@@ -168,120 +170,129 @@ const AccountSettings = () => {
           {t('accountSettings.description')}
         </Typography>
 
-        <Sheet
-          sx={{
-            ...surfaceSx,
-            overflow: 'hidden',
-            position: 'relative',
-            p: { xs: 2, sm: 2.5 },
-            '&::after': {
-              bgcolor: hasPlusAccess ? 'primary.softBg' : 'neutral.softBg',
-              borderRadius: '50%',
-              content: '""',
-              height: 180,
-              opacity: 0.7,
-              position: 'absolute',
-              right: -70,
-              top: -100,
-              width: 180,
-            },
-          }}
-        >
-          <Box
-            sx={{
-              alignItems: 'flex-start',
-              display: 'flex',
-              gap: 1.5,
-              mb: 2,
-              position: 'relative',
-              zIndex: 1,
-            }}
-          >
-            <Box
+        {/* CrewTAK: internal app, no Plus plan / subscription card. */}
+        {!HIDE.subscription && (
+          <>
+            <Sheet
               sx={{
-                bgcolor: hasPlusAccess ? 'primary.softBg' : 'background.level2',
-                borderRadius: '50%',
-                color: hasPlusAccess ? 'primary.plainColor' : 'text.secondary',
-                display: 'grid',
-                flex: '0 0 auto',
-                height: 48,
-                placeItems: 'center',
-                width: 48,
+                ...surfaceSx,
+                overflow: 'hidden',
+                position: 'relative',
+                p: { xs: 2, sm: 2.5 },
+                '&::after': {
+                  bgcolor: hasPlusAccess ? 'primary.softBg' : 'neutral.softBg',
+                  borderRadius: '50%',
+                  content: '""',
+                  height: 180,
+                  opacity: 0.7,
+                  position: 'absolute',
+                  right: -70,
+                  top: -100,
+                  width: 180,
+                },
               }}
             >
-              <WorkspacePremiumRounded />
-            </Box>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
               <Box
                 sx={{
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                   display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 1,
-                  mb: 0.5,
+                  gap: 1.5,
+                  mb: 2,
+                  position: 'relative',
+                  zIndex: 1,
                 }}
               >
-                <Typography level='title-lg' sx={{ fontWeight: 650 }}>
-                  {t('accountSettings.accountType', {
-                    type: subscriptionStatus,
-                  })}
-                </Typography>
-                <Chip
-                  size='sm'
-                  variant='soft'
-                  color={
-                    subscriptionIsActive
-                      ? 'primary'
-                      : subscriptionIsCancelled && expirationIsFuture
-                        ? 'warning'
-                        : 'neutral'
-                  }
+                <Box
+                  sx={{
+                    bgcolor: hasPlusAccess
+                      ? 'primary.softBg'
+                      : 'background.level2',
+                    borderRadius: '50%',
+                    color: hasPlusAccess
+                      ? 'primary.plainColor'
+                      : 'text.secondary',
+                    display: 'grid',
+                    flex: '0 0 auto',
+                    height: 48,
+                    placeItems: 'center',
+                    width: 48,
+                  }}
                 >
-                  {hasPlusAccess
-                    ? t('accountSettings.plus')
-                    : t('accountSettings.free')}
-                </Chip>
+                  <WorkspacePremiumRounded />
+                </Box>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Box
+                    sx={{
+                      alignItems: 'center',
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: 1,
+                      mb: 0.5,
+                    }}
+                  >
+                    <Typography level='title-lg' sx={{ fontWeight: 650 }}>
+                      {t('accountSettings.accountType', {
+                        type: subscriptionStatus,
+                      })}
+                    </Typography>
+                    <Chip
+                      size='sm'
+                      variant='soft'
+                      color={
+                        subscriptionIsActive
+                          ? 'primary'
+                          : subscriptionIsCancelled && expirationIsFuture
+                            ? 'warning'
+                            : 'neutral'
+                      }
+                    >
+                      {hasPlusAccess
+                        ? t('accountSettings.plus')
+                        : t('accountSettings.free')}
+                    </Chip>
+                  </Box>
+                  <Typography
+                    level='body-sm'
+                    textColor='text.secondary'
+                    sx={{ maxWidth: 540, textWrap: 'pretty' }}
+                  >
+                    {subscriptionDetails}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography
-                level='body-sm'
-                textColor='text.secondary'
-                sx={{ maxWidth: 540, textWrap: 'pretty' }}
-              >
-                {subscriptionDetails}
-              </Typography>
-            </Box>
-          </Box>
 
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              gap: 1,
-              position: 'relative',
-              zIndex: 1,
-            }}
-          >
-            {!subscriptionIsActive && (
-              <Button
-                loading={isPurchasing}
-                onClick={handleUpgrade}
-                startDecorator={<WorkspacePremiumRounded />}
-                sx={{ minWidth: 128 }}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  gap: 1,
+                  position: 'relative',
+                  zIndex: 1,
+                }}
               >
-                {t('accountSettings.upgrade')}
-              </Button>
-            )}
-            {subscriptionIsActive && (
-              <Button
-                variant='outlined'
-                color='neutral'
-                onClick={() => setNativeCancelModal(true)}
-              >
-                {t('accountSettings.cancel')}
-              </Button>
-            )}
-          </Box>
-        </Sheet>
+                {!subscriptionIsActive && (
+                  <Button
+                    loading={isPurchasing}
+                    onClick={handleUpgrade}
+                    startDecorator={<WorkspacePremiumRounded />}
+                    sx={{ minWidth: 128 }}
+                  >
+                    {t('accountSettings.upgrade')}
+                  </Button>
+                )}
+                {subscriptionIsActive && (
+                  <Button
+                    variant='outlined'
+                    color='neutral'
+                    onClick={() => setNativeCancelModal(true)}
+                  >
+                    {t('accountSettings.cancel')}
+                  </Button>
+                )}
+              </Box>
+            </Sheet>
+          </>
+        )}
 
         {import.meta.env.VITE_IS_SELF_HOSTED === 'true' && (
           <Box component='section' sx={{ mt: 3.5 }}>

@@ -3,17 +3,19 @@ import {
   Archive,
   ArrowBack,
   BadgeOutlined,
+  CalendarMonthOutlined,
   Checklist,
   FactCheckOutlined,
   FilterAlt,
+  FireExtinguisher,
   FolderOpen,
   History,
   ListAlt,
   Logout,
+  MapOutlined,
   MeetingRoomOutlined,
   MenuOpenRounded,
   MenuRounded,
-  ReportProblem,
   SearchRounded,
   SchoolOutlined,
   SettingsOutlined,
@@ -39,7 +41,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import { HIDE, isHiddenRoute } from '@/crewtak/features'
+import { isHiddenRoute } from '@/crewtak/features'
 import Wordmark from '@/crewtak/Wordmark'
 
 import { version } from '../../../package.json'
@@ -50,7 +52,6 @@ import { useScrollDirection } from '../../hooks/useScrollDirection'
 import { useResource } from '../../queries/ResourceQueries'
 import { useGlobalSearch } from '../../search/GlobalSearchContext'
 import { apiClient } from '../../utils/ApiClient'
-import ErrorReportModal from '../Modals/ErrorReportModal'
 import NavBarLink from './NavBarLink'
 import NavBarResourceSwitcher from './NavBarResourceSwitcher'
 import { OPEN_NAVIGATION_DRAWER_EVENT } from './navigationEvents'
@@ -64,6 +65,9 @@ const NAVBAR_TITLE_KEYS = {
   '/shift': 'Shift Info',
   '/aws': 'AWS',
   '/training': 'Training',
+  '/schedule': 'Schedule',
+  '/map': 'Live Map',
+  '/extinguishers': 'Fire Extinguishers',
   '/activities': 'navigation.activities',
   '/archived': 'navigation.archived',
   '/tasks': 'navigation.allTasks',
@@ -97,7 +101,6 @@ const NavBar = () => {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [bugReportOpen, setBugReportOpen] = useState(false)
   const [desktopExpanded, setDesktopExpanded] = useState(
     () => window.localStorage.getItem('desktopNavExpanded') === 'true',
   )
@@ -214,6 +217,21 @@ const NavBar = () => {
       to: '/training',
       label: 'Training',
       icon: <SchoolOutlined />,
+    },
+    {
+      to: '/schedule',
+      label: 'Schedule',
+      icon: <CalendarMonthOutlined />,
+    },
+    {
+      to: '/map',
+      label: 'Live Map',
+      icon: <MapOutlined />,
+    },
+    {
+      to: '/extinguishers',
+      label: 'Fire Extinguishers',
+      icon: <FireExtinguisher />,
     },
     {
       to: '/settings',
@@ -357,43 +375,6 @@ const NavBar = () => {
         </Box>
       )}
       <List size='sm' sx={{ gap: 0.25, p: 0 }}>
-        <Tooltip
-          title={compact ? t('navigation.reportBug') : ''}
-          placement='right'
-        >
-          <ListItemButton
-            aria-label={t('navigation.reportBug')}
-            onClick={() => {
-              setDrawerOpen(false)
-              setBugReportOpen(true)
-            }}
-            sx={{
-              borderRadius: 'md',
-              display: HIDE.upstreamFeedback ? 'none' : undefined,
-              gap: compact ? 0 : undefined,
-              justifyContent: compact ? 'center' : 'flex-start',
-              minHeight: 48,
-              mx: compact ? 'auto' : 0,
-              px: compact ? 0 : 1.5,
-              width: compact ? 48 : '100%',
-            }}
-          >
-            <ListItemDecorator
-              sx={
-                compact
-                  ? { marginInlineEnd: '0 !important', minInlineSize: 0 }
-                  : undefined
-              }
-            >
-              <ReportProblem />
-            </ListItemDecorator>
-            {!compact && (
-              <Typography level='body-sm' sx={{ fontWeight: 400 }}>
-                {t('navigation.reportBug')}
-              </Typography>
-            )}
-          </ListItemButton>
-        </Tooltip>
         <Tooltip title={compact ? t('logout') : ''} placement='right'>
           <ListItemButton
             aria-label={t('logout')}
@@ -687,11 +668,6 @@ const NavBar = () => {
           </Drawer>
         </>
       )}
-
-      <ErrorReportModal
-        open={bugReportOpen}
-        onClose={() => setBugReportOpen(false)}
-      />
     </>
   )
 }

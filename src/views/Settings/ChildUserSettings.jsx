@@ -23,6 +23,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import CrewEmailField from '../../crewtak/CrewEmailField'
 import { CREW_ROLES, crewRoleLabel } from '../../crewtak/crewRoles'
 import { CREW_SHIFTS, CrewShiftTag } from '../../crewtak/crewShift'
 import { useCrewAdmin } from '../../crewtak/useCrewAdmin'
@@ -35,6 +36,7 @@ import {
   CreateChildUser,
   DeleteChildUser,
   UpdateChildPassword,
+  UpdateCrewEmail,
   UpdateCrewRole,
   UpdateCrewShift,
 } from '../../utils/Fetcher'
@@ -96,7 +98,9 @@ const ChildUserSettings = () => {
         throw new Error(error.error || 'Could not save shift')
       }
       queryClient.setQueryData(['childUsers'], old =>
-        (old || []).map(c => (c.id === child.id ? { ...c, crewShift: next } : c)),
+        (old || []).map(c =>
+          c.id === child.id ? { ...c, crewShift: next } : c,
+        ),
       )
       await refreshChildren()
     } catch (error) {
@@ -129,6 +133,32 @@ const ChildUserSettings = () => {
     }
   }
 
+  // CrewTAK: optional email per crew login ('' clears it). Returns true when
+  // saved so the field can drop its unsaved state.
+  const handleEmailSave = async (child, email) => {
+    try {
+      const response = await UpdateCrewEmail(child.id, email)
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}))
+        throw new Error(error.error || 'Could not save email')
+      }
+      queryClient.setQueryData(['childUsers'], old =>
+        (old || []).map(c => (c.id === child.id ? { ...c, email } : c)),
+      )
+      showNotification({
+        type: 'success',
+        message: email
+          ? `Email saved for ${child.displayName || child.username}`
+          : 'Email removed',
+      })
+      await refreshChildren()
+      return true
+    } catch (error) {
+      showNotification({ type: 'error', message: error.message })
+      return false
+    }
+  }
+
   const handleCreateChild = async childData => {
     try {
       const response = await CreateChildUser(
@@ -137,6 +167,7 @@ const ChildUserSettings = () => {
         childData.password,
         childData.crewShift,
         childData.role,
+        childData.email,
       )
       if (!response.ok) {
         const error = await response.json()
@@ -402,6 +433,11 @@ const ChildUserSettings = () => {
                             username: child.username,
                           })}
                         </Typography>
+                        <CrewEmailField
+                          email={child.email}
+                          name={name}
+                          onSave={email => handleEmailSave(child, email)}
+                        />
                         <Typography level='body-xs' textColor='text.tertiary'>
                           {t('subaccounts.created', {
                             date: fmt.date(child.createdAt),

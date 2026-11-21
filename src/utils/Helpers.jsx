@@ -1,8 +1,12 @@
 import moment from 'moment'
 
+import { HIDE } from '@/crewtak/features'
+
 import { apiClient } from './ApiClient'
 
+// CrewTAK: no Plus plan, everything is unlocked for every crew account.
 const isPlusAccount = userProfile => {
+  if (HIDE.subscription) return true
   return userProfile?.expiration && moment(userProfile?.expiration).isAfter()
 }
 

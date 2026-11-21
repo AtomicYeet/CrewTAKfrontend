@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { HIDE } from '@/crewtak/features'
+
 import { track } from '../../analytics'
 import { useUserProfile } from '../../queries/UserQueries'
 import {
@@ -23,7 +25,11 @@ let suppressionReported = false
  * Decides whether to surface the sentiment prompt automatically. Mount once,
  * near the main task list.
  */
-const FeedbackPrompt = () => {
+// CrewTAK: the upstream feedback prompt is switched off.
+const FeedbackPrompt = () =>
+  HIDE.upstreamFeedback ? null : <UpstreamFeedbackPrompt />
+
+const UpstreamFeedbackPrompt = () => {
   const [open, setOpen] = useState(false)
   const { data: userProfile } = useUserProfile()
 

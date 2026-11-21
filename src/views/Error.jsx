@@ -14,6 +14,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useRouteError } from 'react-router-dom'
 
+import { HIDE } from '@/crewtak/features'
+
 import {
   collectErrorReport,
   formatErrorReport,
@@ -224,18 +226,20 @@ const Error = () => {
         {t('errorScreen.tryAgain')}
       </Button>
 
-      {/* Reporting is one tap from the failure, where the context is still
-          fresh — asking people to find it in Settings afterwards never works. */}
-      <Button
-        variant='outlined'
-        color='neutral'
-        size='lg'
-        startDecorator={<BugReportRounded />}
-        onClick={() => setReportOpen(true)}
-        sx={{ width: '100%', mb: 2 }}
-      >
-        {t('errorScreen.reportProblem')}
-      </Button>
+      {/* CrewTAK: no bug-report button (reports went to upstream Donetick);
+          crew bring problems to the admin directly. */}
+      {!HIDE.upstreamFeedback && (
+        <Button
+          variant='outlined'
+          color='neutral'
+          size='lg'
+          startDecorator={<BugReportRounded />}
+          onClick={() => setReportOpen(true)}
+          sx={{ width: '100%', mb: 2 }}
+        >
+          {t('errorScreen.reportProblem')}
+        </Button>
+      )}
 
       {/* Secondary actions */}
       <Box sx={{ display: 'flex', gap: 3, mb: 5 }}>
@@ -269,13 +273,15 @@ const Error = () => {
           alignItems: 'center',
         }}
       >
-        <Typography
-          level='body-xs'
-          textAlign='center'
-          sx={{ color: 'text.tertiary', mb: 1.5 }}
-        >
-          {t('errorScreen.reportHint')}
-        </Typography>
+        {!HIDE.upstreamFeedback && (
+          <Typography
+            level='body-xs'
+            textAlign='center'
+            sx={{ color: 'text.tertiary', mb: 1.5 }}
+          >
+            {t('errorScreen.reportHint')}
+          </Typography>
+        )}
 
         {(error?.stack || message) && (
           <>
@@ -337,11 +343,13 @@ const Error = () => {
         )}
       </Box>
 
-      <ErrorReportModal
-        open={reportOpen}
-        onClose={() => setReportOpen(false)}
-        error={error}
-      />
+      {!HIDE.upstreamFeedback && (
+        <ErrorReportModal
+          open={reportOpen}
+          onClose={() => setReportOpen(false)}
+          error={error}
+        />
+      )}
 
       <Snackbar
         open={copied}

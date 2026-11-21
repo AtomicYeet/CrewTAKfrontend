@@ -947,6 +947,7 @@ const CreateChildUser = (
   password,
   crewShift = '',
   role = 'member',
+  email = '',
 ) => {
   return Fetch(`/users/subaccounts`, {
     method: 'POST',
@@ -957,6 +958,7 @@ const CreateChildUser = (
       password,
       crewShift,
       role,
+      email,
     }),
   })
 }
@@ -977,6 +979,16 @@ const UpdateCrewRole = (userId, role) => {
     method: 'PUT',
     headers: HEADERS(),
     body: JSON.stringify({ userId, role }),
+  })
+}
+
+// CrewTAK: optional email on a crew login ('' clears it). Used later for
+// notifications and password resets.
+const UpdateCrewEmail = (userId, email) => {
+  return Fetch(`/users/subaccounts/email`, {
+    method: 'PUT',
+    headers: HEADERS(),
+    body: JSON.stringify({ userId, email }),
   })
 }
 
@@ -1225,6 +1237,7 @@ export {
   UnregisterDeviceToken,
   UpdateChildPassword,
   UpdateChoreAssignee,
+  UpdateCrewEmail,
   UpdateCrewRole,
   UpdateCrewShift,
   UpdateChoreHistory,

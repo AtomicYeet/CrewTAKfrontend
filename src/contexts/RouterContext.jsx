@@ -8,6 +8,9 @@ import {
 import App from '@/App'
 import AWS from '@/crewtak/AWS'
 import CompletionLog from '@/crewtak/CompletionLog'
+import FireExtinguishers from '@/crewtak/FireExtinguishers'
+import LiveMap from '@/crewtak/LiveMap'
+import Schedule from '@/crewtak/Schedule'
 import ShiftInfo from '@/crewtak/ShiftInfo'
 import Training from '@/crewtak/Training'
 import WallDisplay from '@/crewtak/WallDisplay'
@@ -331,6 +334,18 @@ const Router = createBrowserRouter([
       {
         path: '/training',
         element: <Training />,
+      },
+      {
+        path: '/schedule',
+        element: <Schedule />,
+      },
+      {
+        path: '/map',
+        element: <LiveMap />,
+      },
+      {
+        path: '/extinguishers',
+        element: <FireExtinguishers />,
       },
       {
         path: '/chores/*',

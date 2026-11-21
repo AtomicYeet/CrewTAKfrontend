@@ -7,6 +7,8 @@ import {
   useState,
 } from 'react'
 
+import { HIDE } from '@/crewtak/features'
+
 import SubscriptionModal from '../components/SubscriptionModal'
 import { useUserProfile } from '../queries/UserQueries'
 import { isPlusAccount } from '../utils/Helpers'
@@ -60,6 +62,8 @@ export const PaywallProvider = ({ children }) => {
 
   const showPaywall = useCallback(
     nextReason => {
+      // CrewTAK: no Plus plan, so there is never a paywall to show.
+      if (HIDE.subscription) return
       const paywallReason = nextReason ?? 'unknown'
 
       if (isNativePurchasePlatform()) {

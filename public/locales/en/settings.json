@@ -40,7 +40,7 @@
       },
       "account": {
         "title": "Account Settings",
-        "description": "Manage your subscription, change password, and account deletion options."
+        "description": "Change your password or delete your account."
       },
       "subaccounts": {
         "title": "Crew Users",
@@ -194,7 +194,7 @@
   },
   "accountSettings": {
     "title": "Account Settings",
-    "description": "Change your account settings, type or update your password",
+    "description": "Change your account settings or update your password",
     "accountType": "Account Type : {{type}}",
     "free": "Free",
     "plus": "Plus",

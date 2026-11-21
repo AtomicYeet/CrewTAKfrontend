@@ -30,6 +30,7 @@ import { useNavigate } from 'react-router-dom'
 
 import useStickyState from '../hooks/useStickyState'
 import { CrewShiftTag } from '../crewtak/crewShift'
+import { HIDE } from '../crewtak/features'
 import { useCrewAdmin } from '../crewtak/useCrewAdmin'
 import { useUserProfile } from '../queries/UserQueries'
 import { apiClient } from '../utils/ApiClient'
@@ -208,7 +209,7 @@ const UserProfileAvatar = ({ showDetails = false }) => {
                   >
                     {currentUser?.email}
                   </Typography>
-                  {isPlusUser && (
+                  {isPlusUser && !HIDE.subscription && (
                     <Typography
                       level='body-xs'
                       sx={{
@@ -334,7 +335,7 @@ const UserProfileAvatar = ({ showDetails = false }) => {
             </ListItemContent>
           </MenuItem>
 
-          {!isPlusUser && (
+          {!isPlusUser && !HIDE.subscription && (
             <MenuItem
               onClick={() => navigate('/settings/account')}
               sx={{

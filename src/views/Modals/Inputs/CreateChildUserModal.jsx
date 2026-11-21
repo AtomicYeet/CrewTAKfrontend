@@ -11,6 +11,11 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import ModalActions from '../../../components/common/ModalActions'
+import {
+  CREW_EMAIL_HINT,
+  isValidCrewEmail,
+  normalizeCrewEmail,
+} from '../../../crewtak/crewEmail'
 import { CREW_ROLES, DEFAULT_CREW_ROLE } from '../../../crewtak/crewRoles'
 import { CREW_SHIFTS } from '../../../crewtak/crewShift'
 import { useResponsiveModal } from '../../../hooks/useResponsiveModal'
@@ -21,6 +26,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
 
   const [childName, setChildName] = useState('')
   const [displayName, setDisplayName] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [crewShift, setCrewShift] = useState('')
@@ -64,8 +70,12 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
       newErrors.displayName = t('childUsers.errDisplayNameMax')
     }
 
+    if (touched.email && !isValidCrewEmail(email)) {
+      newErrors.email = "That doesn't look like a valid email address"
+    }
+
     setErrors(newErrors)
-  }, [childName, displayName, password, confirmPassword, touched, t])
+  }, [childName, displayName, email, password, confirmPassword, touched, t])
 
   const handleSubmit = async () => {
     setTouched({
@@ -73,9 +83,10 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
       password: true,
       confirmPassword: true,
       displayName: true,
+      email: true,
     })
 
-    if (Object.keys(errors).length > 0) {
+    if (Object.keys(errors).length > 0 || !isValidCrewEmail(email)) {
       return
     }
 
@@ -87,6 +98,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
         password,
         crewShift,
         role,
+        email: normalizeCrewEmail(email),
       })
       handleClose()
     } catch (error) {
@@ -99,6 +111,7 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
   const handleClose = () => {
     setChildName('')
     setDisplayName('')
+    setEmail('')
     setPassword('')
     setConfirmPassword('')
     setCrewShift('')
@@ -179,6 +192,25 @@ function CreateChildUserModal({ isOpen, onClose, onSuccess }) {
         {errors.displayName && (
           <FormHelperText>{errors.displayName}</FormHelperText>
         )}
+      </FormControl>
+
+      {/* CrewTAK: optional email (notifications / password resets later). */}
+      <FormControl error={!!errors.email} sx={{ mb: 2 }}>
+        <Typography level='body2' mb={1}>
+          Email
+        </Typography>
+        <Input
+          fullWidth
+          id='email'
+          name='email'
+          type='email'
+          autoComplete='off'
+          placeholder='name@example.com (optional)'
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
+        />
+        <FormHelperText>{errors.email || CREW_EMAIL_HINT}</FormHelperText>
       </FormControl>
 
       {/* CrewTAK: shift and role side by side (stacked on phones). */}
